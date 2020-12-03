@@ -25,12 +25,18 @@ export async function uploadManifest(siteId: string, bucket: string, manifest: M
 
   const storage = new Storage();
   const bar = new cliProgress.SingleBar({
-    format: 'Uploading ({value}/{total}): ' + _colors.green('{bar}') + ' Total: {duration}s (ETA: {eta}s)',
+    format: 'Uploading ({value}/{total}): ' + _colors.green('{bar}') + ' Total: {duration_formatted} ({speed}MB/s, ETA: {eta_formatted})',
   }, cliProgress.Presets.shades_classic);
   const numFiles = manifest.files.length;
 
+  let totalTransferred = 0;
   let numProcessed = 0;
-  bar.start(numFiles, numProcessed);
+  let startTime = Math.floor(Date.now() / 1000);
+  bar.start(numFiles, numProcessed, {
+    speed: 0
+  });
+
+  // TODO: Stat remote files prior to upload; only upload new files
   mapLimit(manifest.files, NUM_CONCURRENT_UPLOADS, (item, callback) => {
     let manifestFile = item;
     let remotePath = getFilePath(siteId, manifestFile.hash);
@@ -50,8 +56,11 @@ export async function uploadManifest(siteId: string, bucket: string, manifest: M
       gzip: true,
       metadata: metadata,
     }).then((resp: any) => {
-      // console.log(resp[1]);
-      bar.update(numProcessed += 1);
+      totalTransferred += parseInt(resp[1].size);
+      let elapsed = Math.floor(Date.now() / 1000) - startTime;
+      bar.update(numProcessed += 1, {
+        speed: (totalTransferred / elapsed / (1024*1024)).toFixed(2),
+      });
       if (numProcessed == numFiles) {
         bar.stop();
       }
