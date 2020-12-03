@@ -1,10 +1,12 @@
 import * as cliProgress from 'cli-progress';
 import { mapLimit } from 'async';
 import { Manifest } from './manifest';
+const _colors = require('colors');
 
 const {Storage} = require('@google-cloud/storage');
 
-const bucket = 'wing-prod.appspot.com';
+const DEFAULT_BUCKET = `${process.env.GCLOUD_PROJECT}.appspot.com`;
+
 const NUM_CONCURRENT_UPLOADS = 24;
 
 function getFilePath (siteId: string, hash: string) {
@@ -17,17 +19,22 @@ export interface Metadata {
   metadata: {};
 }
 
-export async function uploadManifest(siteId: string, manifest: Manifest) {
-  const storage = new Storage();
+export async function uploadManifest(siteId: string, bucket: string, manifest: Manifest) {
+  bucket = bucket || DEFAULT_BUCKET;  // If bucket is blank.
+  console.log(`Uploading to -> ${bucket}/${getFilePath(siteId, '')}`);
 
-  const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+  const storage = new Storage();
+  const bar = new cliProgress.SingleBar({
+    format: 'Uploading ({value}/{total}): ' + _colors.green('{bar}') + ' Total: {duration}s (ETA: {eta}s)',
+  }, cliProgress.Presets.shades_classic);
   const numFiles = manifest.files.length;
+
   let numProcessed = 0;
   bar.start(numFiles, numProcessed);
-
   mapLimit(manifest.files, NUM_CONCURRENT_UPLOADS, (item, callback) => {
     let manifestFile = item;
     let remotePath = getFilePath(siteId, manifestFile.hash);
+
     // console.log(`Uploading ${manifestFile.cleanPath} -> ${bucket}/${remotePath}`);
     let metadata: Metadata = {
       cacheControl: 'public, max-age=31536000',
@@ -42,7 +49,8 @@ export async function uploadManifest(siteId: string, manifest: Manifest) {
       destination: remotePath,
       gzip: true,
       metadata: metadata,
-    }).then(() => {
+    }).then((resp: any) => {
+      // console.log(resp[1]);
       bar.update(numProcessed += 1);
       if (numProcessed == numFiles) {
         bar.stop();
