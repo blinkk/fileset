@@ -5,7 +5,6 @@ import { Manifest } from './manifest';
 const {Storage} = require('@google-cloud/storage');
 
 const bucket = 'wing-prod.appspot.com';
-const siteId = 'fiber';
 const NUM_CONCURRENT_UPLOADS = 24;
 
 function getFilePath (siteId: string, hash: string) {
@@ -18,7 +17,7 @@ export interface Metadata {
   metadata: {};
 }
 
-export async function uploadManifest(manifest: Manifest) {
+export async function uploadManifest(siteId: string, manifest: Manifest) {
   const storage = new Storage();
 
   const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);

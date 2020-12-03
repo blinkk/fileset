@@ -2,6 +2,7 @@ import {Manifest} from '../manifest';
 import * as upload from '../upload';
 
 interface UploadOptions {
+  site: string;
   ref: string;
   branch: string;
   redirect: string;
@@ -16,6 +17,6 @@ export class UploadCommand {
   run(path: string) {
     let manifest = new Manifest();
     manifest.createFromDirectory(path);
-    upload.uploadManifest(manifest);
+    upload.uploadManifest(this.options.site, manifest);
   }
 }
