@@ -85,8 +85,9 @@ export async function uploadManifest(bucket: string, manifest: Manifest) {
         const remotePath = getBlobPath(manifest.site, manifestFile.hash);
 
         // console.log(`Uploading ${manifestFile.cleanPath} -> ${bucket}/${remotePath}`);
+        // NOTE: This was causing stale responses, even when rewritten by the client-server: 'public, max-age=31536000',
         const metadata: Metadata = {
-          cacheControl: 'private, max-age=86400',   // NOTE: This was causing stale responses, even when rewritten by the client-server: 'public, max-age=31536000',
+          cacheControl: 'public, max-age=1',
           contentType: manifestFile.mimetype,
           metadata: {
             path: manifestFile.cleanPath,

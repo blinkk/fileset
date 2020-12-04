@@ -10,6 +10,11 @@ const auth = new GoogleAuth({
 });
 
 const server = httpProxy.createProxyServer();
+interface ManifestCache {
+  [requestSha: string]: string;
+}
+
+const manifestCache: ManifestCache = {};
 
 const downloadManifest = async (shortsha: string) => {
   const key = datastore.key(['Fileset2Manifest', shortsha]);
@@ -49,7 +54,12 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       blobPath += 'index.html';
     }
     shortsha = shortsha.slice(0, 7);
+    // const manifest =
+    //   manifestCache[requestSha] || (await downloadManifest(requestSha));
+    // manifestCache[requestSha] = manifest;
+
     const manifest = await downloadManifest(requestSha);
+
     if (!manifest) {
       res.sendStatus(404);
       return;
@@ -71,10 +81,6 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       target: URL,
       changeOrigin: true,
       preserveHeaderKeyCase: true,
-    });
-    // Ensure responses sent to user are not cached (despite server-to-server responses being entirely cached as the blob keys do not change).
-    server.on('proxyRes', (proxyRes, req, res) => {
-      proxyRes.headers['Cache-Control'] = 'private, max-age=86400';
     });
   });
   return app;
