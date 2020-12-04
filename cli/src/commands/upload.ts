@@ -16,7 +16,11 @@ export class UploadCommand {
   }
 
   run(path: string) {
-    let manifest = new Manifest(this.options.site, this.options.ref, this.options.branch);
+    const manifest = new Manifest(
+      this.options.site,
+      this.options.ref,
+      this.options.branch
+    );
     manifest.createFromDirectory(path);
     upload.uploadManifest(this.options.bucket, manifest);
   }

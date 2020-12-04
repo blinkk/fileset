@@ -2,13 +2,11 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as fsPath from 'path';
 import * as mimeTypes from 'mime-types';
-import { map } from 'async';
 
-
-const walk = function(path: string, newFiles ?: string[]) {
+const walk = function (path: string, newFiles?: string[]) {
   let files = newFiles || [];
-  fs.readdirSync(path).forEach((file) => {
-    let absPath = fsPath.join(path, file);
+  fs.readdirSync(path).forEach(file => {
+    const absPath = fsPath.join(path, file);
     if (fs.statSync(absPath).isDirectory()) {
       files = walk(absPath, files);
     } else {
@@ -30,11 +28,11 @@ export interface PathToHash {
 }
 
 export class Manifest {
-  site: string
-  ref: string
-  branch?: string
-  files: ManifestFile[]
-  shortSha: string
+  site: string;
+  ref: string;
+  branch?: string;
+  files: ManifestFile[];
+  shortSha: string;
 
   constructor(site: string, ref: string, branch?: string) {
     this.files = [];
@@ -45,15 +43,15 @@ export class Manifest {
   }
 
   async createFromDirectory(path: string) {
-    let paths = walk(path);
-    paths.forEach((filePath) => {
+    const paths = walk(path);
+    paths.forEach(filePath => {
       this.addFile(filePath, path);
     });
   }
 
   createHash(path: string) {
-    let contents = fs.readFileSync(path);
-    let hash = crypto.createHash('sha1');
+    const contents = fs.readFileSync(path);
+    const hash = crypto.createHash('sha1');
     hash.setEncoding('hex');
     hash.write(contents);
     hash.end();
@@ -61,9 +59,9 @@ export class Manifest {
   }
 
   async addFile(path: string, dir: string) {
-    let hash = this.createHash(path);
-    let cleanPath = path.replace(dir, '');
-    let manifestFile: ManifestFile = {
+    const hash = this.createHash(path);
+    const cleanPath = path.replace(dir, '');
+    const manifestFile: ManifestFile = {
       cleanPath: cleanPath,
       hash: hash,
       mimetype: mimeTypes.lookup(path) || 'application/octet-stream',
@@ -73,11 +71,10 @@ export class Manifest {
   }
 
   toJSON() {
-    let pathsToHashes: any = {};
-    this.files.forEach((file) => {
+    const pathsToHashes: any = {};
+    this.files.forEach(file => {
       pathsToHashes[file.cleanPath] = file.hash;
-    })
+    });
     return pathsToHashes;
   }
-
 }
