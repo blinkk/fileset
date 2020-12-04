@@ -60,7 +60,7 @@ export class Manifest {
 
   async addFile(path: string, dir: string) {
     const hash = this.createHash(path);
-    const cleanPath = path.replace(dir, '');
+    const cleanPath = path.replace(dir.replace(/^\\+|\\+$/g, ''), '/');
     const manifestFile: ManifestFile = {
       cleanPath: cleanPath,
       hash: hash,
