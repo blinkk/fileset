@@ -1,12 +1,9 @@
-import {app} from '../server';
+import {createApp} from '../server';
 
 interface ServeOptions {
-  bucket: string;
   site: string;
-  ref: string;
+  shortsha: string;
   branch: string;
-  redirect: string;
-  config: string;
 }
 
 export class ServeCommand {
@@ -15,6 +12,7 @@ export class ServeCommand {
   }
 
   run() {
+    const app = createApp(this.options.site, this.options.shortsha, this.options.branch);
     const PORT = process.env.PORT || 8080;
     app.listen(PORT, () => {
       console.log(`App listening on port ${PORT}`);

@@ -21,6 +21,9 @@ program
 program
   .command('serve [dir]')
   .description('Runs the server')
+  .option('-h, --shortsha <shortsha>', 'commit sha', 'c5e3035')
+  .option('-s, --site <site>', 'site', 'waymo')
+  .option('-b, --branch <branch>', 'branch', 'master')
   .action((path, options) => {
     const cmd = new ServeCommand(options);
     cmd.run();
