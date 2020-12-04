@@ -2,14 +2,8 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as fsPath from 'path';
 import * as mimeTypes from 'mime-types';
+import { map } from 'async';
 
-
-export interface ManifestFile {
-  hash: string;
-  path: string;
-  mimetype: string;
-  cleanPath: string;
-}
 
 const walk = function(path: string, newFiles ?: string[]) {
   let files = newFiles || [];
@@ -24,11 +18,30 @@ const walk = function(path: string, newFiles ?: string[]) {
   return files;
 };
 
-export class Manifest {
-  files: ManifestFile[]
+export interface ManifestFile {
+  hash: string;
+  path: string;
+  mimetype: string;
+  cleanPath: string;
+}
 
-  constructor() {
+export interface PathToHash {
+  path?: string;
+}
+
+export class Manifest {
+  site: string
+  ref: string
+  branch?: string
+  files: ManifestFile[]
+  shortSha: string
+
+  constructor(site: string, ref: string, branch?: string) {
     this.files = [];
+    this.site = site;
+    this.ref = ref;
+    this.shortSha = ref.slice(0, 7);
+    this.branch = branch;
   }
 
   async createFromDirectory(path: string) {
@@ -38,23 +51,33 @@ export class Manifest {
     });
   }
 
-  async addFile(path: string, dir: string) {
+  createHash(path: string) {
     let contents = fs.readFileSync(path);
     let hash = crypto.createHash('sha1');
     hash.setEncoding('hex');
     hash.write(contents);
     hash.end();
+    return hash.read();
+  }
+
+  async addFile(path: string, dir: string) {
+    let hash = this.createHash(path);
     let cleanPath = path.replace(dir, '');
     let manifestFile: ManifestFile = {
       cleanPath: cleanPath,
-      hash: hash.read(),
+      hash: hash,
       mimetype: mimeTypes.lookup(path) || 'application/octet-stream',
       path: path,
     };
     this.files.push(manifestFile);
   }
 
-  async toJson() {
+  toJSON() {
+    let pathsToHashes: any = {};
+    this.files.forEach((file) => {
+      pathsToHashes[file.cleanPath] = file.hash;
+    })
+    return pathsToHashes;
   }
 
 }

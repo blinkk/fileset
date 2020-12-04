@@ -10,6 +10,8 @@ program
   .description('Uploads a directory to cloud storage')
   .option('-b, --bucket <bucket>', 'bucket', '')
   .option('-s, --site <site>', 'site', '')
+  .option('-r, --ref <ref>', 'ref', '')
+  .option('-br, --branch <branch>', 'branch', '')
   .action((path, options) => {
     const cmd = new UploadCommand(options);
     cmd.run(path);
