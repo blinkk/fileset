@@ -116,7 +116,6 @@ export async function uploadManifest(bucket: string, manifest: Manifest) {
 
     // @ts-ignore
     bar.on('stop', () => {
-      console.log('\n');
       finalize(manifest);
     });
   } else {

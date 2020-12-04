@@ -41,17 +41,20 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       console.log(`Mapped ${req.path} -> ${blobPath} -> ${URL}${updatedUrl}`);
     }
     req.url = updatedUrl;
-    console.log(req.url);
 
+    // Add Authorization: Bearer ... header to outgoing GCS request.
     const client = await auth.getClient();
     const headers = await client.getRequestHeaders();
-    // Adds Authorization: Bearer ... header to outgoing GCS request.
-    // @ts-ignore
-    req.headers = {headers};
+    req.headers = headers;
     server.web(req, res, {
       target: URL,
       changeOrigin: true,
       preserveHeaderKeyCase: true,
+    });
+
+    // Ensure responses sent to user are not cached (despite server-to-server responses being entirely cached as the blob keys do not change).
+    server.on('proxyRes', (proxyRes, req, res) => {
+      proxyRes.headers['Cache-Control'] = 'private, max-age=86400';
     });
   });
   return app;
