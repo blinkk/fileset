@@ -46,7 +46,7 @@ const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
 
 export async function uploadManifest(bucket: string, manifest: Manifest) {
   bucket = bucket || DEFAULT_BUCKET; // If bucket is blank.
-  console.log(`Uploading to -> ${bucket}/${getBlobPath(manifest.site, '')}`);
+  console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
 
   const storage = new Storage();
   const bar = new cliProgress.SingleBar(
@@ -137,7 +137,7 @@ async function finalize(manifest: Manifest) {
     },
   };
   await datastore.save(entity);
-  console.log(`Finalized upload -> ${manifest.branch} @ ${manifest.shortSha}`);
+  console.log(`Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`);
 
   if (manifest.branch) {
 

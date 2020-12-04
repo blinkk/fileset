@@ -22,6 +22,10 @@ export class UploadCommand {
       this.options.branch
     );
     manifest.createFromDirectory(path);
+    if (!manifest.files.length) {
+      console.log(`No files found in -> ${path}`);
+      return;
+    }
     upload.uploadManifest(this.options.bucket, manifest);
   }
 }
