@@ -1,6 +1,6 @@
 import * as cliProgress from 'cli-progress';
-import {mapLimit} from 'async';
-import {Manifest} from './manifest';
+import {asyncify, mapLimit} from 'async';
+import {Manifest, ManifestFile} from './manifest';
 import _colors = require('colors');
 
 import {Storage} from '@google-cloud/storage';
@@ -16,18 +16,32 @@ function getBlobPath(siteId: string, hash: string) {
   return `fileset/sites/${siteId}/blobs/${hash}`;
 }
 
-function getManifestPath(siteId: string, ref: string) {
-  return `fileset/sites/${siteId}/manifests/${ref}`;
-}
-
-function getBranchMappingPath(siteId: string, branch: string) {
-  return `fileset/sites/${siteId}/branches/${branch}`;
-}
-
 export interface Metadata {
   cacheControl: string;
   contentType: string;
   metadata: {};
+}
+
+const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
+  const filesToUpload: Array<ManifestFile> = [];
+  await mapLimit(
+    manifest.files,
+    NUM_CONCURRENT_UPLOADS,
+    asyncify(async (manifestFile: ManifestFile) => {
+      const remotePath = getBlobPath(manifest.site, manifestFile.hash);
+      await storageBucket
+        .file(remotePath)
+        .exists()
+        .then((resp: any) => {
+          const exists = resp[0];
+          if (!exists) {
+            filesToUpload.push(manifestFile);
+          }
+        });
+    })
+  );
+
+  return filesToUpload;
 }
 
 export async function uploadManifest(bucket: string, manifest: Manifest) {
@@ -44,55 +58,70 @@ export async function uploadManifest(bucket: string, manifest: Manifest) {
     },
     cliProgress.Presets.shades_classic
   );
-  const numFiles = manifest.files.length;
 
-  let totalTransferred = 0;
-  let numProcessed = 0;
-  const startTime = Math.floor(Date.now() / 1000);
-  bar.start(numFiles, numProcessed, {
-    speed: 0,
-  });
+  const storageBucket = storage.bucket(bucket);
 
-  // TODO: Stat remote files prior to upload; only upload new files
-  mapLimit(manifest.files, NUM_CONCURRENT_UPLOADS, (item, callback) => {
-    const manifestFile = item;
-    const remotePath = getBlobPath(manifest.site, manifestFile.hash);
+  // Check whether files exist prior to uploading. Existing files can be skipped.
+  const filesToUpload = await findUploadedFiles(manifest, storageBucket);
 
-    // console.log(`Uploading ${manifestFile.cleanPath} -> ${bucket}/${remotePath}`);
-    const metadata: Metadata = {
-      cacheControl: 'public, max-age=31536000',
-      contentType: manifestFile.mimetype,
-      metadata: {
-        path: manifestFile.cleanPath,
-      },
-    };
+  const numFiles = filesToUpload.length;
+  console.log(
+    `Found new ${filesToUpload.length} files out of ${manifest.files.length} total...`
+  );
 
-    // TODO: Handle upload errors and retries.
-    storage
-      .bucket(bucket)
-      .upload(manifestFile.path, {
-        destination: remotePath,
-        gzip: true,
-        metadata: metadata,
-      })
-      .then((resp: any) => {
-        totalTransferred += parseInt(resp[1].size);
-        const elapsed = Math.floor(Date.now() / 1000) - startTime;
-        bar.update((numProcessed += 1), {
-          speed: (totalTransferred / elapsed / (1024 * 1024)).toFixed(2),
-        });
-        if (numProcessed == numFiles) {
-          bar.stop();
-        }
-        callback();
-      });
-  });
+  if (numFiles > 0) {
+    let totalTransferred = 0;
+    let numProcessed = 0;
+    const startTime = Math.floor(Date.now() / 1000);
+    bar.start(numFiles, numProcessed, {
+      speed: 0,
+    });
 
-  // @ts-ignore
-  bar.on('stop', () => {
-    console.log('\n');
+    // Only upload new files.
+    mapLimit(
+      filesToUpload,
+      NUM_CONCURRENT_UPLOADS,
+      (manifestFile, callback) => {
+        const remotePath = getBlobPath(manifest.site, manifestFile.hash);
+
+        // console.log(`Uploading ${manifestFile.cleanPath} -> ${bucket}/${remotePath}`);
+        const metadata: Metadata = {
+          cacheControl: 'public, max-age=31536000',
+          contentType: manifestFile.mimetype,
+          metadata: {
+            path: manifestFile.cleanPath,
+          },
+        };
+
+        // TODO: Handle upload errors and retries.
+        storageBucket
+          .upload(manifestFile.path, {
+            destination: remotePath,
+            gzip: true,
+            metadata: metadata,
+          })
+          .then((resp: any) => {
+            totalTransferred += parseInt(resp[1].size);
+            const elapsed = Math.floor(Date.now() / 1000) - startTime;
+            bar.update((numProcessed += 1), {
+              speed: (totalTransferred / elapsed / (1024 * 1024)).toFixed(2),
+            });
+            if (numProcessed == numFiles) {
+              bar.stop();
+            }
+            callback();
+          });
+      }
+    );
+
+    // @ts-ignore
+    bar.on('stop', () => {
+      console.log('\n');
+      finalize(manifest);
+    });
+  } else {
     finalize(manifest);
-  });
+  }
 }
 
 async function finalize(manifest: Manifest) {
@@ -111,9 +140,6 @@ async function finalize(manifest: Manifest) {
   console.log(`Finalized upload -> ${manifest.branch} @ ${manifest.shortSha}`);
 
   if (manifest.branch) {
-    const branchMappingPath = getBranchMappingPath(
-      manifest.site,
-      manifest.branch
-    );
+
   }
 }

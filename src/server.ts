@@ -18,11 +18,7 @@ const downloadManifest = async (shortsha: string) => {
   return paths;
 };
 
-export async function createApp(
-  siteId: string,
-  shortsha: string,
-  branch: string
-) {
+export function createApp(siteId: string, shortsha: string, branch: string) {
   const app = express();
   app.all('/*', async (req: express.Request, res: express.Response) => {
     let blobPath = decodeURIComponent(req.path);
