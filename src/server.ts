@@ -90,15 +90,22 @@ export function createApp(siteId: string, branchOrRef: string) {
 
     const manifest = await downloadManifest(requestBranchOrRef);
     if (!manifest) {
-      // TODO: Consolidate not found errors.
-      res.sendStatus(404);
+      res
+        .status(404)
+        .sendFile(
+          fsPath.join(__dirname, './static/', 'fileset-does-not-exist.html')
+        );
       return;
     }
 
     const manifestPaths = manifest.paths;
 
     if (!manifestPaths) {
-      res.sendStatus(404);
+      res
+        .status(404)
+        .sendFile(
+          fsPath.join(__dirname, './static/', 'fileset-does-not-exist.html')
+        );
       return;
     }
     const blobKey = manifestPaths[blobPath];
