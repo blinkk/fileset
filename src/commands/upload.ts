@@ -1,13 +1,13 @@
+import {getGitData} from '../gitdata';
 import {Manifest} from '../manifest';
 import * as upload from '../upload';
 
 interface UploadOptions {
   bucket: string;
+  force?: boolean;
   site: string;
-  ref: string;
-  branch: string;
-  redirect: string;
-  config: string;
+  ref?: string;
+  branch?: string;
 }
 
 export class UploadCommand {
@@ -15,17 +15,18 @@ export class UploadCommand {
     this.options = options;
   }
 
-  run(path: string) {
+  async run(path: string) {
+    const gitData = await getGitData(path);
     const manifest = new Manifest(
       this.options.site,
-      this.options.ref,
-      this.options.branch
+      this.options.ref || gitData.ref,
+      this.options.branch || gitData.branch || ''
     );
     manifest.createFromDirectory(path);
     if (!manifest.files.length) {
       console.log(`No files found in -> ${path}`);
       return;
     }
-    upload.uploadManifest(this.options.bucket, manifest);
+    upload.uploadManifest(this.options.bucket, manifest, this.options.force);
   }
 }

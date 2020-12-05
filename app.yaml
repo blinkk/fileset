@@ -2,4 +2,4 @@ service: fileset2
 runtime: nodejs10
 
 # TODO(jeremydw): Site, shortsha, and branch should be determined at request-time.
-entrypoint: node ./dist/src/index.js serve -s duo --shortsha 3d6ae3897 --branch master
+entrypoint: node ./dist/src/index.js serve

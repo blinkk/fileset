@@ -1,3 +1,4 @@
+import {getGitData} from '../gitdata';
 import {createApp} from '../server';
 
 interface ServeOptions {
@@ -12,7 +13,11 @@ export class ServeCommand {
   }
 
   run() {
-    const app = createApp(this.options.site, this.options.shortsha, this.options.branch);
+    const app = createApp(
+      this.options.site || 'default',
+      this.options.shortsha || '',
+      this.options.branch || ''
+    );
     const PORT = process.env.PORT || 8080;
     app.listen(PORT, () => {
       console.log(`App listening on port ${PORT}`);

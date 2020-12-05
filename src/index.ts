@@ -12,6 +12,7 @@ program
   .option('-b, --bucket <bucket>', 'bucket', '')
   .option('-s, --site <site>', 'site', '')
   .option('-r, --ref <ref>', 'ref', '')
+  .option('-f, --force', '', false)
   .option('-br, --branch <branch>', 'branch', '')
   .action((path, options) => {
     const cmd = new UploadCommand(options);
@@ -21,9 +22,9 @@ program
 program
   .command('serve [dir]')
   .description('Runs the server')
-  .option('-h, --shortsha <shortsha>', 'commit sha', 'c5e3035')
-  .option('-s, --site <site>', 'site', 'waymo')
-  .option('-b, --branch <branch>', 'branch', 'master')
+  .option('-h, --shortsha <shortsha>', 'commit sha', '')
+  .option('-s, --site <site>', 'site', '')
+  .option('-b, --branch <branch>', 'branch', '')
   .action((path, options) => {
     const cmd = new ServeCommand(options);
     cmd.run();

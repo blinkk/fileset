@@ -16,12 +16,6 @@ function getBlobPath(siteId: string, hash: string) {
   return `fileset/sites/${siteId}/blobs/${hash}`;
 }
 
-export interface Metadata {
-  cacheControl: string;
-  contentType: string;
-  metadata: {};
-}
-
 const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
   const filesToUpload: Array<ManifestFile> = [];
   await mapLimit(
@@ -44,7 +38,7 @@ const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
   return filesToUpload;
 }
 
-export async function uploadManifest(bucket: string, manifest: Manifest) {
+export async function uploadManifest(bucket: string, manifest: Manifest, force?: boolean) {
   bucket = bucket || DEFAULT_BUCKET; // If bucket is blank.
   console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
 
@@ -62,7 +56,10 @@ export async function uploadManifest(bucket: string, manifest: Manifest) {
   const storageBucket = storage.bucket(bucket);
 
   // Check whether files exist prior to uploading. Existing files can be skipped.
-  const filesToUpload = await findUploadedFiles(manifest, storageBucket);
+  let filesToUpload = await findUploadedFiles(manifest, storageBucket);
+  if (force) {
+    filesToUpload = manifest.files;
+  }
 
   const numFiles = filesToUpload.length;
   console.log(
@@ -86,8 +83,11 @@ export async function uploadManifest(bucket: string, manifest: Manifest) {
 
         // console.log(`Uploading ${manifestFile.cleanPath} -> ${bucket}/${remotePath}`);
         // NOTE: This was causing stale responses, even when rewritten by the client-server: 'public, max-age=31536000',
-        const metadata: Metadata = {
-          cacheControl: 'public, max-age=1',
+        // https://cloud.google.com/storage/docs/gsutil/addlhelp/WorkingWithObjectMetadata#cache-control
+        // NOTE: In order for GCS to respond extremely fast, it requires a longer cache expiry time.
+        // TODO: See if we can remove this from the proxy response without killing perf.
+        const metadata = {
+          cacheControl: 'public, max-age=3600',
           contentType: manifestFile.mimetype,
           metadata: {
             path: manifestFile.cleanPath,
@@ -97,8 +97,8 @@ export async function uploadManifest(bucket: string, manifest: Manifest) {
         // TODO: Handle upload errors and retries.
         storageBucket
           .upload(manifestFile.path, {
+            //gzip: true,  // gzip: true must *not* be set here, as it interferes with the proxied GCS response.
             destination: remotePath,
-            gzip: true,
             metadata: metadata,
           })
           .then((resp: any) => {

@@ -14,8 +14,6 @@ interface ManifestCache {
   [requestSha: string]: string;
 }
 
-const manifestCache: ManifestCache = {};
-
 const downloadManifest = async (shortsha: string) => {
   const key = datastore.key(['Fileset2Manifest', shortsha]);
   const entity = await datastore.get(key);
@@ -40,6 +38,7 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
   console.log(`Starting server for site: ${siteId} @ ${branch}`);
 
   const app = express();
+  app.disable('x-powered-by');
   app.all('/*', async (req: express.Request, res: express.Response) => {
     const envFromHostname = parseHostname(req.hostname);
     const requestSiteId = envFromHostname.siteId || siteId;
@@ -54,9 +53,6 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       blobPath += 'index.html';
     }
     shortsha = shortsha.slice(0, 7);
-    // const manifest =
-    //   manifestCache[requestSha] || (await downloadManifest(requestSha));
-    // manifestCache[requestSha] = manifest;
 
     const manifest = await downloadManifest(requestSha);
 
@@ -81,6 +77,21 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       target: URL,
       changeOrigin: true,
       preserveHeaderKeyCase: true,
+    });
+    server.on('proxyRes', (proxyRes, req, res) => {
+      delete proxyRes.headers['x-goog-generation'];
+      delete proxyRes.headers['x-goog-hash'];
+      delete proxyRes.headers['x-goog-metageneration'];
+      delete proxyRes.headers['x-goog-meta-patn'];
+      delete proxyRes.headers['x-goog-storage-class'];
+      delete proxyRes.headers['x-goog-stored-content-encoding'];
+      delete proxyRes.headers['x-goog-stored-content-length'];
+      delete proxyRes.headers['x-guploader-uploadid'];
+      delete proxyRes.headers['x-cloud-trace-context'];
+      delete proxyRes.headers['x-goog-meta-path'];
+      // proxyRes.headers['cache-control'] = 'no-cache, must-revalidate';
+      proxyRes.headers['x-fileset-ref'] = shortsha;
+      res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
     });
   });
   return app;
