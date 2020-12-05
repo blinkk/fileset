@@ -1,5 +1,8 @@
 service: fileset2
 runtime: nodejs10
-
-# TODO(jeremydw): Site, shortsha, and branch should be determined at request-time.
+instance_class: F4
 entrypoint: node ./dist/src/index.js serve
+handlers:
+- url: /.*
+  secure: always
+  script: auto

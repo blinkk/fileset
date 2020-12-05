@@ -1,7 +1,8 @@
-import express = require('express');
-import httpProxy = require('http-proxy');
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
+import * as fsPath from 'path';
+import express = require('express');
+import httpProxy = require('http-proxy');
 
 const URL = 'https://storage.googleapis.com';
 const datastore = new Datastore();
@@ -51,9 +52,6 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
     const requestSiteId = envFromHostname.siteId || siteId;
     const requestSha = envFromHostname.branchOrRef || shortsha;
     const requestBranch = envFromHostname.branchOrRef || branch;
-    console.log(
-      `Handling request -> ${requestSiteId} @ ${requestSha} (${requestBranch})`
-    );
 
     let blobPath = decodeURIComponent(req.path);
     if (blobPath.endsWith('/')) {
@@ -67,18 +65,20 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       return;
     }
     const blobKey = manifest[blobPath];
-    const updatedUrl = blobKey
-      ? `/wing-prod.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`
-      : '/404';
+    const updatedUrl = `/wing-prod.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
 
-    if (!process.env.GAE_APPLICATION) {
-      console.log(`Mapped ${req.path} -> ${blobPath} -> ${URL}${updatedUrl}`);
+    // TODO: Add custom 404 support based on site config.
+    if (!blobKey) {
+      console.log(`Blob not found ${req.path} -> ${URL}${updatedUrl}`);
+      res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
+      return;
     }
-    req.url = updatedUrl;
+
     // Add Authorization: Bearer ... header to outgoing GCS request.
     const client = await auth.getClient();
     const headers = await client.getRequestHeaders();
     req.headers = headers;
+    req.url = updatedUrl;
     server.web(req, res, {
       target: URL,
       changeOrigin: true,
@@ -99,7 +99,9 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       // This cannot be "private, max-age=0" as this kills perf.
       // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
       proxyRes.headers['cache-control'] = 'public, max-age=0036';  // The padded 0036 keeps the content length the same per upload.ts.
+      proxyRes.headers['x-fileset-blob'] = blobPath;
       proxyRes.headers['x-fileset-ref'] = requestSha;
+      proxyRes.headers['x-fileset-site'] = siteId;
       res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
     });
   });
