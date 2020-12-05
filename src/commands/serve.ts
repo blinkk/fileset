@@ -3,6 +3,7 @@ import {createApp} from '../server';
 interface ServeOptions {
   site: string;
   ref?: string;
+  fcd?: string;
 }
 
 export class ServeCommand {

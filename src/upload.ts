@@ -42,7 +42,8 @@ const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
 export async function uploadManifest(
   bucket: string,
   manifest: Manifest,
-  force?: boolean
+  force?: boolean,
+  ttl?: Date
 ) {
   bucket = bucket || DEFAULT_BUCKET; // If bucket is blank.
   console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
@@ -122,37 +123,61 @@ export async function uploadManifest(
 
     // @ts-ignore
     bar.on('stop', () => {
-      finalize(manifest);
+      finalize(manifest, ttl);
     });
   } else {
-    finalize(manifest);
+    finalize(manifest, ttl);
   }
 }
 
-function createEntity(key: entity.Key, manifest: Manifest) {
+async function createEntity(key: entity.Key, manifest: Manifest, ttl?: Date) {
+  const manifestPaths = manifest.toJSON();
+  let props: any = {
+    created: new Date(),
+    site: manifest.site,
+    ref: manifest.ref,
+    branch: manifest.branch,
+    paths: manifestPaths,
+  };
+  if (ttl) {
+    const key = datastore.key([
+      'Fileset2Manifest',
+      `branch:${manifest.branch}`,
+    ]);
+    const resp = await datastore.get(key);
+    if (resp && resp[0]) {
+      console.log(
+        `Adding TTL for branch ${manifest.branch} -> ${manifest.shortSha} @ ${ttl}`
+      );
+      const entity = resp[0];
+      if (entity.ttls) {
+        entity.ttls[ttl.toString()] = props;
+      } else {
+        entity.ttls = {ttl: props};
+      }
+      props = entity;
+    }
+  }
   return {
     key: key,
-    excludeFromIndexes: ['paths'],
-    data: {
-      created: new Date(),
-      ref: manifest.ref,
-      branch: manifest.branch,
-      paths: manifest.toJSON(),
-    },
+    excludeFromIndexes: ['paths', 'ttls'],
+    data: props,
   };
 }
 
-async function finalize(manifest: Manifest) {
+async function finalize(manifest: Manifest, ttl?: Date) {
+  // Create shortSha mapping.
   const key = datastore.key(['Fileset2Manifest', manifest.shortSha]);
-  const ent = createEntity(key, manifest);
+  const ent = await createEntity(key, manifest);
   await datastore.save(ent);
 
+  // Create branch mapping.
   if (manifest.branch) {
     const branchKey = datastore.key([
       'Fileset2Manifest',
       `branch:${manifest.branch}`,
     ]);
-    const branchEnt = createEntity(branchKey, manifest);
+    const branchEnt = await createEntity(branchKey, manifest, ttl);
     await datastore.save(branchEnt);
   }
 

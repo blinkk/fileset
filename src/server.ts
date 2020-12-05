@@ -3,7 +3,7 @@ import {GoogleAuth} from 'google-auth-library';
 import * as fsPath from 'path';
 import express = require('express');
 import httpProxy = require('http-proxy');
-import { Manifest } from './manifest';
+import {Manifest} from './manifest';
 
 const URL = 'https://storage.googleapis.com';
 const datastore = new Datastore();
@@ -26,7 +26,33 @@ const downloadManifest = async (branchOrRef: string) => {
     return;
   }
   const entities = resp[0];
-  return entities[0] || entities[1];
+  const result = entities[0] || entities[1];
+  if (!result) {
+    return;
+  }
+  if (!result.ttls) {
+    return result;
+  }
+
+  if (result.ttls) {
+    // TODO: Allow this to be overwritten.
+    const now = new Date();
+    let latestManifest = null;
+    for (const ttlString in result.ttls) {
+      const ttlDate = new Date(ttlString);
+      const isLaterThanManifestDate = now >= ttlDate;
+      const isLaterThanAllManifests =
+        !latestManifest || ttlDate >= latestManifest.ttl;
+      if (isLaterThanManifestDate && isLaterThanAllManifests) {
+        latestManifest = result.ttls[ttlString];
+        latestManifest.ttl = ttlDate;
+      }
+    }
+    if (latestManifest) {
+      return latestManifest;
+    }
+  }
+  return result;
 };
 
 const parseHostname = (hostname: string) => {
@@ -63,6 +89,12 @@ export function createApp(siteId: string, branchOrRef: string) {
     }
 
     const manifest = await downloadManifest(requestBranchOrRef);
+    if (!manifest) {
+      // TODO: Consolidate not found errors.
+      res.sendStatus(404);
+      return;
+    }
+
     const manifestPaths = manifest.paths;
 
     if (!manifestPaths) {
@@ -89,6 +121,9 @@ export function createApp(siteId: string, branchOrRef: string) {
       changeOrigin: true,
       preserveHeaderKeyCase: true,
     });
+    server.on('error', (error, req, res) => {
+      console.log(`An error occurred while serving ${req.url}`, error);
+    });
     server.on('proxyRes', (proxyRes, req, res) => {
       delete proxyRes.headers['x-cloud-trace-context'];
       delete proxyRes.headers['x-goog-generation'];
@@ -103,10 +138,13 @@ export function createApp(siteId: string, branchOrRef: string) {
       delete proxyRes.headers['x-guploader-uploadid'];
       // This cannot be "private, max-age=0" as this kills perf.
       // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
-      proxyRes.headers['cache-control'] = 'public, max-age=0036';  // The padded 0036 keeps the content length the same per upload.ts.
+      proxyRes.headers['cache-control'] = 'public, max-age=0036'; // The padded 0036 keeps the content length the same per upload.ts.
       proxyRes.headers['x-fileset-blob'] = blobKey;
       proxyRes.headers['x-fileset-ref'] = manifest.ref;
       proxyRes.headers['x-fileset-site'] = siteId;
+      if (manifest.ttl) {
+        proxyRes.headers['x-fileset-ttl'] = manifest.ttl;
+      }
       res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
     });
   });

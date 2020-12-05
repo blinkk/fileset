@@ -8,6 +8,7 @@ interface UploadOptions {
   site: string;
   ref?: string;
   branch?: string;
+  ttl?: string;
 }
 
 export class UploadCommand {
@@ -27,6 +28,12 @@ export class UploadCommand {
       console.log(`No files found in -> ${path}`);
       return;
     }
-    upload.uploadManifest(this.options.bucket, manifest, this.options.force);
+    const ttl = this.options.ttl ? new Date(this.options.ttl) : undefined;
+    upload.uploadManifest(
+      this.options.bucket,
+      manifest,
+      this.options.force,
+      ttl
+    );
   }
 }

@@ -9,11 +9,10 @@ const program = createCommand();
 program
   .command('upload [dir]')
   .description('Uploads a directory to cloud storage')
-  .option('-b, --bucket <bucket>', 'bucket', '')
   .option('-s, --site <site>', 'site', '')
   .option('-r, --ref <ref>', 'ref', '')
-  .option('-f, --force', '', false)
-  .option('-br, --branch <branch>', 'branch', '')
+  .option('-f, --force', 'force', false)
+  .option('-t, --ttl <ttl>', 'ttl', undefined)
   .action((path, options) => {
     const cmd = new UploadCommand(options);
     cmd.run(path);
