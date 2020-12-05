@@ -20,12 +20,11 @@ program
   });
 
 program
-  .command('serve [dir]')
+  .command('serve')
   .description('Runs the server')
-  .option('-r, --ref <ref>', 'ref', '')
   .option('-s, --site <site>', 'site', '')
-  .option('-b, --branch <branch>', 'branch', '')
-  .action((path, options) => {
+  .option('-r, --ref <ref>', 'ref', '')
+  .action(options => {
     const cmd = new ServeCommand(options);
     cmd.run();
   });

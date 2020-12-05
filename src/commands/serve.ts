@@ -1,10 +1,8 @@
-import {getGitData} from '../gitdata';
 import {createApp} from '../server';
 
 interface ServeOptions {
   site: string;
-  ref: string;
-  branch: string;
+  ref?: string;
 }
 
 export class ServeCommand {
@@ -12,11 +10,10 @@ export class ServeCommand {
     this.options = options;
   }
 
-  run() {
+  async run() {
     const app = createApp(
       this.options.site || 'default',
-      this.options.ref || '',
-      this.options.branch || ''
+      this.options.ref || ''
     );
     const PORT = process.env.PORT || 8080;
     app.listen(PORT, () => {

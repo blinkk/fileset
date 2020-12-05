@@ -5,6 +5,7 @@ import _colors = require('colors');
 
 import {Storage} from '@google-cloud/storage';
 import {Datastore} from '@google-cloud/datastore';
+import {entity} from '@google-cloud/datastore/build/src/entity';
 
 const datastore = new Datastore();
 
@@ -128,26 +129,37 @@ export async function uploadManifest(
   }
 }
 
-async function finalize(manifest: Manifest) {
-  const key = datastore.key(['Fileset2Manifest', manifest.shortSha]);
-  const pathsToHashes = manifest.toJSON();
-  const entity = {
+function createEntity(key: entity.Key, manifest: Manifest) {
+  return {
     key: key,
     excludeFromIndexes: ['paths'],
     data: {
       created: new Date(),
       ref: manifest.ref,
-      paths: pathsToHashes,
+      branch: manifest.branch,
+      paths: manifest.toJSON(),
     },
   };
-  await datastore.save(entity);
+}
+
+async function finalize(manifest: Manifest) {
+  const key = datastore.key(['Fileset2Manifest', manifest.shortSha]);
+  const ent = createEntity(key, manifest);
+  await datastore.save(ent);
+
+  if (manifest.branch) {
+    const branchKey = datastore.key([
+      'Fileset2Manifest',
+      `branch:${manifest.branch}`,
+    ]);
+    const branchEnt = createEntity(branchKey, manifest);
+    await datastore.save(branchEnt);
+  }
+
   console.log(
     `Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
   );
   console.log(
-    `Staged: https://${manifest.site}-dot-${manifest.shortSha}-dot-fileset2-dot-${process.env.GCLOUD_PROJECT}.appspot.com`
+    `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset2-dot-${process.env.GCLOUD_PROJECT}.appspot.com`
   );
-
-  if (manifest.branch) {
-  }
 }
