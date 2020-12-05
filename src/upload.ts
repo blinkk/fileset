@@ -36,9 +36,13 @@ const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
   );
 
   return filesToUpload;
-}
+};
 
-export async function uploadManifest(bucket: string, manifest: Manifest, force?: boolean) {
+export async function uploadManifest(
+  bucket: string,
+  manifest: Manifest,
+  force?: boolean
+) {
   bucket = bucket || DEFAULT_BUCKET; // If bucket is blank.
   console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
 
@@ -137,9 +141,13 @@ async function finalize(manifest: Manifest) {
     },
   };
   await datastore.save(entity);
-  console.log(`Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`);
+  console.log(
+    `Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
+  );
+  console.log(
+    `Staged: https://${manifest.site}-dot-${manifest.shortSha}-dot-fileset2-dot-${process.env.GCLOUD_PROJECT}.appspot.com`
+  );
 
   if (manifest.branch) {
-
   }
 }

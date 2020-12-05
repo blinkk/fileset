@@ -99,7 +99,7 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       // This cannot be "private, max-age=0" as this kills perf.
       // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
       proxyRes.headers['cache-control'] = 'public, max-age=0036';  // The padded 0036 keeps the content length the same per upload.ts.
-      proxyRes.headers['x-fileset-blob'] = blobPath;
+      proxyRes.headers['x-fileset-blob'] = blobKey;
       proxyRes.headers['x-fileset-ref'] = requestSha;
       proxyRes.headers['x-fileset-site'] = siteId;
       res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
