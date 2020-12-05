@@ -3,7 +3,7 @@ import {createApp} from '../server';
 
 interface ServeOptions {
   site: string;
-  shortsha: string;
+  ref: string;
   branch: string;
 }
 
@@ -15,7 +15,7 @@ export class ServeCommand {
   run() {
     const app = createApp(
       this.options.site || 'default',
-      this.options.shortsha || '',
+      this.options.ref || '',
       this.options.branch || ''
     );
     const PORT = process.env.PORT || 8080;

@@ -22,7 +22,7 @@ program
 program
   .command('serve [dir]')
   .description('Runs the server')
-  .option('-h, --shortsha <shortsha>', 'commit sha', '')
+  .option('-r, --ref <ref>', 'ref', '')
   .option('-s, --site <site>', 'site', '')
   .option('-b, --branch <branch>', 'branch', '')
   .action((path, options) => {

@@ -25,12 +25,19 @@ const downloadManifest = async (shortsha: string) => {
 };
 
 const parseHostname = (hostname: string) => {
-  // TODO: Make this more robust;
-  const parts = hostname.split('-dot-');
-  return {
-    siteId: parts[0],
-    branchOrRef: parts[1].slice(0, 7),
-  };
+  // TODO: Make this more robust
+  if (hostname.includes('-dot-')) {
+    const parts = hostname.split('-dot-');
+    return {
+      siteId: parts[0],
+      branchOrRef: parts[1].slice(0, 7),
+    };
+  } else {
+    return {
+      siteId: '',
+      branchOrRef: '',
+    };
+  }
 };
 
 export function createApp(siteId: string, shortsha: string, branch: string) {
@@ -45,14 +52,13 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
     const requestSha = envFromHostname.branchOrRef || shortsha;
     const requestBranch = envFromHostname.branchOrRef || branch;
     console.log(
-      `Handling request -> ${requestSiteId} @ ${requestBranch} (${requestBranch})`
+      `Handling request -> ${requestSiteId} @ ${requestSha} (${requestBranch})`
     );
 
     let blobPath = decodeURIComponent(req.path);
     if (blobPath.endsWith('/')) {
       blobPath += 'index.html';
     }
-    shortsha = shortsha.slice(0, 7);
 
     const manifest = await downloadManifest(requestSha);
 
@@ -79,18 +85,19 @@ export function createApp(siteId: string, shortsha: string, branch: string) {
       preserveHeaderKeyCase: true,
     });
     server.on('proxyRes', (proxyRes, req, res) => {
+      delete proxyRes.headers['x-cloud-trace-context'];
       delete proxyRes.headers['x-goog-generation'];
       delete proxyRes.headers['x-goog-hash'];
-      delete proxyRes.headers['x-goog-metageneration'];
+      delete proxyRes.headers['x-goog-meta-path'];
       delete proxyRes.headers['x-goog-meta-patn'];
+      delete proxyRes.headers['x-goog-metageneration'];
       delete proxyRes.headers['x-goog-storage-class'];
       delete proxyRes.headers['x-goog-stored-content-encoding'];
       delete proxyRes.headers['x-goog-stored-content-length'];
+      delete proxyRes.headers['x-guploader-response-body-transformations'];
       delete proxyRes.headers['x-guploader-uploadid'];
-      delete proxyRes.headers['x-cloud-trace-context'];
-      delete proxyRes.headers['x-goog-meta-path'];
-      // proxyRes.headers['cache-control'] = 'no-cache, must-revalidate';
-      proxyRes.headers['x-fileset-ref'] = shortsha;
+      proxyRes.headers['cache-control'] = 'public, max-age=0036';  // The padded 0036 keeps the content length the same per upload.ts.
+      proxyRes.headers['x-fileset-ref'] = requestSha;
       res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
     });
   });
