@@ -148,6 +148,15 @@ function createScheduleItem(
   } as ScheduleItem;
 }
 
+async function saveManifestEntity(key: entity.Key, data: any) {
+  const ent = {
+    key: key,
+    excludeFromIndexes: ['schedule'],
+    data: data,
+  };
+  await datastore.save(ent);
+}
+
 async function finalize(manifest: Manifest, ttl?: Date) {
   const manifestPaths = manifest.toJSON();
   const now = new Date();
@@ -160,17 +169,12 @@ async function finalize(manifest: Manifest, ttl?: Date) {
   const scheduleItem = createScheduleItem(manifest, manifestPaths, now);
   const schedule: Record<string, ScheduleItem> = {};
   schedule[now.toString()] = scheduleItem;
-  const ent = {
-    key: key,
-    excludeFromIndexes: ['schedule'],
-    data: {
-      site: manifest.site,
-      ref: manifest.ref,
-      branch: manifest.branch,
-      schedule: schedule,
-    },
-  };
-  await datastore.save(ent);
+  await saveManifestEntity(key, {
+    site: manifest.site,
+    ref: manifest.ref,
+    branch: manifest.branch,
+    schedule: schedule,
+  });
 
   // Create branch mapping.
   if (manifest.branch) {
@@ -204,12 +208,7 @@ async function finalize(manifest: Manifest, ttl?: Date) {
         existingData.schedule
       )}`
     );
-    const branchEnt = {
-      key: branchKey,
-      excludeFromIndexes: ['schedule'],
-      data: existingData,
-    };
-    await datastore.save(branchEnt);
+    await saveManifestEntity(branchKey, existingData);
   }
 
   console.log(

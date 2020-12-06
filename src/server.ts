@@ -47,7 +47,6 @@ const getManifest = async (siteId: string, branchOrRef: string) => {
   if (latestManifest) {
     return latestManifest;
   }
-  return result;
 };
 
 const parseHostname = (hostname: string) => {
