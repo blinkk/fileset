@@ -81,7 +81,7 @@ export function createApp(siteId: string, branchOrRef: string) {
     }
 
     const manifest = await getManifest(requestSiteId, requestBranchOrRef);
-    if (!manifest) {
+    if (!manifest || !manifest.paths) {
       res
         .status(404)
         .sendFile(
@@ -91,16 +91,8 @@ export function createApp(siteId: string, branchOrRef: string) {
     }
 
     const manifestPaths = manifest.paths;
-    if (!manifestPaths) {
-      res
-        .status(404)
-        .sendFile(
-          fsPath.join(__dirname, './static/', 'fileset-does-not-exist.html')
-        );
-      return;
-    }
     const blobKey = manifestPaths[blobPath];
-    const updatedUrl = `/wing-prod.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
+    const updatedUrl = `/${process.env.GCLOUD_PROJECT}.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
 
     // TODO: Add custom 404 support based on site config.
     if (!blobKey) {
