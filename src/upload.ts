@@ -39,17 +39,8 @@ const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
   return filesToUpload;
 };
 
-export async function uploadManifest(
-  bucket: string,
-  manifest: Manifest,
-  force?: boolean,
-  ttl?: Date
-) {
-  bucket = bucket || DEFAULT_BUCKET; // If bucket is blank.
-  console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
-
-  const storage = new Storage();
-  const bar = new cliProgress.SingleBar(
+function createProgressBar() {
+  return new cliProgress.SingleBar(
     {
       format:
         'Uploading ({value}/{total}): ' +
@@ -58,15 +49,25 @@ export async function uploadManifest(
     },
     cliProgress.Presets.shades_classic
   );
+}
 
-  const storageBucket = storage.bucket(bucket);
+export async function uploadManifest(
+  bucket: string,
+  manifest: Manifest,
+  force?: boolean,
+  ttl?: Date
+) {
+  bucket = bucket || DEFAULT_BUCKET;
+  console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
+  const storageBucket = new Storage().bucket(bucket);
+  const bar = createProgressBar();
 
-  // Check whether files exist prior to uploading. Existing files can be skipped.
-  let filesToUpload = await findUploadedFiles(manifest, storageBucket);
-  if (force) {
-    filesToUpload = manifest.files;
-  }
-
+  // Check for files that have already been uploaded. Files already uploaded do
+  // not need to be uploaded again, as the GCS path is keyed by the file's
+  // contents.
+  const filesToUpload = force
+    ? manifest.files
+    : await findUploadedFiles(manifest, storageBucket);
   const numFiles = filesToUpload.length;
   console.log(
     `Found new ${filesToUpload.length} files out of ${manifest.files.length} total...`
@@ -80,14 +81,12 @@ export async function uploadManifest(
       speed: 0,
     });
 
-    // Only upload new files.
     mapLimit(
       filesToUpload,
       NUM_CONCURRENT_UPLOADS,
-      (manifestFile, callback) => {
+      asyncify(async (manifestFile: ManifestFile) => {
         const remotePath = getBlobPath(manifest.site, manifestFile.hash);
 
-        // console.log(`Uploading ${manifestFile.cleanPath} -> ${bucket}/${remotePath}`);
         // NOTE: This was causing stale responses, even when rewritten by the client-server: 'public, max-age=31536000',
         // https://cloud.google.com/storage/docs/gsutil/addlhelp/WorkingWithObjectMetadata#cache-control
         // NOTE: In order for GCS to respond extremely fast, it requires a longer cache expiry time.
@@ -100,25 +99,23 @@ export async function uploadManifest(
           },
         };
 
-        // TODO: Handle upload errors and retries.
-        storageBucket
-          .upload(manifestFile.path, {
-            //gzip: true,  // gzip: true must *not* be set here, as it interferes with the proxied GCS response.
-            destination: remotePath,
-            metadata: metadata,
-          })
-          .then((resp: any) => {
-            totalTransferred += parseInt(resp[1].size);
-            const elapsed = Math.floor(Date.now() / 1000) - startTime;
-            bar.update((numProcessed += 1), {
-              speed: (totalTransferred / elapsed / (1024 * 1024)).toFixed(2),
-            });
-            if (numProcessed == numFiles) {
-              bar.stop();
-            }
-            callback();
-          });
-      }
+        // TODO: Veryify this correctly handles errors and retry attempts.
+        const resp = await storageBucket.upload(manifestFile.path, {
+          // NOTE: `gzip: true` must *not* be set here. Doing so interferes
+          // with the proxied GCS response. Despite not setting `gzip: true`,
+          // the response remains gzipped from the proxy server.
+          destination: remotePath,
+          metadata: metadata,
+        });
+        totalTransferred += parseInt(resp[1].size);
+        const elapsed = Math.floor(Date.now() / 1000) - startTime;
+        bar.update((numProcessed += 1), {
+          speed: (totalTransferred / elapsed / (1024 * 1024)).toFixed(2),
+        });
+        if (numProcessed === numFiles) {
+          bar.stop();
+        }
+      })
     );
 
     // @ts-ignore
