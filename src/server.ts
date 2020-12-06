@@ -3,7 +3,6 @@ import {GoogleAuth} from 'google-auth-library';
 import * as fsPath from 'path';
 import express = require('express');
 import httpProxy = require('http-proxy');
-import {Manifest} from './manifest';
 
 const URL = 'https://storage.googleapis.com';
 const datastore = new Datastore();
@@ -12,9 +11,6 @@ const auth = new GoogleAuth({
 });
 
 const server = httpProxy.createProxyServer();
-interface ManifestCache {
-  [requestSha: string]: string;
-}
 
 const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
@@ -70,7 +66,6 @@ const parseHostname = (hostname: string) => {
 };
 
 export function createApp(siteId: string, branchOrRef: string) {
-  // const startupManifest = await getManifest(branchOrRef);
   console.log(`Starting server for site: ${siteId} @ ${branchOrRef}`);
 
   const app = express();
@@ -141,7 +136,8 @@ export function createApp(siteId: string, branchOrRef: string) {
       delete proxyRes.headers['x-guploader-uploadid'];
       // This cannot be "private, max-age=0" as this kills perf.
       // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
-      proxyRes.headers['cache-control'] = 'public, max-age=0036'; // The padded 0036 keeps the content length the same per upload.ts.
+      // The padded "0036" keeps the Content-Length identical with `3600`.
+      proxyRes.headers['cache-control'] = 'public, max-age=0036';
       proxyRes.headers['x-fileset-blob'] = blobKey;
       proxyRes.headers['x-fileset-ref'] = manifest.ref;
       proxyRes.headers['x-fileset-site'] = siteId;
