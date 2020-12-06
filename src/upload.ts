@@ -130,28 +130,10 @@ export async function uploadManifest(
   }
 }
 
-interface ScheduleItem {
-  ttl: Date;
-  ref: string;
-  paths: Record<string, string>;
-}
-
-function createScheduleItem(
-  manifest: Manifest,
-  manifestPaths: Record<string, string>,
-  ttl: Date
-) {
-  return {
-    ttl: ttl,
-    ref: manifest.ref,
-    paths: manifestPaths,
-  } as ScheduleItem;
-}
-
 async function saveManifestEntity(key: entity.Key, data: any) {
   const ent = {
     key: key,
-    excludeFromIndexes: ['schedule'],
+    excludeFromIndexes: ['paths'],
     data: data,
   };
   await datastore.save(ent);
@@ -161,55 +143,38 @@ async function finalize(manifest: Manifest, ttl?: Date) {
   const manifestPaths = manifest.toJSON();
   const now = new Date();
 
-  // Create shortSha mapping.
+  // Create shortSha mapping for staging.
   const key = datastore.key([
     'Fileset2Manifest',
     `${manifest.site}:ref:${manifest.shortSha}`,
   ]);
-  const scheduleItem = createScheduleItem(manifest, manifestPaths, now);
-  const schedule: Record<string, ScheduleItem> = {};
-  schedule[now.toString()] = scheduleItem;
   await saveManifestEntity(key, {
     site: manifest.site,
     ref: manifest.ref,
     branch: manifest.branch,
-    schedule: schedule,
+    paths: manifestPaths,
   });
 
-  // Create branch mapping.
+  // Create branch mapping for staging.
   if (manifest.branch) {
     const branchKey = datastore.key([
       'Fileset2Manifest',
       `${manifest.site}:branch:${manifest.branch}`,
     ]);
-    const branchScheduleItem = createScheduleItem(
-      manifest,
-      manifestPaths,
-      ttl || now
-    );
-    const branchSchedule: Record<string, ScheduleItem> = {};
-    const branchScheduleKey = (ttl || now).toString();
-    branchSchedule[branchScheduleKey] = branchScheduleItem;
-    const resp = await datastore.get(branchKey);
-    let existingData = resp && resp[0];
-    if (!existingData) {
-      existingData = {
-        site: manifest.site,
-        ref: manifest.ref,
-        branch: manifest.branch,
-        schedule: branchSchedule,
-      };
-    } else {
-      // TODO: Clean up past scheduled items here.
-      existingData.schedule[branchScheduleKey] = branchScheduleItem;
-    }
-    console.log(
-      `TTLs for branch: ${manifest.branch} -> ${Object.keys(
-        existingData.schedule
-      )}`
-    );
-    await saveManifestEntity(branchKey, existingData);
+    await saveManifestEntity(branchKey, {
+      site: manifest.site,
+      ref: manifest.ref,
+      branch: manifest.branch,
+      paths: manifestPaths,
+    });
   }
+
+  // TODO: Update the site's playbook and use the playbook for timed launches.
+  // The playbook should contain copies of all future launches. Each site should only
+  // have one playbook.
+  // const routerKey = datastore.key(['Fileset2Router', manifest.site]);
+  // const router =  await datastore.get(routerKey);
+  // const entity = router && router[0];
 
   console.log(
     `Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`

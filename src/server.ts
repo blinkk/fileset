@@ -30,23 +30,26 @@ const getManifest = async (siteId: string, branchOrRef: string) => {
   if (!result) {
     return;
   }
+  return result;
 
-  // TODO: Allow this to be overwritten.
-  const now = new Date();
-  let latestManifest = null;
-  for (const ttlString in result.schedule) {
-    const ttlDate = new Date(ttlString);
-    const isLaterThanManifestDate = now >= ttlDate;
-    const isLaterThanAllManifests =
-      !latestManifest || ttlDate >= latestManifest.ttl;
-    if (isLaterThanManifestDate && isLaterThanAllManifests) {
-      latestManifest = result.schedule[ttlString];
-      latestManifest.ttl = ttlDate;
-    }
-  }
-  if (latestManifest) {
-    return latestManifest;
-  }
+  // TODO: Add getPlaybook which can be used for prod serving and TTLs.
+  // getManifest is only used for staging.
+  // // TODO: Allow this to be overwritten.
+  // const now = new Date();
+  // let latestManifest = null;
+  // for (const ttlString in result.schedule) {
+  //   const ttlDate = new Date(ttlString);
+  //   const isLaterThanManifestDate = now >= ttlDate;
+  //   const isLaterThanAllManifests =
+  //     !latestManifest || ttlDate >= latestManifest.ttl;
+  //   if (isLaterThanManifestDate && isLaterThanAllManifests) {
+  //     latestManifest = result.schedule[ttlString];
+  //     latestManifest.ttl = ttlDate;
+  //   }
+  // }
+  // if (latestManifest) {
+  //   return latestManifest;
+  // }
 };
 
 const parseHostname = (hostname: string) => {
