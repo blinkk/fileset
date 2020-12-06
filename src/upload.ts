@@ -130,54 +130,85 @@ export async function uploadManifest(
   }
 }
 
-async function createEntity(key: entity.Key, manifest: Manifest, ttl?: Date) {
-  const manifestPaths = manifest.toJSON();
-  let props: any = {
-    created: new Date(),
-    site: manifest.site,
-    ref: manifest.ref,
-    branch: manifest.branch,
-    paths: manifestPaths,
-  };
-  if (ttl) {
-    const key = datastore.key([
-      'Fileset2Manifest',
-      `branch:${manifest.branch}`,
-    ]);
-    const resp = await datastore.get(key);
-    if (resp && resp[0]) {
-      console.log(
-        `Adding TTL for branch ${manifest.branch} -> ${manifest.shortSha} @ ${ttl}`
-      );
-      const entity = resp[0];
-      if (entity.ttls) {
-        entity.ttls[ttl.toString()] = props;
-      } else {
-        entity.ttls = {ttl: props};
-      }
-      props = entity;
-    }
-  }
+interface ScheduleItem {
+  ttl: Date;
+  ref: string;
+  paths: Record<string, string>;
+}
+
+function createScheduleItem(
+  manifest: Manifest,
+  manifestPaths: Record<string, string>,
+  ttl: Date
+) {
   return {
-    key: key,
-    excludeFromIndexes: ['paths', 'ttls'],
-    data: props,
-  };
+    ttl: ttl,
+    ref: manifest.ref,
+    paths: manifestPaths,
+  } as ScheduleItem;
 }
 
 async function finalize(manifest: Manifest, ttl?: Date) {
+  const manifestPaths = manifest.toJSON();
+  const now = new Date();
+
   // Create shortSha mapping.
-  const key = datastore.key(['Fileset2Manifest', manifest.shortSha]);
-  const ent = await createEntity(key, manifest);
+  const key = datastore.key([
+    'Fileset2Manifest',
+    `${manifest.site}:ref:${manifest.shortSha}`,
+  ]);
+  const scheduleItem = createScheduleItem(manifest, manifestPaths, now);
+  const schedule: Record<string, ScheduleItem> = {};
+  schedule[now.toString()] = scheduleItem;
+  const ent = {
+    key: key,
+    excludeFromIndexes: ['schedule'],
+    data: {
+      site: manifest.site,
+      ref: manifest.ref,
+      branch: manifest.branch,
+      schedule: schedule,
+    },
+  };
   await datastore.save(ent);
 
   // Create branch mapping.
   if (manifest.branch) {
     const branchKey = datastore.key([
       'Fileset2Manifest',
-      `branch:${manifest.branch}`,
+      `${manifest.site}:branch:${manifest.branch}`,
     ]);
-    const branchEnt = await createEntity(branchKey, manifest, ttl);
+    const branchScheduleItem = createScheduleItem(
+      manifest,
+      manifestPaths,
+      ttl || now
+    );
+    const branchSchedule: Record<string, ScheduleItem> = {};
+    const branchScheduleKey = (ttl || now).toString();
+    branchSchedule[branchScheduleKey] = branchScheduleItem;
+    const resp = await datastore.get(branchKey);
+    let existingData = resp && resp[0];
+    if (!existingData) {
+      existingData = {
+        site: manifest.site,
+        ref: manifest.ref,
+        branch: manifest.branch,
+        schedule: branchSchedule,
+      };
+    } else {
+      // TODO: Clean up past scheduled items here.
+      existingData.schedule[branchScheduleKey] = branchScheduleItem;
+    }
+    console.log(
+      `TTLs for branch: ${manifest.branch} -> ${Object.keys(
+        existingData.schedule
+      )}`
+    );
+    const branchEnt = {
+      key: branchKey,
+      excludeFromIndexes: ['schedule'],
+      data: existingData,
+    };
     await datastore.save(branchEnt);
   }
 

@@ -16,10 +16,10 @@ interface ManifestCache {
   [requestSha: string]: string;
 }
 
-const downloadManifest = async (branchOrRef: string) => {
+const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
-    datastore.key(['Fileset2Manifest', branchOrRef]),
-    datastore.key(['Fileset2Manifest', `branch:${branchOrRef}`]),
+    datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
+    datastore.key(['Fileset2Manifest', `${siteId}:ref:${branchOrRef}`]),
   ];
   const resp = await datastore.get(keys);
   if (!resp || !resp[0]) {
@@ -30,27 +30,22 @@ const downloadManifest = async (branchOrRef: string) => {
   if (!result) {
     return;
   }
-  if (!result.ttls) {
-    return result;
-  }
 
-  if (result.ttls) {
-    // TODO: Allow this to be overwritten.
-    const now = new Date();
-    let latestManifest = null;
-    for (const ttlString in result.ttls) {
-      const ttlDate = new Date(ttlString);
-      const isLaterThanManifestDate = now >= ttlDate;
-      const isLaterThanAllManifests =
-        !latestManifest || ttlDate >= latestManifest.ttl;
-      if (isLaterThanManifestDate && isLaterThanAllManifests) {
-        latestManifest = result.ttls[ttlString];
-        latestManifest.ttl = ttlDate;
-      }
+  // TODO: Allow this to be overwritten.
+  const now = new Date();
+  let latestManifest = null;
+  for (const ttlString in result.schedule) {
+    const ttlDate = new Date(ttlString);
+    const isLaterThanManifestDate = now >= ttlDate;
+    const isLaterThanAllManifests =
+      !latestManifest || ttlDate >= latestManifest.ttl;
+    if (isLaterThanManifestDate && isLaterThanAllManifests) {
+      latestManifest = result.schedule[ttlString];
+      latestManifest.ttl = ttlDate;
     }
-    if (latestManifest) {
-      return latestManifest;
-    }
+  }
+  if (latestManifest) {
+    return latestManifest;
   }
   return result;
 };
@@ -73,7 +68,7 @@ const parseHostname = (hostname: string) => {
 };
 
 export function createApp(siteId: string, branchOrRef: string) {
-  // const startupManifest = await downloadManifest(branchOrRef);
+  // const startupManifest = await getManifest(branchOrRef);
   console.log(`Starting server for site: ${siteId} @ ${branchOrRef}`);
 
   const app = express();
@@ -88,7 +83,7 @@ export function createApp(siteId: string, branchOrRef: string) {
       blobPath += 'index.html';
     }
 
-    const manifest = await downloadManifest(requestBranchOrRef);
+    const manifest = await getManifest(requestSiteId, requestBranchOrRef);
     if (!manifest) {
       res
         .status(404)
@@ -99,7 +94,6 @@ export function createApp(siteId: string, branchOrRef: string) {
     }
 
     const manifestPaths = manifest.paths;
-
     if (!manifestPaths) {
       res
         .status(404)
@@ -129,7 +123,7 @@ export function createApp(siteId: string, branchOrRef: string) {
       preserveHeaderKeyCase: true,
     });
     server.on('error', (error, req, res) => {
-      console.log(`An error occurred while serving ${req.url}`, error);
+      console.log(`An error occurred while serving ${req.url} (${error})`);
     });
     server.on('proxyRes', (proxyRes, req, res) => {
       delete proxyRes.headers['x-cloud-trace-context'];
