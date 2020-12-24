@@ -1,6 +1,7 @@
 .npmrc
+Makefile
 build/
 dist/
 docs/
-Makefile
+key.json
 node_modules/

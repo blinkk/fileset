@@ -56,6 +56,68 @@ entrypoint: fileset serve
 gcloud app deploy app.yaml
 ```
 
+### Authentication for deployment
+
+Before you are able to deploy your files, you'll need to set up authentication
+to deploy.
+
+1. Identify the service account to use.
+
+Authentication to upload your files is done using a service account. You'll
+generally want to use one of two service accounts:
+
+  a. When the command is invoked from Google Cloud Build, your project's Cloud
+  Build service account (`<ProjectNumber>@cloudbuild.gserviceaccount.com`) is
+  used.
+
+To determine your project's project number:
+
+```bash
+gcloud projects describe <AppID>
+```
+
+  b. When the command is invoked locally (i.e. for testing or for manual uploads),
+  you'll likely want to use your App Engine app's default service account
+  (`<AppID>@appspot.gserviceaccount.com`). You can download a service account key
+  by running:
+
+```bash
+gcloud iam service-accounts keys create \
+  key.json \
+  --iam-account <AppID>@appspot.gserviceaccount.com
+```
+
+NOTE: This will download a `key.json` to your current directory. Avoid
+committing this to your Git repository. You'll want to add `key.json` to
+`.gitignore`.
+
+2. Ensure service account has permissions.
+
+The following permissions are needed:
+
+- Cloud Datastore (manifests are stored here): Cloud Datastore Owner
+  (`datastore.owner`)
+- Cloud Storage (files are uploaded here): Storage Object Admin
+  (`storage.objectAdmin`)
+
+If using the App Engine default service account, you will not need to modify the
+permissions, as the service account has the "Project Editor" permission by
+default.
+
+If using the Cloud Build service account (or any other service account), you'll
+need to add the above two permissions to the account. That can be done via the
+IAM page (`https://console.cloud.google.com/access/iam?project=<AppId>`) or via
+the `gcloud` CLI:
+
+```
+for role in datastore.owner storage.objectAdmin g; do \
+  gcloud projects add-iam-policy-binding \
+      <AppId>
+      --member=serviceAccount:<ProjectNumber>@cloudbuild.gserviceaccount.com \
+      --role=roles/$role \
+; done
+```
+
 ### Deployment setup
 
 1. Create a `fileset.yaml` configuration file.
@@ -66,17 +128,19 @@ schedule:
   default: master  # Specify a branch for the prod deployment.
 ```
 
-2. Generate your files. Use a static site generator or just manually create a
-   directory containing files to upload. In the below example, the files in the
-   directory `build` are uploaded.
+2. Generate your files.
 
-3. Upload your files.
+Use a static site generator or just manually create a directory containing files
+to upload. In the below example, the files in the directory `build` are
+uploaded.
+
+4. Upload your files.
 
 ```bash
 fileset upload -s siteId build
 ```
 
-4. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
+5. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
    directory is now being served by the application server.
 
 TODO: Document Identity-Aware Proxy setup and CLI authentication.
