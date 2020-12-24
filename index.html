@@ -1,0 +1,223 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@blinkk/fileset</title>
+	<meta name="description" content="Documentation for @blinkk/fileset">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@blinkk/fileset</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>@blinkk/fileset</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#fileset" id="fileset" style="color: inherit; text-decoration: none;">
+					<h1>Fileset</h1>
+				</a>
+				<p>Fileset is a light, high-performance TypeScript static web server intended for
+					high-traffic sites. Features include preview branches backed by Google Account
+					authentication, redirects, localization-aware serving, atomic deployments, and
+				timed deployments.</p>
+				<p>Instructions for deployment onto Google App Engine (backed by Cloud Datastore
+				and Cloud Storage) are provided.</p>
+				<a href="#concept" id="concept" style="color: inherit; text-decoration: none;">
+					<h2>Concept</h2>
+				</a>
+				<p>Many websites can be built and deployed as fully static packages (i.e. just
+					HTML, CSS, and JavaScript – with no dynamic backend). In these instances,
+					websites may still have other requirements such as localization, redirects, or
+					atomic deployments that end up adding slight dynamic functionality to an
+				otherwise fully static project.</p>
+				<p>Fileset aims to bridge the gap by offering a thin middle layer on top of Google
+					Cloud Storage: static files are uploaded to Google Cloud Storage via the CLI,
+					with the Fileset server handling request traffic. The server determines whether
+					to issue a response sprinkled with one of the above dynamic features, and
+					otherwise proxies traffic directly to Google Cloud Storage – leveraging Google&#39;s
+				global network for performance.</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>There are two main tasks required in order to use Fileset. First, you&#39;ll need to
+					deploy the application server and configure the Identity-Aware Proxy. This only
+					needs to be done once, when the project is originally set up. Secondly, you&#39;ll
+					need to upload files to be served. Files must be uploaded each time you want to
+				serve new files to users, or update redirects, etc.</p>
+				<a href="#server-setup" id="server-setup" style="color: inherit; text-decoration: none;">
+					<h3>Server setup</h3>
+				</a>
+				<p>NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
+				(<code>gs://appid.appspot.com</code>) to upload files.</p>
+				<ol>
+					<li>Install the Fileset CLI.</li>
+				</ol>
+				<pre><code class="language-bash">npm install --save-dev @blinkk/fileset</code></pre>
+				<ol start="2">
+					<li>Create an <code>app.yaml</code> for Google App Engine deployment.</li>
+				</ol>
+				<pre><code class="language-yaml"><span class="hljs-attr">service:</span> <span class="hljs-string">fileset</span>
+<span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span>
+<span class="hljs-attr">entrypoint:</span> <span class="hljs-string">fileset</span> <span class="hljs-string">serve</span></code></pre>
+				<ol start="3">
+					<li>Deploy the app.</li>
+				</ol>
+				<pre><code class="language-bash">gcloud app deploy app.yaml</code></pre>
+				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
+					<h3>Deployment setup</h3>
+				</a>
+				<ol>
+					<li>Create a <code>fileset.yaml</code> configuration file.</li>
+				</ol>
+				<pre><code class="language-yaml"><span class="hljs-attr">site:</span> <span class="hljs-string">siteId</span>  <span class="hljs-comment"># Specify a site ID. If blank, `default` will be used.</span>
+<span class="hljs-attr">schedule:</span>
+  <span class="hljs-attr">default:</span> <span class="hljs-string">master</span>  <span class="hljs-comment"># Specify a branch for the prod deployment.</span></code></pre>
+				<ol start="2">
+					<li><p>Generate your files. Use a static site generator or just manually create a
+							directory containing files to upload. In the below example, the files in the
+						directory <code>build</code> are uploaded.</p>
+					</li>
+					<li><p>Upload your files.</p>
+					</li>
+				</ol>
+				<pre><code class="language-bash">fileset upload -s siteId build</code></pre>
+				<ol start="4">
+					<li>That&#39;s it! Files have been uploaded to Google Cloud Storage and the uploaded
+					directory is now being served by the application server.</li>
+				</ol>
+				<p>TODO: Document Identity-Aware Proxy setup and CLI authentication.</p>
+				<a href="#environments" id="environments" style="color: inherit; text-decoration: none;">
+					<h2>Environments</h2>
+				</a>
+				<p>Fileset uses Git branches to determine whether files should be in production
+					(and public) or in staging (and restricted via the Identity-Aware Proxy). The
+					Git branch is determined by inspecting the local Git environment when the
+				<code>upload</code> command is invoked.</p>
+				<p>The best way to understand how this works is by following the examples below:</p>
+				<pre><code class="language-bash"><span class="hljs-comment"># master branch</span>
+<span class="hljs-comment"># ✓ public</span>
+<span class="hljs-comment"># ✓ production URL</span>
+<span class="hljs-comment"># ✓ also available from staging URL (restricted)</span>
+
+(master) $ fileset upload build
+...
+ Public URL: https://appid.appspot.com
+Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com</code></pre>
+				<pre><code class="language-bash"><span class="hljs-comment"># staging branch</span>
+<span class="hljs-comment"># ✓ not public; restricted by Identity-Aware Proxy</span>
+<span class="hljs-comment"># ✓ staging URL only (restricted)</span>
+
+(staging) $ fileset upload build
+...
+Staging URL: https://default-4fb48ce-dot-fileset-dot-appid.appspot.com</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_serve_.html">&quot;commands/serve&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_commands_upload_.html">&quot;commands/upload&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_gitdata_.html">&quot;gitdata&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_manifest_.html">&quot;manifest&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_server_.html">&quot;server&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_upload_.html">&quot;upload&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
