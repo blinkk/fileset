@@ -1,6 +1,7 @@
-import {getGitData} from '../gitdata';
-import {Manifest} from '../manifest';
 import * as upload from '../upload';
+
+import {Manifest} from '../manifest';
+import {getGitData} from '../gitdata';
 
 interface UploadOptions {
   bucket: string;
@@ -16,7 +17,7 @@ export class UploadCommand {
     this.options = options;
   }
 
-  async run(path: string) {
+  async run(path = './') {
     const gitData = await getGitData(path);
     const manifest = new Manifest(
       this.options.site,

@@ -1,5 +1,6 @@
+.npmrc
 build/
 dist/
-example/db/
+docs/
+Makefile
 node_modules/
-.npmrc

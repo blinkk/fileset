@@ -4,12 +4,20 @@
       "rootDir": ".",
       "outDir": "dist",
       "types": [
-        "mocha",
         "node"
       ]
     },
     "include": [
       "src/**/*.ts",
       "test/**/*.ts"
-    ]
+    ],
+    "typedocOptions": {
+      "excludeExternals": true,
+      "src": [
+        "./src/**/*.ts"
+      ],
+      "exclude": [
+        "./src/*.test.ts",
+      ],
+    }
   }
