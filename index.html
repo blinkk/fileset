@@ -152,7 +152,7 @@
 				default.</p>
 				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
 					need to add the above two permissions to the account. That can be done via the
-					IAM page (<code>https://pantheon.corp.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
+					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
 				the <code>gcloud</code> CLI:</p>
 				<pre><code>for role in datastore.owner storage.objectAdmin g; do \
   gcloud projects<span class="hljs-built_in"> add-iam-policy-binding </span>\
