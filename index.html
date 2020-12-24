@@ -112,25 +112,74 @@
 					<li>Deploy the app.</li>
 				</ol>
 				<pre><code class="language-bash">gcloud app deploy app.yaml</code></pre>
-				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
-					<h3>Deployment setup</h3>
+				<a href="#authentication-for-deployment" id="authentication-for-deployment" style="color: inherit; text-decoration: none;">
+					<h3>Authentication for deployment</h3>
 				</a>
+				<p>Before you are able to deploy your files, you&#39;ll need to set up authentication
+				to deploy.</p>
 				<ol>
-					<li>Create a <code>fileset.yaml</code> configuration file.</li>
+					<li>Identify the service account to use.</li>
 				</ol>
-				<pre><code class="language-yaml"><span class="hljs-attr">site:</span> <span class="hljs-string">siteId</span>  <span class="hljs-comment"># Specify a site ID. If blank, `default` will be used.</span>
-<span class="hljs-attr">schedule:</span>
-  <span class="hljs-attr">default:</span> <span class="hljs-string">master</span>  <span class="hljs-comment"># Specify a branch for the prod deployment.</span></code></pre>
+				<p>Authentication to upload your files is done using a service account. You&#39;ll
+				generally want to use one of two service accounts:</p>
+				<p>a. When the command is invoked from Google Cloud Build, your project&#39;s Cloud
+					Build service account (<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is
+				used.</p>
+				<p>To determine your project&#39;s project number:</p>
+				<pre><code class="language-bash">gcloud projects describe &lt;AppID&gt;</code></pre>
+				<p>b. When the command is invoked locally (i.e. for testing or for manual uploads),
+					you&#39;ll likely want to use your App Engine app&#39;s default service account
+					(<code>&lt;AppID&gt;@appspot.gserviceaccount.com</code>). You can download a service account key
+				by running:</p>
+				<pre><code class="language-bash">gcloud iam service-accounts keys create \
+  key.json \
+  --iam-account &lt;AppID&gt;@appspot.gserviceaccount.com</code></pre>
+				<p>NOTE: This will download a <code>key.json</code> to your current directory. Avoid
+					committing this to your Git repository. You&#39;ll want to add <code>key.json</code> to
+				<code>.gitignore</code>.</p>
 				<ol start="2">
-					<li><p>Generate your files. Use a static site generator or just manually create a
-							directory containing files to upload. In the below example, the files in the
-						directory <code>build</code> are uploaded.</p>
-					</li>
-					<li><p>Upload your files.</p>
-					</li>
+					<li>Ensure service account has permissions.</li>
+				</ol>
+				<p>The following permissions are needed:</p>
+				<ul>
+					<li>Cloud Datastore (manifests are stored here): Cloud Datastore Owner
+					(<code>datastore.owner</code>)</li>
+					<li>Cloud Storage (files are uploaded here): Storage Object Admin
+					(<code>storage.objectAdmin</code>)</li>
+				</ul>
+				<p>If using the App Engine default service account, you will not need to modify the
+					permissions, as the service account has the &quot;Project Editor&quot; permission by
+				default.</p>
+				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
+					need to add the above two permissions to the account. That can be done via the
+					IAM page (<code>https://pantheon.corp.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
+				the <code>gcloud</code> CLI:</p>
+				<pre><code>for role in datastore.owner storage.objectAdmin ; do \
+  gcloud projects<span class="hljs-built_in"> add-iam-policy-binding </span>\
+      &lt;AppId&gt;
+      --member=serviceAccount:&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com \
+      --role=roles/$role \
+; done
+
+<span class="hljs-comment">### Deployment setup</span>
+
+1. Create a `fileset.yaml` configuration file.
+
+```yaml
+site: siteId  <span class="hljs-comment"># Specify a site ID. If blank, `default` will be used.</span>
+schedule:
+  default: master  <span class="hljs-comment"># Specify a branch for the prod deployment.</span></code></pre>
+				<ol start="2">
+					<li>Generate your files.</li>
+				</ol>
+				<p>Use a static site generator or just manually create a directory containing files
+					to upload. In the below example, the files in the directory <code>build</code> are
+				uploaded.</p>
+				<ol start="4">
+					<li>Upload your files.</li>
 				</ol>
 				<pre><code class="language-bash">fileset upload -s siteId build</code></pre>
-				<ol start="4">
+				<ol start="5">
 					<li>That&#39;s it! Files have been uploaded to Google Cloud Storage and the uploaded
 					directory is now being served by the application server.</li>
 				</ol>
