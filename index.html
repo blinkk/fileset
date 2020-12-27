@@ -136,9 +136,16 @@ gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.c
 				<ol>
 					<li>Create a <code>fileset.yaml</code> configuration file.</li>
 				</ol>
-				<pre><code class="language-yaml"><span class="hljs-attr">site:</span> <span class="hljs-string">siteId</span>  <span class="hljs-comment"># Specify a site ID. If blank, `default` will be used.</span>
+				<pre><code class="language-yaml"><span class="hljs-comment"># Your Google Cloud project&#x27;s ID (required).</span>
+<span class="hljs-attr">google_cloud_project:</span> <span class="hljs-string">&lt;AppId&gt;</span>
+
+<span class="hljs-comment"># Your site ID (optional). If blank, `default` will be used.</span>
+<span class="hljs-attr">site:</span> <span class="hljs-string">&lt;SiteId&gt;</span>
+
+<span class="hljs-comment"># Specify a launch schedule. The schedule maps timestamps to branches or commit</span>
+<span class="hljs-comment"># shas. If blank, `master` is used for the default deployment.</span>
 <span class="hljs-attr">schedule:</span>
-  <span class="hljs-attr">default:</span> <span class="hljs-string">master</span>  <span class="hljs-comment"># Specify a branch for the prod deployment.</span></code></pre>
+  <span class="hljs-attr">default:</span> <span class="hljs-string">master</span></code></pre>
 				<ol start="2">
 					<li>Generate your files.</li>
 				</ol>
