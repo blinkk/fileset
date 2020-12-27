@@ -1,5 +1,7 @@
 # Fileset
 
+![Master](https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg)
+
 Fileset is a light, high-performance TypeScript static web server intended for
 high-traffic sites. Features include preview branches backed by Google Account
 authentication, redirects, localization-aware serving, atomic deployments, and
