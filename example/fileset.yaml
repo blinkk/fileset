@@ -1,0 +1,4 @@
+google_cloud_project: <AppId>
+site: <SiteId>
+schedule:
+  default: master

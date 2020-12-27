@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "start": "fileset serve",
+    "upload": "fileset upload build"
+  },
+  "devDependencies": {
+    "@blinkk/fileset": "^0.1.0"
+  }
+}

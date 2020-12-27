@@ -39,7 +39,7 @@ NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
 (`gs://appid.appspot.com`) to upload files.
 
 1. Within your project, create a directory to house the server files, e.g.
-   `./backend/fileset`. Avoid mixing the server configuration with any tools to
+   `./backend/server`. Avoid mixing the server configuration with any tools to
    build your website. The `package.json`, etc. should be kept separate in order
    to keep the deployment slim.
 
@@ -64,11 +64,17 @@ service: fileset
 runtime: nodejs10
 ```
 
-4. Deploy the app and enable the Cloud Datastore API.
+4. Create the app and deploy.
 
 ```bash
-gcloud app deploy --project=<AppID> app.yaml
-gcloud services enable datastore.googleapis.com --project=<AppID>
+# Create an App Engine app if one doesn't exist yet.
+gcloud app create --project=<AppId>
+
+# Enable the Cloud Datastore API.
+gcloud services enable datastore.googleapis.com --project=<AppId>
+
+# Deploy the app.
+gcloud app deploy --project=<AppId> app.yaml
 ```
 
 ### Deployment setup
@@ -80,9 +86,16 @@ Google Cloud Platform services before and need information on authentication.
 1. Create a `fileset.yaml` configuration file.
 
 ```yaml
-site: siteId  # Specify a site ID. If blank, `default` will be used.
+# Your Google Cloud project's ID (required).
+google_cloud_project: <AppId>
+
+# Your site ID (optional). If blank, `default` will be used.
+site: <SiteId>
+
+# Specify a launch schedule. The schedule maps timestamps to branches or commit
+# shas. If blank, `master` is used for the default deployment.
 schedule:
-  default: master  # Specify a branch for the prod deployment.
+  default: master
 ```
 
 2. Generate your files.
@@ -138,18 +151,18 @@ Build, your project's Cloud Build service account
 To determine your project's project number:
 
 ```bash
-gcloud projects describe <AppID>
+gcloud projects describe <AppId>
 ```
 
 __Application default service account__: When the command is invoked locally
 (i.e. for testing or for manual uploads), you'll likely want to use your App
-Engine app's default service account (`<AppID>@appspot.gserviceaccount.com`).
+Engine app's default service account (`<AppId>@appspot.gserviceaccount.com`).
 You can download a service account key by running:
 
 ```bash
 gcloud iam service-accounts keys create \
   key.json \
-  --iam-account <AppID>@appspot.gserviceaccount.com
+  --iam-account <AppId>@appspot.gserviceaccount.com
 ```
 
 NOTE: This will download a `key.json` to your current directory. Avoid

@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "fileset serve"
+  },
+  "dependencies": {
+    "@blinkk/fileset": "^0.1.0"
+  }
+}
