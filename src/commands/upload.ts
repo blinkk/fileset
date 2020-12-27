@@ -43,6 +43,8 @@ export class UploadCommand {
     const gitData = await getGitData(path);
     const config = findConfig(path);
     const ttl = this.options.ttl ? new Date(this.options.ttl) : undefined;
+    const site = this.options.site || config.site;
+
     let bucket = this.options.bucket;
     if (!bucket && config.google_cloud_project) {
       bucket = `${config.google_cloud_project}.appspot.com`;
@@ -54,7 +56,13 @@ export class UploadCommand {
         'Unable to determine which Google Cloud Storage bucket to use. You must specify a `google_cloud_project` in `fileset.yaml` or specify a `GOOGLE_CLOUD_PROJECT` environment variable.'
       );
     }
-    const site = this.options.site || config.site;
+
+    const googleCloudProject =
+      config.google_cloud_project || process.env.GOOGLE_CLOUD_PROJECT;
+    if (!googleCloudProject) {
+      throw new Error('Unable to determine the Google Cloud project.');
+    }
+
     const manifest = new Manifest(
       site,
       this.options.ref || gitData.ref,
@@ -65,6 +73,12 @@ export class UploadCommand {
       console.log(`No files found in -> ${path}`);
       return;
     }
-    upload.uploadManifest(bucket, manifest, this.options.force, ttl);
+    upload.uploadManifest(
+      googleCloudProject,
+      bucket,
+      manifest,
+      this.options.force,
+      ttl
+    );
   }
 }

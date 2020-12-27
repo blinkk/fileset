@@ -36,39 +36,102 @@ serve new files to users, or update redirects, etc.
 NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
 (`gs://appid.appspot.com`) to upload files.
 
-1. Install the Fileset CLI.
+1. Within your project, create a directory to house the server files, e.g.
+   `./backend/fileset`. Avoid mixing the server configuration with any tools to
+   build your website. The `package.json`, etc. should be kept separate in order
+   to keep the deployment slim.
 
-```bash
-npm install --save-dev @blinkk/fileset
+2. Create a `package.json` like the below. App Engine will use `npm start` to
+   run the server.
+
+```json
+{
+  "scripts": {
+    "start": "fileset serve"
+  },
+  "dependencies": {
+    "@blinkk/fileset": "^0.1.0"
+  }
+}
 ```
 
-2. Create an `app.yaml` for Google App Engine deployment.
+3. Create an `app.yaml` for Google App Engine deployment.
 
 ```yaml
 service: fileset
 runtime: nodejs10
-entrypoint: fileset serve
 ```
 
-3. Deploy the app.
+4. Deploy the app and enable the Cloud Datastore API.
 
 ```bash
-gcloud app deploy app.yaml
+gcloud app deploy --project=<AppID> app.yaml
+gcloud services enable datastore.googleapis.com --project=<AppID>
 ```
 
-### Authentication for deployment
+### Deployment setup
 
-Before you are able to deploy your files, you'll need to set up authentication
-to deploy.
+NOTE: Before you can deploy, you'll need to authenticate. Refer to the
+[authentication documentation](#uploader-authentication) if you have not used
+Google Cloud Platform services before and need information on authentication.
 
-1. Identify the service account to use.
+1. Create a `fileset.yaml` configuration file.
+
+```yaml
+site: siteId  # Specify a site ID. If blank, `default` will be used.
+schedule:
+  default: master  # Specify a branch for the prod deployment.
+```
+
+2. Generate your files.
+
+Use a static site generator or just manually create a directory containing files
+to upload. In the below example, the files in the directory `build` are
+uploaded.
+
+4. Upload your files.
+
+```bash
+fileset upload ./build
+```
+
+NOTE: The uploader will look for `fileset.yaml` within the `./build` directory
+first. If it's not found, it will look up in the parent folder for a
+`fileset.yaml` file. If the config file doesn't exist in the `./build` or parent
+folder, the uploader will abort.
+
+5. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
+   directory is now being served by the application server.
+
+TODO: Document Identity-Aware Proxy setup and CLI authentication.
+
+## Uploader authentication
+
+You'll need to be authenticated to deploy files and upload the serving manifests.
+
+### Local testing / user account authentication
+
+If you are testing locally, your user account can be used to authenticate to
+Cloud Datastore and Cloud Storage. Simply run the below command to create
+credentials used for authentication:
+
+```bash
+gcloud auth application-default login
+```
+
+### Continuous deployment / service account authentication
+
+If you are using a service account for deployment, you'll need to ensure it has
+the right permissions.
+
+#### 1. Identify the service account to use.
 
 Authentication to upload your files is done using a service account. You'll
 generally want to use one of two service accounts:
 
-  a. When the command is invoked from Google Cloud Build, your project's Cloud
-  Build service account (`<ProjectNumber>@cloudbuild.gserviceaccount.com`) is
-  used.
+__Cloud Build service account__: When the command is invoked from Google Cloud
+Build, your project's Cloud Build service account
+(`<ProjectNumber>@cloudbuild.gserviceaccount.com`) is used.
 
 To determine your project's project number:
 
@@ -76,10 +139,10 @@ To determine your project's project number:
 gcloud projects describe <AppID>
 ```
 
-  b. When the command is invoked locally (i.e. for testing or for manual uploads),
-  you'll likely want to use your App Engine app's default service account
-  (`<AppID>@appspot.gserviceaccount.com`). You can download a service account key
-  by running:
+__Application default service account__: When the command is invoked locally
+(i.e. for testing or for manual uploads), you'll likely want to use your App
+Engine app's default service account (`<AppID>@appspot.gserviceaccount.com`).
+You can download a service account key by running:
 
 ```bash
 gcloud iam service-accounts keys create \
@@ -91,7 +154,7 @@ NOTE: This will download a `key.json` to your current directory. Avoid
 committing this to your Git repository. You'll want to add `key.json` to
 `.gitignore`.
 
-2. Ensure service account has permissions.
+#### 2. Ensure service account has permissions.
 
 The following permissions are needed:
 
@@ -117,34 +180,6 @@ for role in datastore.owner storage.objectAdmin g; do \
       --role=roles/$role \
 ; done
 ```
-
-### Deployment setup
-
-1. Create a `fileset.yaml` configuration file.
-
-```yaml
-site: siteId  # Specify a site ID. If blank, `default` will be used.
-schedule:
-  default: master  # Specify a branch for the prod deployment.
-```
-
-2. Generate your files.
-
-Use a static site generator or just manually create a directory containing files
-to upload. In the below example, the files in the directory `build` are
-uploaded.
-
-4. Upload your files.
-
-```bash
-fileset upload -s siteId build
-```
-
-5. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
-   directory is now being served by the application server.
-
-TODO: Document Identity-Aware Proxy setup and CLI authentication.
-
 ## Environments
 
 Fileset uses Git branches to determine whether files should be in production
@@ -175,3 +210,14 @@ Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com
 ...
 Staging URL: https://default-4fb48ce-dot-fileset-dot-appid.appspot.com
 ```
+
+## Testing
+
+You can verify Fileset server is working as you expect by looking for the following headers:
+
+| Header | Description |
+|-|-|
+| `x-fileset-site` | The site being served. Usually this will be `default` but for multi-site installations, this will be useful for determining which site is serving. |
+| `x-fileset-ref` | The Git commit sha that corresponds to the serving manifest that is handling your request. |
+| `x-fileset-blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content. |
+| `x-fileset-ttl` | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served. |

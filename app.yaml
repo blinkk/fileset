@@ -1,4 +1,4 @@
 service: fileset2
 runtime: nodejs10
 instance_class: F4
-entrypoint: node ./dist/src/index.js serve
+entrypoint: fileset serve

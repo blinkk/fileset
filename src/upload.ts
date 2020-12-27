@@ -8,8 +8,8 @@ import {asyncify, mapLimit} from 'async';
 import {Datastore} from '@google-cloud/datastore';
 import {Storage} from '@google-cloud/storage';
 import {entity} from '@google-cloud/datastore/build/src/entity';
+import {google} from '@google-cloud/datastore/build/protos/protos';
 
-const datastore = new Datastore();
 const NUM_CONCURRENT_UPLOADS = 64;
 
 function getBlobPath(siteId: string, hash: string) {
@@ -51,13 +51,16 @@ function createProgressBar() {
 }
 
 export async function uploadManifest(
+  googleCloudProject: string,
   bucket: string,
   manifest: Manifest,
   force?: boolean,
   ttl?: Date
 ) {
   console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
-  const storageBucket = new Storage().bucket(bucket);
+  const storageBucket = new Storage({
+    projectId: googleCloudProject,
+  }).bucket(bucket);
   const bar = createProgressBar();
 
   // Check for files that have already been uploaded. Files already uploaded do
@@ -72,7 +75,7 @@ export async function uploadManifest(
   );
 
   if (numTotalFiles <= 0) {
-    finalize(manifest, ttl);
+    finalize(googleCloudProject, manifest, ttl);
   } else {
     let bytesTransferred = 0;
     let numProcessedFiles = 0;
@@ -82,7 +85,7 @@ export async function uploadManifest(
     });
     // @ts-ignore
     bar.on('stop', () => {
-      finalize(manifest, ttl);
+      finalize(googleCloudProject, manifest, ttl);
     });
 
     mapLimit(
@@ -130,7 +133,11 @@ export async function uploadManifest(
   }
 }
 
-async function saveManifestEntity(key: entity.Key, data: any) {
+async function saveManifestEntity(
+  datastore: Datastore,
+  key: entity.Key,
+  data: any
+) {
   const ent = {
     key: key,
     excludeFromIndexes: ['paths'],
@@ -139,7 +146,15 @@ async function saveManifestEntity(key: entity.Key, data: any) {
   await datastore.save(ent);
 }
 
-async function finalize(manifest: Manifest, ttl?: Date) {
+async function finalize(
+  googleCloudProject: string,
+  manifest: Manifest,
+  ttl?: Date
+) {
+  const datastore = new Datastore({
+    projectId: googleCloudProject,
+    // keyFilename: '/path/to/keyfile.json',
+  });
   const manifestPaths = manifest.toJSON();
   const now = new Date();
 
@@ -148,7 +163,7 @@ async function finalize(manifest: Manifest, ttl?: Date) {
     'Fileset2Manifest',
     `${manifest.site}:ref:${manifest.shortSha}`,
   ]);
-  await saveManifestEntity(key, {
+  await saveManifestEntity(datastore, key, {
     site: manifest.site,
     ref: manifest.ref,
     branch: manifest.branch,
@@ -162,7 +177,7 @@ async function finalize(manifest: Manifest, ttl?: Date) {
       'Fileset2Manifest',
       `${manifest.site}:branch:${manifest.branch}`,
     ]);
-    await saveManifestEntity(branchKey, {
+    await saveManifestEntity(datastore, branchKey, {
       site: manifest.site,
       ref: manifest.ref,
       branch: manifest.branch,
@@ -181,6 +196,6 @@ async function finalize(manifest: Manifest, ttl?: Date) {
   );
   // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
   console.log(
-    `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset2-dot-${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`
+    `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset2-dot-${googleCloudProject}.appspot.com`
   );
 }
