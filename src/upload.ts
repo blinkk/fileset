@@ -1,13 +1,15 @@
 import _colors = require('colors');
-import {asyncify, mapLimit} from 'async';
-import {Datastore} from '@google-cloud/datastore';
-import {entity} from '@google-cloud/datastore/build/src/entity';
-import {Manifest, ManifestFile} from './manifest';
-import {Storage} from '@google-cloud/storage';
+
 import * as cliProgress from 'cli-progress';
 
+import {Manifest, ManifestFile} from './manifest';
+import {asyncify, mapLimit} from 'async';
+
+import {Datastore} from '@google-cloud/datastore';
+import {Storage} from '@google-cloud/storage';
+import {entity} from '@google-cloud/datastore/build/src/entity';
+
 const datastore = new Datastore();
-const DEFAULT_BUCKET = `${process.env.GCLOUD_PROJECT}.appspot.com`;
 const NUM_CONCURRENT_UPLOADS = 64;
 
 function getBlobPath(siteId: string, hash: string) {
@@ -54,7 +56,6 @@ export async function uploadManifest(
   force?: boolean,
   ttl?: Date
 ) {
-  bucket = bucket || DEFAULT_BUCKET;
   console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
   const storageBucket = new Storage().bucket(bucket);
   const bar = createProgressBar();
@@ -180,6 +181,6 @@ async function finalize(manifest: Manifest, ttl?: Date) {
   );
   // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
   console.log(
-    `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset2-dot-${process.env.GCLOUD_PROJECT}.appspot.com`
+    `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset2-dot-${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`
   );
 }
