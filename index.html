@@ -101,7 +101,7 @@
 				(<code>gs://appid.appspot.com</code>) to upload files.</p>
 				<ol>
 					<li><p>Within your project, create a directory to house the server files, e.g.
-							<code>./backend/fileset</code>. Avoid mixing the server configuration with any tools to
+							<code>./backend/server</code>. Avoid mixing the server configuration with any tools to
 							build your website. The <code>package.json</code>, etc. should be kept separate in order
 						to keep the deployment slim.</p>
 					</li>
@@ -123,10 +123,16 @@
 				<pre><code class="language-yaml"><span class="hljs-attr">service:</span> <span class="hljs-string">fileset</span>
 <span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span></code></pre>
 				<ol start="4">
-					<li>Deploy the app and enable the Cloud Datastore API.</li>
+					<li>Create the app and deploy.</li>
 				</ol>
-				<pre><code class="language-bash">gcloud app deploy --project=&lt;AppID&gt; app.yaml
-gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.com --project=&lt;AppID&gt;</code></pre>
+				<pre><code class="language-bash"><span class="hljs-comment"># Create an App Engine app if one doesn&#x27;t exist yet.</span>
+gcloud app create --project=&lt;AppId&gt;
+
+<span class="hljs-comment"># Enable the Cloud Datastore API.</span>
+gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.com --project=&lt;AppId&gt;
+
+<span class="hljs-comment"># Deploy the app.</span>
+gcloud app deploy --project=&lt;AppId&gt; app.yaml</code></pre>
 				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
 					<h3>Deployment setup</h3>
 				</a>
@@ -190,14 +196,14 @@ gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.c
 					Build, your project&#39;s Cloud Build service account
 				(<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is used.</p>
 				<p>To determine your project&#39;s project number:</p>
-				<pre><code class="language-bash">gcloud projects describe &lt;AppID&gt;</code></pre>
+				<pre><code class="language-bash">gcloud projects describe &lt;AppId&gt;</code></pre>
 				<p><strong>Application default service account</strong>: When the command is invoked locally
 					(i.e. for testing or for manual uploads), you&#39;ll likely want to use your App
-					Engine app&#39;s default service account (<code>&lt;AppID&gt;@appspot.gserviceaccount.com</code>).
+					Engine app&#39;s default service account (<code>&lt;AppId&gt;@appspot.gserviceaccount.com</code>).
 				You can download a service account key by running:</p>
 				<pre><code class="language-bash">gcloud iam service-accounts keys create \
   key.json \
-  --iam-account &lt;AppID&gt;@appspot.gserviceaccount.com</code></pre>
+  --iam-account &lt;AppId&gt;@appspot.gserviceaccount.com</code></pre>
 				<p>NOTE: This will download a <code>key.json</code> to your current directory. Avoid
 					committing this to your Git repository. You&#39;ll want to add <code>key.json</code> to
 				<code>.gitignore</code>.</p>
