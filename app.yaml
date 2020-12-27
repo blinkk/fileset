@@ -2,7 +2,3 @@ service: fileset2
 runtime: nodejs10
 instance_class: F4
 entrypoint: node ./dist/src/index.js serve
-handlers:
-- url: /.*
-  secure: always
-  script: auto

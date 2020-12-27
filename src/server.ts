@@ -77,6 +77,12 @@ export function createApp(siteId: string, branchOrRef: string) {
     const requestSiteId = envFromHostname.siteId || siteId;
     const requestBranchOrRef = envFromHostname.branchOrRef || branchOrRef;
 
+    if (req.params.debug) {
+      console.log(
+        `Site: ${requestSiteId}, Ref: ${requestBranchOrRef}, Bucket: ${process.env.GOOGLE_CLOUD_PROJECT}`
+      );
+    }
+
     let blobPath = decodeURIComponent(req.path);
     if (blobPath.endsWith('/')) {
       blobPath += 'index.html';
@@ -95,7 +101,7 @@ export function createApp(siteId: string, branchOrRef: string) {
 
     const manifestPaths = manifest.paths;
     const blobKey = manifestPaths[blobPath];
-    const updatedUrl = `/${process.env.GCLOUD_PROJECT}.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
+    const updatedUrl = `/${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
 
     // TODO: Add custom 404 support based on site config.
     if (!blobKey) {
@@ -135,7 +141,7 @@ export function createApp(siteId: string, branchOrRef: string) {
       proxyRes.headers['cache-control'] = 'public, max-age=0036';
       proxyRes.headers['x-fileset-blob'] = blobKey;
       proxyRes.headers['x-fileset-ref'] = manifest.ref;
-      proxyRes.headers['x-fileset-site'] = siteId;
+      proxyRes.headers['x-fileset-site'] = requestSiteId;
       if (manifest.ttl) {
         proxyRes.headers['x-fileset-ttl'] = manifest.ttl;
       }
