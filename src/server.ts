@@ -1,6 +1,8 @@
+import * as fsPath from 'path';
+
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
-import * as fsPath from 'path';
+
 import express = require('express');
 import httpProxy = require('http-proxy');
 
@@ -48,7 +50,7 @@ const getManifest = async (siteId: string, branchOrRef: string) => {
   // }
 };
 
-const parseHostname = (hostname: string) => {
+export function parseHostname(hostname: string) {
   // TODO: Make this more robust
   if (hostname.includes('-dot-')) {
     const prefix = hostname.split('-dot-fileset2-')[0];
@@ -63,7 +65,7 @@ const parseHostname = (hostname: string) => {
       branchOrRef: '',
     };
   }
-};
+}
 
 export function createApp(siteId: string, branchOrRef: string) {
   console.log(`Starting server for site: ${siteId} @ ${branchOrRef}`);
@@ -82,6 +84,7 @@ export function createApp(siteId: string, branchOrRef: string) {
 
     const manifest = await getManifest(requestSiteId, requestBranchOrRef);
     if (!manifest || !manifest.paths) {
+      console.log(`Site: ${requestSiteId}, Ref: ${requestBranchOrRef}`);
       res
         .status(404)
         .sendFile(
