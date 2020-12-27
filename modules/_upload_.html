@@ -71,10 +71,8 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_upload_.html#default_bucket" class="tsd-kind-icon">DEFAULT_<wbr>BUCKET</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_upload_.html#num_concurrent_uploads" class="tsd-kind-icon">NUM_<wbr>CONCURRENT_<wbr>UPLOADS</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_upload_.html#_colors" class="tsd-kind-icon">_colors</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_upload_.html#datastore" class="tsd-kind-icon">datastore</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -94,22 +92,12 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="default_bucket" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> DEFAULT_<wbr>BUCKET</h3>
-					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>BUCKET<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x60;${process.env.GCLOUD_PROJECT}.appspot.com&#x60;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L10">upload.ts:10</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 					<a name="num_concurrent_uploads" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> NUM_<wbr>CONCURRENT_<wbr>UPLOADS</h3>
 					<div class="tsd-signature tsd-kind-icon">NUM_<wbr>CONCURRENT_<wbr>UPLOADS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">64</span><span class="tsd-signature-symbol"> = 64</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L11">upload.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L13">upload.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -119,17 +107,7 @@
 					<div class="tsd-signature tsd-kind-icon">_colors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/runner/work/fileset/fileset/node_modules/colors/index&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L1">upload.ts:1</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="datastore" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> datastore</h3>
-					<div class="tsd-signature tsd-kind-icon">datastore<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Datastore</span><span class="tsd-signature-symbol"> = new Datastore()</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L9">upload.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L1">upload.ts:1</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -146,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L39">upload.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L41">upload.ts:41</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">SingleBar</span></h4>
@@ -157,17 +135,20 @@
 					<a name="finalize" class="tsd-anchor"></a>
 					<h3>finalize</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">finalize<span class="tsd-signature-symbol">(</span>manifest<span class="tsd-signature-symbol">: </span><a href="../classes/_manifest_.manifest.html" class="tsd-signature-type">Manifest</a>, ttl<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">finalize<span class="tsd-signature-symbol">(</span>googleCloudProject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, manifest<span class="tsd-signature-symbol">: </span><a href="../classes/_manifest_.manifest.html" class="tsd-signature-type">Manifest</a>, ttl<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L141">upload.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L149">upload.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>googleCloudProject: <span class="tsd-signature-type">string</span></h5>
+								</li>
 								<li>
 									<h5>manifest: <a href="../classes/_manifest_.manifest.html" class="tsd-signature-type">Manifest</a></h5>
 								</li>
@@ -189,7 +170,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L17">upload.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L19">upload.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -215,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L13">upload.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L15">upload.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -235,17 +216,20 @@
 					<a name="savemanifestentity" class="tsd-anchor"></a>
 					<h3>save<wbr>Manifest<wbr>Entity</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">save<wbr>Manifest<wbr>Entity<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Key</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">save<wbr>Manifest<wbr>Entity<span class="tsd-signature-symbol">(</span>datastore<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Datastore</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Key</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L132">upload.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L136">upload.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>datastore: <span class="tsd-signature-type">Datastore</span></h5>
+								</li>
 								<li>
 									<h5>key: <span class="tsd-signature-type">Key</span></h5>
 								</li>
@@ -261,17 +245,20 @@
 					<a name="uploadmanifest" class="tsd-anchor"></a>
 					<h3>upload<wbr>Manifest</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">upload<wbr>Manifest<span class="tsd-signature-symbol">(</span>bucket<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, manifest<span class="tsd-signature-symbol">: </span><a href="../classes/_manifest_.manifest.html" class="tsd-signature-type">Manifest</a>, force<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span>, ttl<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">upload<wbr>Manifest<span class="tsd-signature-symbol">(</span>googleCloudProject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bucket<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, manifest<span class="tsd-signature-symbol">: </span><a href="../classes/_manifest_.manifest.html" class="tsd-signature-type">Manifest</a>, force<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span>, ttl<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Date</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/1e290f5/src/upload.ts#L51">upload.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/ac3d1e3/src/upload.ts#L53">upload.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
+								<li>
+									<h5>googleCloudProject: <span class="tsd-signature-type">string</span></h5>
+								</li>
 								<li>
 									<h5>bucket: <span class="tsd-signature-type">string</span></h5>
 								</li>
@@ -323,16 +310,10 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_upload_.html#default_bucket" class="tsd-kind-icon">DEFAULT_<wbr>BUCKET</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_upload_.html#num_concurrent_uploads" class="tsd-kind-icon">NUM_<wbr>CONCURRENT_<wbr>UPLOADS</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_upload_.html#_colors" class="tsd-kind-icon">_colors</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_upload_.html#datastore" class="tsd-kind-icon">datastore</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
 						<a href="_upload_.html#createprogressbar" class="tsd-kind-icon">create<wbr>Progress<wbr>Bar</a>

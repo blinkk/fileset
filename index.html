@@ -99,38 +99,64 @@
 				<p>NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
 				(<code>gs://appid.appspot.com</code>) to upload files.</p>
 				<ol>
-					<li>Install the Fileset CLI.</li>
+					<li><p>Within your project, create a directory to house the server files, e.g.
+						<code>./backend/fileset</code>.</p>
+					</li>
+					<li><p>Create a <code>package.json</code> like the below. App Engine will use <code>npm start</code> to
+						run the server.</p>
+					</li>
 				</ol>
-				<pre><code class="language-bash">npm install --save-dev @blinkk/fileset</code></pre>
-				<ol start="2">
-					<li>Create an <code>app.yaml</code> for Google App Engine deployment.</li>
+				<pre><code class="language-json">{
+  <span class="hljs-attr">&quot;scripts&quot;</span>: {
+    <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;fileset serve&quot;</span>
+  },
+  <span class="hljs-attr">&quot;dependencies&quot;</span>: {
+    <span class="hljs-attr">&quot;@blinkk/fileset&quot;</span>: <span class="hljs-string">&quot;^0.1.0&quot;</span>
+  }
+}</code></pre>
+				<ol start="3">
+					<li><p>Run <code>npm install</code>.</p>
+					</li>
+					<li><p>Create an <code>app.yaml</code> for Google App Engine deployment.</p>
+					</li>
 				</ol>
 				<pre><code class="language-yaml"><span class="hljs-attr">service:</span> <span class="hljs-string">fileset</span>
-<span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span>
-<span class="hljs-attr">entrypoint:</span> <span class="hljs-string">fileset</span> <span class="hljs-string">serve</span></code></pre>
-				<ol start="3">
-					<li>Deploy the app.</li>
+<span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span></code></pre>
+				<ol start="5">
+					<li>Deploy the app and enable the Cloud Datastore API.</li>
 				</ol>
-				<pre><code class="language-bash">gcloud app deploy app.yaml</code></pre>
+				<pre><code class="language-bash">gcloud app deploy --project=&lt;AppID&gt; app.yaml
+gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.com --project=&lt;AppID&gt;</code></pre>
 				<a href="#authentication-for-deployment" id="authentication-for-deployment" style="color: inherit; text-decoration: none;">
 					<h3>Authentication for deployment</h3>
 				</a>
-				<p>Before you are able to deploy your files, you&#39;ll need to set up authentication
-				to deploy.</p>
+				<p>You&#39;ll need to be authenticated to deploy files and upload the serving manifests.</p>
+				<a href="#local-testing--user-account-authentication" id="local-testing--user-account-authentication" style="color: inherit; text-decoration: none;">
+					<h4>Local testing / user account authentication</h4>
+				</a>
+				<p>If you are testing locally, your user account can be used to authenticate to
+					Cloud Datastore and Cloud Storage. Simply run the below command to create
+				credentials used for authentication:</p>
+				<pre><code class="language-bash">gcloud auth application-default login</code></pre>
+				<a href="#continuous-deployment--service-account-authentication" id="continuous-deployment--service-account-authentication" style="color: inherit; text-decoration: none;">
+					<h4>Continuous deployment / service account authentication</h4>
+				</a>
+				<p>If you are using a service account for deployment, you&#39;ll need to ensure it has
+				the right permissions.</p>
 				<ol>
 					<li>Identify the service account to use.</li>
 				</ol>
 				<p>Authentication to upload your files is done using a service account. You&#39;ll
 				generally want to use one of two service accounts:</p>
-				<p>  a. When the command is invoked from Google Cloud Build, your project&#39;s Cloud
-					Build service account (<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is
-				used.</p>
+				<p><strong>Cloud Build service account</strong>: When the command is invoked from Google Cloud
+					Build, your project&#39;s Cloud Build service account
+				(<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is used.</p>
 				<p>To determine your project&#39;s project number:</p>
 				<pre><code class="language-bash">gcloud projects describe &lt;AppID&gt;</code></pre>
-				<p>  b. When the command is invoked locally (i.e. for testing or for manual uploads),
-					you&#39;ll likely want to use your App Engine app&#39;s default service account
-					(<code>&lt;AppID&gt;@appspot.gserviceaccount.com</code>). You can download a service account key
-				by running:</p>
+				<p><strong>Application default service account</strong>: When the command is invoked locally
+					(i.e. for testing or for manual uploads), you&#39;ll likely want to use your App
+					Engine app&#39;s default service account (<code>&lt;AppID&gt;@appspot.gserviceaccount.com</code>).
+				You can download a service account key by running:</p>
 				<pre><code class="language-bash">gcloud iam service-accounts keys create \
   key.json \
   --iam-account &lt;AppID&gt;@appspot.gserviceaccount.com</code></pre>
@@ -178,7 +204,11 @@
 				<ol start="4">
 					<li>Upload your files.</li>
 				</ol>
-				<pre><code class="language-bash">fileset upload -s siteId build</code></pre>
+				<pre><code class="language-bash">fileset upload ./build</code></pre>
+				<p>NOTE: The uploader will look for <code>fileset.yaml</code> within the <code>./build</code> directory
+					first. If it&#39;s not found, it will look up in the parent folder for a
+					<code>fileset.yaml</code> file. If the config file doesn&#39;t exist in the <code>./build</code> or parent
+				folder, the uploader will abort.</p>
 				<ol start="5">
 					<li>That&#39;s it! Files have been uploaded to Google Cloud Storage and the uploaded
 					directory is now being served by the application server.</li>
@@ -208,6 +238,34 @@ Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com</code></p
 (staging) $ fileset upload build
 ...
 Staging URL: https://default-4fb48ce-dot-fileset-dot-appid.appspot.com</code></pre>
+				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+					<h2>Testing</h2>
+				</a>
+				<p>You can verify Fileset server is working as you expect by looking for the following headers:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Header</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>x-fileset-site</code></td>
+							<td>The site being served. Usually this will be <code>default</code> but for multi-site installations, this will be useful for determining which site is serving.</td>
+						</tr>
+						<tr>
+							<td><code>x-fileset-ref</code></td>
+							<td>The Git commit sha that corresponds to the serving manifest that is handling your request.</td>
+						</tr>
+						<tr>
+							<td><code>x-fileset-blob</code></td>
+							<td>The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file&#39;s content.</td>
+						</tr>
+						<tr>
+							<td><code>x-fileset-ttl</code></td>
+							<td>For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served.</td>
+						</tr>
+				</tbody></table>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
