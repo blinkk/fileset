@@ -7,6 +7,7 @@ import express = require('express');
 import httpProxy = require('http-proxy');
 
 const URL = 'https://storage.googleapis.com';
+const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
 const datastore = new Datastore();
 const auth = new GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/devstorage.read_only',
@@ -101,7 +102,7 @@ export function createApp(siteId: string, branchOrRef: string) {
 
     const manifestPaths = manifest.paths;
     const blobKey = manifestPaths[blobPath];
-    const updatedUrl = `/${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
+    const updatedUrl = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
 
     // TODO: Add custom 404 support based on site config.
     if (!blobKey) {
