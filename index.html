@@ -126,68 +126,12 @@
 				</ol>
 				<pre><code class="language-bash">gcloud app deploy --project=&lt;AppID&gt; app.yaml
 gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.com --project=&lt;AppID&gt;</code></pre>
-				<a href="#authentication-for-deployment" id="authentication-for-deployment" style="color: inherit; text-decoration: none;">
-					<h3>Authentication for deployment</h3>
-				</a>
-				<p>You&#39;ll need to be authenticated to deploy files and upload the serving manifests.</p>
-				<a href="#local-testing--user-account-authentication" id="local-testing--user-account-authentication" style="color: inherit; text-decoration: none;">
-					<h4>Local testing / user account authentication</h4>
-				</a>
-				<p>If you are testing locally, your user account can be used to authenticate to
-					Cloud Datastore and Cloud Storage. Simply run the below command to create
-				credentials used for authentication:</p>
-				<pre><code class="language-bash">gcloud auth application-default login</code></pre>
-				<a href="#continuous-deployment--service-account-authentication" id="continuous-deployment--service-account-authentication" style="color: inherit; text-decoration: none;">
-					<h4>Continuous deployment / service account authentication</h4>
-				</a>
-				<p>If you are using a service account for deployment, you&#39;ll need to ensure it has
-				the right permissions.</p>
-				<ol>
-					<li>Identify the service account to use.</li>
-				</ol>
-				<p>Authentication to upload your files is done using a service account. You&#39;ll
-				generally want to use one of two service accounts:</p>
-				<p><strong>Cloud Build service account</strong>: When the command is invoked from Google Cloud
-					Build, your project&#39;s Cloud Build service account
-				(<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is used.</p>
-				<p>To determine your project&#39;s project number:</p>
-				<pre><code class="language-bash">gcloud projects describe &lt;AppID&gt;</code></pre>
-				<p><strong>Application default service account</strong>: When the command is invoked locally
-					(i.e. for testing or for manual uploads), you&#39;ll likely want to use your App
-					Engine app&#39;s default service account (<code>&lt;AppID&gt;@appspot.gserviceaccount.com</code>).
-				You can download a service account key by running:</p>
-				<pre><code class="language-bash">gcloud iam service-accounts keys create \
-  key.json \
-  --iam-account &lt;AppID&gt;@appspot.gserviceaccount.com</code></pre>
-				<p>NOTE: This will download a <code>key.json</code> to your current directory. Avoid
-					committing this to your Git repository. You&#39;ll want to add <code>key.json</code> to
-				<code>.gitignore</code>.</p>
-				<ol start="2">
-					<li>Ensure service account has permissions.</li>
-				</ol>
-				<p>The following permissions are needed:</p>
-				<ul>
-					<li>Cloud Datastore (manifests are stored here): Cloud Datastore Owner
-					(<code>datastore.owner</code>)</li>
-					<li>Cloud Storage (files are uploaded here): Storage Object Admin
-					(<code>storage.objectAdmin</code>)</li>
-				</ul>
-				<p>If using the App Engine default service account, you will not need to modify the
-					permissions, as the service account has the &quot;Project Editor&quot; permission by
-				default.</p>
-				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
-					need to add the above two permissions to the account. That can be done via the
-					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
-				the <code>gcloud</code> CLI:</p>
-				<pre><code>for role in datastore.owner storage.objectAdmin g; do \
-  gcloud projects<span class="hljs-built_in"> add-iam-policy-binding </span>\
-      &lt;AppId&gt;
-      --member=serviceAccount:&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com \
-      --role=roles/$role \
-; done</code></pre>
 				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
 					<h3>Deployment setup</h3>
 				</a>
+				<p>NOTE: Before you can deploy, you&#39;ll need to authenticate. Refer to the
+					<a href="#uploader-authentication">authentication documentation</a> if you have not used
+				Google Cloud Platform services before and need information on authentication.</p>
 				<ol>
 					<li>Create a <code>fileset.yaml</code> configuration file.</li>
 				</ol>
@@ -213,6 +157,65 @@ gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.c
 					directory is now being served by the application server.</li>
 				</ol>
 				<p>TODO: Document Identity-Aware Proxy setup and CLI authentication.</p>
+				<a href="#uploader-authentication" id="uploader-authentication" style="color: inherit; text-decoration: none;">
+					<h2>Uploader authentication</h2>
+				</a>
+				<p>You&#39;ll need to be authenticated to deploy files and upload the serving manifests.</p>
+				<a href="#local-testing--user-account-authentication" id="local-testing--user-account-authentication" style="color: inherit; text-decoration: none;">
+					<h3>Local testing / user account authentication</h3>
+				</a>
+				<p>If you are testing locally, your user account can be used to authenticate to
+					Cloud Datastore and Cloud Storage. Simply run the below command to create
+				credentials used for authentication:</p>
+				<pre><code class="language-bash">gcloud auth application-default login</code></pre>
+				<a href="#continuous-deployment--service-account-authentication" id="continuous-deployment--service-account-authentication" style="color: inherit; text-decoration: none;">
+					<h3>Continuous deployment / service account authentication</h3>
+				</a>
+				<p>If you are using a service account for deployment, you&#39;ll need to ensure it has
+				the right permissions.</p>
+				<a href="#1-identify-the-service-account-to-use" id="1-identify-the-service-account-to-use" style="color: inherit; text-decoration: none;">
+					<h4>1. Identify the service account to use.</h4>
+				</a>
+				<p>Authentication to upload your files is done using a service account. You&#39;ll
+				generally want to use one of two service accounts:</p>
+				<p><strong>Cloud Build service account</strong>: When the command is invoked from Google Cloud
+					Build, your project&#39;s Cloud Build service account
+				(<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is used.</p>
+				<p>To determine your project&#39;s project number:</p>
+				<pre><code class="language-bash">gcloud projects describe &lt;AppID&gt;</code></pre>
+				<p><strong>Application default service account</strong>: When the command is invoked locally
+					(i.e. for testing or for manual uploads), you&#39;ll likely want to use your App
+					Engine app&#39;s default service account (<code>&lt;AppID&gt;@appspot.gserviceaccount.com</code>).
+				You can download a service account key by running:</p>
+				<pre><code class="language-bash">gcloud iam service-accounts keys create \
+  key.json \
+  --iam-account &lt;AppID&gt;@appspot.gserviceaccount.com</code></pre>
+				<p>NOTE: This will download a <code>key.json</code> to your current directory. Avoid
+					committing this to your Git repository. You&#39;ll want to add <code>key.json</code> to
+				<code>.gitignore</code>.</p>
+				<a href="#2-ensure-service-account-has-permissions" id="2-ensure-service-account-has-permissions" style="color: inherit; text-decoration: none;">
+					<h4>2. Ensure service account has permissions.</h4>
+				</a>
+				<p>The following permissions are needed:</p>
+				<ul>
+					<li>Cloud Datastore (manifests are stored here): Cloud Datastore Owner
+					(<code>datastore.owner</code>)</li>
+					<li>Cloud Storage (files are uploaded here): Storage Object Admin
+					(<code>storage.objectAdmin</code>)</li>
+				</ul>
+				<p>If using the App Engine default service account, you will not need to modify the
+					permissions, as the service account has the &quot;Project Editor&quot; permission by
+				default.</p>
+				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
+					need to add the above two permissions to the account. That can be done via the
+					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
+				the <code>gcloud</code> CLI:</p>
+				<pre><code>for role in datastore.owner storage.objectAdmin g; do \
+  gcloud projects<span class="hljs-built_in"> add-iam-policy-binding </span>\
+      &lt;AppId&gt;
+      --member=serviceAccount:&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com \
+      --role=roles/$role \
+; done</code></pre>
 				<a href="#environments" id="environments" style="color: inherit; text-decoration: none;">
 					<h2>Environments</h2>
 				</a>
