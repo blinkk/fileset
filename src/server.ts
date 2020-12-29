@@ -51,21 +51,24 @@ const getManifest = async (siteId: string, branchOrRef: string) => {
   // }
 };
 
-export function parseHostname(hostname: string) {
-  // TODO: Make this more robust
-  if (hostname.includes('-dot-')) {
-    const prefix = hostname.split('-dot-fileset2-')[0];
-    const parts = prefix.split('-'); // Either site-ref or site.
-    return {
-      siteId: parts[0],
-      branchOrRef: parts.length > 1 ? parts[1].slice(0, 7) : 'master',
-    };
-  } else {
-    return {
-      siteId: '',
-      branchOrRef: '',
-    };
+export function parseHostname(hostname: string, defaultSiteId?: string, defaultLiveDomain?: string) {
+  let siteId = defaultSiteId || 'default';
+  let branchOrRef = '';
+  if (hostname == defaultLiveDomain) {
+    // Hostname is the "live" or "prod" domain. Use the master branch.
+    branchOrRef = 'master';
+  } else if (hostname.includes('-dot-')) {
+    // Use "-dot-" as a sentinel for App Engine wildcard domains.
+    const prefix = hostname.split('-dot-')[0];
+    const parts = prefix.split('-'); // Either <Site>-<Ref> or <Site>.
+    siteId = parts[0];
+    branchOrRef = parts.length > 1 ? parts[1].slice(0, 7) : 'master';
   }
+  // TODO: Implement defaultStagingDomain (custom staging domain) support.
+  return {
+    siteId: siteId,
+    branchOrRef: branchOrRef,
+  };
 }
 
 export function createApp(siteId: string, branchOrRef: string) {
@@ -74,7 +77,7 @@ export function createApp(siteId: string, branchOrRef: string) {
   const app = express();
   app.disable('x-powered-by');
   app.all('/*', async (req: express.Request, res: express.Response) => {
-    const envFromHostname = parseHostname(req.hostname);
+    const envFromHostname = parseHostname(req.hostname, process.env.FILESET_SITE, process.env.FILESET_LIVE_DOMAIN);
     const requestSiteId = envFromHostname.siteId || siteId;
     const requestBranchOrRef = envFromHostname.branchOrRef || branchOrRef;
 

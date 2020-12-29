@@ -1,4 +1,0 @@
-service: fileset2
-runtime: nodejs10
-instance_class: F4
-entrypoint: fileset serve
