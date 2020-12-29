@@ -240,3 +240,22 @@ You can verify Fileset server is working as you expect by looking for the follow
 | `x-fileset-ref` | The Git commit sha that corresponds to the serving manifest that is handling your request. |
 | `x-fileset-blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content. |
 | `x-fileset-ttl` | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served. |
+
+## Tips
+
+### Usage within Makefile
+
+The absolute path to the `fileset` executable must be specified to invoke the CLI.
+
+```
+./node_modules/.bin/fileset upload build
+```
+
+### Usage with Grow.dev
+
+First, build the site to the `build` directory. Then, upload the directory to Fileset.
+
+```
+grow build --deployment=prod
+fileset upload build
+```
