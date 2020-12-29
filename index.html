@@ -121,7 +121,11 @@
 					<li>Create an <code>app.yaml</code> for Google App Engine deployment.</li>
 				</ol>
 				<pre><code class="language-yaml"><span class="hljs-attr">service:</span> <span class="hljs-string">fileset</span>
-<span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span></code></pre>
+<span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span>
+<span class="hljs-attr">env_variables:</span>
+  <span class="hljs-attr">FILESET_SITE:</span> <span class="hljs-string">default</span>
+  <span class="hljs-attr">FILESET_LIVE_DOMAIN:</span> <span class="hljs-string">example.com</span>
+  <span class="hljs-attr">FILESET_STAGING_DOMAIN:</span> <span class="hljs-string">&#x27;{ref}.staging.example.com&#x27;</span></code></pre>
 				<ol start="4">
 					<li>Create the app and deploy.</li>
 				</ol>
