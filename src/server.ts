@@ -54,7 +54,7 @@ const getManifest = async (siteId: string, branchOrRef: string) => {
 export function parseHostname(hostname: string, defaultSiteId?: string, defaultLiveDomain?: string) {
   let siteId = defaultSiteId || 'default';
   let branchOrRef = '';
-  if (hostname == defaultLiveDomain) {
+  if (defaultLiveDomain && defaultLiveDomain.split(',').includes(hostname)) {
     // Hostname is the "live" or "prod" domain. Use the master branch.
     branchOrRef = 'master';
   } else if (hostname.includes('-dot-')) {

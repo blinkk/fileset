@@ -20,6 +20,14 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: 'master',
     }
   );
+  // Multiple live domains.
+  t.deepEqual(
+    server.parseHostname('example.com', 'example', 'example.com,foo.com'),
+    {
+      siteId: 'example',
+      branchOrRef: 'master',
+    }
+  );
   // Some other domain.
   t.deepEqual(
     server.parseHostname('something.com', 'example', 'example.com'),
