@@ -13,13 +13,10 @@ test('Test parseHostname', (t: ExecutionContext) => {
     }
   );
   // Custom live domain.
-  t.deepEqual(
-    server.parseHostname('example.com', 'example', 'example.com'),
-    {
-      siteId: 'example',
-      branchOrRef: 'master',
-    }
-  );
+  t.deepEqual(server.parseHostname('example.com', 'example', 'example.com'), {
+    siteId: 'example',
+    branchOrRef: 'master',
+  });
   // Multiple live domains.
   t.deepEqual(
     server.parseHostname('example.com', 'example', 'example.com,foo.com'),
@@ -29,11 +26,8 @@ test('Test parseHostname', (t: ExecutionContext) => {
     }
   );
   // Some other domain.
-  t.deepEqual(
-    server.parseHostname('something.com', 'example', 'example.com'),
-    {
-      siteId: 'example',
-      branchOrRef: '',
-    }
-  );
+  t.deepEqual(server.parseHostname('something.com', 'example', 'example.com'), {
+    siteId: 'example',
+    branchOrRef: '',
+  });
 });

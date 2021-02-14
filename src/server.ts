@@ -1,4 +1,6 @@
 import * as fsPath from 'path';
+import * as manifest from './manifest';
+import * as redirects from './redirects';
 
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
@@ -51,7 +53,11 @@ const getManifest = async (siteId: string, branchOrRef: string) => {
   // }
 };
 
-export function parseHostname(hostname: string, defaultSiteId?: string, defaultLiveDomain?: string) {
+export function parseHostname(
+  hostname: string,
+  defaultSiteId?: string,
+  defaultLiveDomain?: string
+) {
   let siteId = defaultSiteId || 'default';
   let branchOrRef = '';
   if (defaultLiveDomain && defaultLiveDomain.split(',').includes(hostname)) {
@@ -77,7 +83,11 @@ export function createApp(siteId: string, branchOrRef: string) {
   const app = express();
   app.disable('x-powered-by');
   app.all('/*', async (req: express.Request, res: express.Response) => {
-    const envFromHostname = parseHostname(req.hostname, process.env.FILESET_SITE, process.env.FILESET_LIVE_DOMAIN);
+    const envFromHostname = parseHostname(
+      req.hostname,
+      process.env.FILESET_SITE,
+      process.env.FILESET_LIVE_DOMAIN
+    );
     const requestSiteId = envFromHostname.siteId || siteId;
     const requestBranchOrRef = envFromHostname.branchOrRef || branchOrRef;
 
@@ -103,6 +113,26 @@ export function createApp(siteId: string, branchOrRef: string) {
       return;
     }
 
+    // Handle redirects.
+    if (manifest.redirects) {
+      const routeTrie = new redirects.RouteTrie();
+      manifest.redirects.forEach((redirect: manifest.Redirect) => {
+        const code = redirect.permanent ? 301 : 302;
+        const route = new redirects.RedirectRoute(code, redirect.to);
+        routeTrie.add(redirect.from, route);
+      });
+      const [route, params] = routeTrie.get(req.path);
+      if (route) {
+        const [
+          code,
+          destination,
+        ] = (route as redirects.RedirectRoute).getRedirect(params);
+        res.redirect(code, destination);
+        return;
+      }
+    }
+
+    // Handle static content.
     const manifestPaths = manifest.paths;
     const blobKey = manifestPaths[blobPath];
     const updatedUrl = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
