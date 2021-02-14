@@ -5,6 +5,7 @@ import {ExecutionContext} from 'ava';
 import test from 'ava';
 
 test('Test redirects', (t: ExecutionContext) => {
+  let numTestsRun = 0;
   const config: manifest.Redirect[] = [
     {
       from: '/foo',
@@ -20,6 +21,7 @@ test('Test redirects', (t: ExecutionContext) => {
       to: '/$locale/$wildcard',
     },
   ];
+
   const routeTrie = new redirects.RouteTrie();
   config.forEach(redirect => {
     const code = redirect.permanent ? 301 : 302;
@@ -27,12 +29,29 @@ test('Test redirects', (t: ExecutionContext) => {
     routeTrie.add(redirect.from, route);
   });
 
-  const [route, params] = routeTrie.get('/foo');
-  if (route) {
-    const [code, destination] = (route as redirects.RedirectRoute).getRedirect(
-      params
-    );
+  let [route, params] = routeTrie.get('/foo');
+  if (route instanceof redirects.RedirectRoute) {
+    const [code, destination] = route.getRedirect(params);
     t.is(code, 301);
     t.is(destination, '/bar');
+    numTestsRun++;
   }
+
+  [route, params] = routeTrie.get('/intl/de');
+  if (route instanceof redirects.RedirectRoute) {
+    const [code, destination] = route.getRedirect(params);
+    t.is(code, 302);
+    t.is(destination, '/de/');
+    numTestsRun++;
+  }
+
+  [route, params] = routeTrie.get('/intl/ja/foo');
+  if (route instanceof redirects.RedirectRoute) {
+    const [code, destination] = route.getRedirect(params);
+    t.is(code, 302);
+    t.is(destination, '/ja/foo');
+    numTestsRun++;
+  }
+
+  t.is(numTestsRun, 3);
 });

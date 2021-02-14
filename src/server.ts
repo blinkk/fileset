@@ -122,11 +122,8 @@ export function createApp(siteId: string, branchOrRef: string) {
         routeTrie.add(redirect.from, route);
       });
       const [route, params] = routeTrie.get(req.path);
-      if (route) {
-        const [
-          code,
-          destination,
-        ] = (route as redirects.RedirectRoute).getRedirect(params);
+      if (route instanceof redirects.RedirectRoute) {
+        const [code, destination] = route.getRedirect(params);
         res.redirect(code, destination);
         return;
       }
