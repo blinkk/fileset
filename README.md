@@ -68,17 +68,24 @@ env_variables:
   FILESET_STAGING_DOMAIN: '{ref}.staging.example.com'
 ```
 
-4. Create the app and deploy.
+4. Create a `Makefile` to help run setup commands.
+
+```make
+project := <AppId>  # Replace with your App ID.
+
+setup:
+	gcloud app create --project=$(project)
+	gcloud services enable datastore.googleapis.com --project=$(project)
+
+deploy:
+	gcloud app deploy --project=$(project) app.yaml
+```
+
+5. Deploy the app.
 
 ```bash
-# Create an App Engine app if one doesn't exist yet.
-gcloud app create --project=<AppId>
-
-# Enable the Cloud Datastore API.
-gcloud services enable datastore.googleapis.com --project=<AppId>
-
-# Deploy the app.
-gcloud app deploy --project=<AppId> app.yaml
+make setup
+make deploy
 ```
 
 ### Deployment setup
