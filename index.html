@@ -127,16 +127,21 @@
   <span class="hljs-attr">FILESET_LIVE_DOMAIN:</span> <span class="hljs-string">example.com</span>
   <span class="hljs-attr">FILESET_STAGING_DOMAIN:</span> <span class="hljs-string">&#x27;{ref}.staging.example.com&#x27;</span></code></pre>
 				<ol start="4">
-					<li>Create the app and deploy.</li>
+					<li>Create a <code>Makefile</code> to help run setup commands.</li>
 				</ol>
-				<pre><code class="language-bash"><span class="hljs-comment"># Create an App Engine app if one doesn&#x27;t exist yet.</span>
-gcloud app create --project=&lt;AppId&gt;
+				<pre><code class="language-make">project := &lt;AppId&gt;  <span class="hljs-comment"># Replace with your App ID.</span>
 
-<span class="hljs-comment"># Enable the Cloud Datastore API.</span>
-gcloud services <span class="hljs-built_in">enable</span> datastore.googleapis.com --project=&lt;AppId&gt;
+<span class="hljs-section">setup:</span>
+    gcloud app create --project=<span class="hljs-variable">$(project)</span>
+    gcloud services enable datastore.googleapis.com --project=<span class="hljs-variable">$(project)</span>
 
-<span class="hljs-comment"># Deploy the app.</span>
-gcloud app deploy --project=&lt;AppId&gt; app.yaml</code></pre>
+<span class="hljs-section">deploy:</span>
+    gcloud app deploy --project=<span class="hljs-variable">$(project)</span> app.yaml</code></pre>
+				<ol start="5">
+					<li>Deploy the app.</li>
+				</ol>
+				<pre><code class="language-bash">make setup
+make deploy</code></pre>
 				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
 					<h3>Deployment setup</h3>
 				</a>
