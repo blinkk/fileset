@@ -19,7 +19,6 @@
     "dev": "nodemon --watch src -e ts --exec npm run dev:start",
     "docs": "typedoc --out docs src/",
     "fix": "node ./node_modules/eslint/bin/eslint --fix src/**/*.ts src/**/*.tsx",
-    "prepare": "npm run dev:start",
     "test": "ava"
   },
   "ava": {
