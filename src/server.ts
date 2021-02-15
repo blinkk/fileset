@@ -61,14 +61,14 @@ export function parseHostname(
   let siteId = defaultSiteId || 'default';
   let branchOrRef = '';
   if (defaultLiveDomain && defaultLiveDomain.split(',').includes(hostname)) {
-    // Hostname is the "live" or "prod" domain. Use the master branch.
-    branchOrRef = 'master';
+    // Hostname is the "live" or "prod" domain. Use the main branch.
+    branchOrRef = 'main';
   } else if (hostname.includes('-dot-')) {
     // Use "-dot-" as a sentinel for App Engine wildcard domains.
     const prefix = hostname.split('-dot-')[0];
     const parts = prefix.split('-'); // Either <Site>-<Ref> or <Site>.
     siteId = parts[0];
-    branchOrRef = parts.length > 1 ? parts[1].slice(0, 7) : 'master';
+    branchOrRef = parts.length > 1 ? parts[1].slice(0, 7) : 'main';
   }
   // TODO: Implement defaultStagingDomain (custom staging domain) support.
   return {

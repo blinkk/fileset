@@ -15,14 +15,14 @@ test('Test parseHostname', (t: ExecutionContext) => {
   // Custom live domain.
   t.deepEqual(server.parseHostname('example.com', 'example', 'example.com'), {
     siteId: 'example',
-    branchOrRef: 'master',
+    branchOrRef: 'main',
   });
   // Multiple live domains.
   t.deepEqual(
     server.parseHostname('example.com', 'example', 'example.com,foo.com'),
     {
       siteId: 'example',
-      branchOrRef: 'master',
+      branchOrRef: 'main',
     }
   );
   // Some other domain.
