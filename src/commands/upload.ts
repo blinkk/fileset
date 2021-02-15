@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as fsPath from 'path';
+import * as manifest from '../manifest';
 import * as upload from '../upload';
 import * as yaml from 'js-yaml';
 
-import {Manifest} from '../manifest';
 import {getGitData} from '../gitdata';
 
 interface UploadOptions {
@@ -29,7 +29,7 @@ function findConfig(path: string) {
   // TODO: Validate config schema.
   const config = yaml.safeLoad(fs.readFileSync(configPath, 'utf8')) as Record<
     string,
-    string
+    unknown
   >;
   return config;
 }
@@ -63,20 +63,23 @@ export class UploadCommand {
       throw new Error('Unable to determine the Google Cloud project.');
     }
 
-    const manifest = new Manifest(
-      site,
+    const manifestObj = new manifest.Manifest(
+      site as string,
       this.options.ref || gitData.ref,
       this.options.branch || gitData.branch || ''
     );
-    manifest.createFromDirectory(path);
-    if (!manifest.files.length) {
+    manifestObj.createFromDirectory(path);
+    if (config.redirects) {
+      manifestObj.setRedirects(config.redirects as manifest.Redirect[]);
+    }
+    if (!manifestObj.files.length) {
       console.log(`No files found in -> ${path}`);
       return;
     }
     upload.uploadManifest(
-      googleCloudProject,
+      googleCloudProject as string,
       bucket,
-      manifest,
+      manifestObj,
       this.options.force,
       ttl
     );

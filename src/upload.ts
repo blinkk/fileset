@@ -155,7 +155,7 @@ async function finalize(
     projectId: googleCloudProject,
     // keyFilename: '/path/to/keyfile.json',
   });
-  const manifestPaths = manifest.toJSON();
+  const manifestPaths = manifest.pathsToJSON();
   const now = new Date();
 
   // Create shortSha mapping, so a shortSha can be used to lookup filesets.
@@ -164,10 +164,11 @@ async function finalize(
     `${manifest.site}:ref:${manifest.shortSha}`,
   ]);
   await saveManifestEntity(datastore, key, {
-    site: manifest.site,
-    ref: manifest.ref,
     branch: manifest.branch,
     paths: manifestPaths,
+    redirects: manifest.redirects,
+    ref: manifest.ref,
+    site: manifest.site,
   });
 
   // Create branch mapping, so a branch name can be used to lookup filesets.
@@ -178,10 +179,11 @@ async function finalize(
       `${manifest.site}:branch:${manifest.branch}`,
     ]);
     await saveManifestEntity(datastore, branchKey, {
-      site: manifest.site,
-      ref: manifest.ref,
       branch: manifest.branch,
       paths: manifestPaths,
+      redirects: manifest.redirects,
+      ref: manifest.ref,
+      site: manifest.site,
     });
   }
 

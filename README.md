@@ -97,9 +97,17 @@ google_cloud_project: <AppId>
 site: <SiteId>
 
 # Specify a launch schedule. The schedule maps timestamps to branches or commit
-# shas. If blank, `master` is used for the default deployment.
+# shas. If blank, `main` is used for the default deployment.
 schedule:
-  default: master
+  default: main
+
+redirects:
+- from: /foo
+  to: /bar
+- from: /intl/:locale/
+  to: /$locale/
+- from: /intl/:locale/*wildcard
+  to: /$locale/$wildcard
 ```
 
 2. Generate your files.
@@ -209,12 +217,12 @@ Git branch is determined by inspecting the local Git environment when the
 The best way to understand how this works is by following the examples below:
 
 ```bash
-# master branch
+# main branch
 # ✓ public
 # ✓ production URL
 # ✓ also available from staging URL (restricted)
 
-(master) $ fileset upload build
+(main) $ fileset upload build
 ...
  Public URL: https://appid.appspot.com
 Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com

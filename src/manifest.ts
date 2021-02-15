@@ -23,6 +23,12 @@ export interface ManifestFile {
   cleanPath: string;
 }
 
+export interface Redirect {
+  from: string;
+  to: string;
+  permanent?: boolean;
+}
+
 export interface PathToHash {
   path?: string;
 }
@@ -32,10 +38,12 @@ export class Manifest {
   ref: string;
   branch?: string;
   files: ManifestFile[];
+  redirects: Redirect[];
   shortSha: string;
 
   constructor(site: string, ref: string, branch?: string) {
     this.files = [];
+    this.redirects = [];
     this.site = site;
     this.ref = ref;
     this.shortSha = ref.slice(0, 7);
@@ -49,6 +57,10 @@ export class Manifest {
     });
   }
 
+  setRedirects(redirects: Redirect[]) {
+    this.redirects = redirects;
+  }
+
   createHash(path: string) {
     const contents = fs.readFileSync(path);
     const hash = crypto.createHash('sha1');
@@ -60,7 +72,9 @@ export class Manifest {
 
   async addFile(path: string, dir: string) {
     const hash = this.createHash(path);
-    const cleanPath = path.replace(dir.replace(/^\\+|\\+$/g, ''), '/').replace('//', '/');
+    const cleanPath = path
+      .replace(dir.replace(/^\\+|\\+$/g, ''), '/')
+      .replace('//', '/');
     const manifestFile: ManifestFile = {
       cleanPath: cleanPath,
       hash: hash,
@@ -70,7 +84,16 @@ export class Manifest {
     this.files.push(manifestFile);
   }
 
-  toJSON() {
+  async addRedirect(from: string, to: string, permanent: boolean) {
+    const redirect: Redirect = {
+      from: from,
+      to: to,
+      permanent: permanent,
+    };
+    this.redirects.push(redirect);
+  }
+
+  pathsToJSON() {
     const pathsToHashes: any = {};
     this.files.forEach(file => {
       pathsToHashes[file.cleanPath] = file.hash;
