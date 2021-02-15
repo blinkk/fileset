@@ -153,9 +153,17 @@ gcloud app deploy --project=&lt;AppId&gt; app.yaml</code></pre>
 <span class="hljs-attr">site:</span> <span class="hljs-string">&lt;SiteId&gt;</span>
 
 <span class="hljs-comment"># Specify a launch schedule. The schedule maps timestamps to branches or commit</span>
-<span class="hljs-comment"># shas. If blank, `master` is used for the default deployment.</span>
+<span class="hljs-comment"># shas. If blank, `main` is used for the default deployment.</span>
 <span class="hljs-attr">schedule:</span>
-  <span class="hljs-attr">default:</span> <span class="hljs-string">master</span></code></pre>
+  <span class="hljs-attr">default:</span> <span class="hljs-string">main</span>
+
+<span class="hljs-attr">redirects:</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">from:</span> <span class="hljs-string">/foo</span>
+  <span class="hljs-attr">to:</span> <span class="hljs-string">/bar</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">from:</span> <span class="hljs-string">/intl/:locale/</span>
+  <span class="hljs-attr">to:</span> <span class="hljs-string">/$locale/</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">from:</span> <span class="hljs-string">/intl/:locale/*wildcard</span>
+  <span class="hljs-attr">to:</span> <span class="hljs-string">/$locale/$wildcard</span></code></pre>
 				<ol start="2">
 					<li>Generate your files.</li>
 				</ol>
@@ -242,12 +250,12 @@ gcloud app deploy --project=&lt;AppId&gt; app.yaml</code></pre>
 					Git branch is determined by inspecting the local Git environment when the
 				<code>upload</code> command is invoked.</p>
 				<p>The best way to understand how this works is by following the examples below:</p>
-				<pre><code class="language-bash"><span class="hljs-comment"># master branch</span>
+				<pre><code class="language-bash"><span class="hljs-comment"># main branch</span>
 <span class="hljs-comment"># ✓ public</span>
 <span class="hljs-comment"># ✓ production URL</span>
 <span class="hljs-comment"># ✓ also available from staging URL (restricted)</span>
 
-(master) $ fileset upload build
+(main) $ fileset upload build
 ...
  Public URL: https://appid.appspot.com
 Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com</code></pre>
@@ -322,6 +330,9 @@ fileset upload <span class="hljs-keyword">build</span></code></pre>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_manifest_.html">&quot;manifest&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_redirects_.html">&quot;redirects&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/_server_.html">&quot;server&quot;</a>
