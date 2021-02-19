@@ -66,9 +66,16 @@ export function parseHostname(
   } else if (hostname.includes('-dot-')) {
     // Use "-dot-" as a sentinel for App Engine wildcard domains.
     const prefix = hostname.split('-dot-')[0];
-    const parts = prefix.split('-'); // Either <Site>-<Ref> or <Site>.
-    siteId = parts[0];
-    branchOrRef = parts.length > 1 ? parts[1].slice(0, 7) : 'main';
+    const parts = prefix.split('-'); // Either <Site>-<Ref> or <Ref>.
+    if (parts.length > 1) {
+      // Format is: <Site>-<Ref>
+      siteId = parts[0];
+      branchOrRef = parts[1].slice(0, 7);
+    } else {
+      // Format is: <Ref>
+      siteId = 'default';
+      branchOrRef = parts[0].slice(0, 7);
+    }
   }
   // TODO: Implement defaultStagingDomain (custom staging domain) support.
   return {

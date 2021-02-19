@@ -12,6 +12,14 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: 'refname',
     }
   );
+  // App Engine wildcard domain, no sitename provided.
+  t.deepEqual(
+    server.parseHostname('refname-dot-fileset2-dot-appid.appspot.com'),
+    {
+      siteId: 'default',
+      branchOrRef: 'refname',
+    }
+  );
   // Custom live domain.
   t.deepEqual(server.parseHostname('example.com', 'example', 'example.com'), {
     siteId: 'example',

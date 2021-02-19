@@ -8,7 +8,6 @@ import {asyncify, mapLimit} from 'async';
 import {Datastore} from '@google-cloud/datastore';
 import {Storage} from '@google-cloud/storage';
 import {entity} from '@google-cloud/datastore/build/src/entity';
-import {google} from '@google-cloud/datastore/build/protos/protos';
 
 const NUM_CONCURRENT_UPLOADS = 64;
 
@@ -84,7 +83,7 @@ export async function uploadManifest(
       speed: 0,
     });
     // @ts-ignore
-    bar.on('stop', () => {
+    bar.on('stop-pre-clear', () => {
       finalize(googleCloudProject, manifest, ttl);
     });
 
@@ -156,7 +155,6 @@ async function finalize(
     // keyFilename: '/path/to/keyfile.json',
   });
   const manifestPaths = manifest.pathsToJSON();
-  const now = new Date();
 
   // Create shortSha mapping, so a shortSha can be used to lookup filesets.
   const key = datastore.key([
@@ -197,7 +195,13 @@ async function finalize(
     `Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
   );
   // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
-  console.log(
-    `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset2-dot-${googleCloudProject}.appspot.com`
-  );
+  if (manifest.site === 'default') {
+    console.log(
+      `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
+    );
+  } else {
+    console.log(
+      `Staged: https://${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
+    );
+  }
 }
