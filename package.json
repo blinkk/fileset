@@ -16,7 +16,7 @@
     "compile": "tsc; webpack --config webpack.common.js --mode development",
     "copy": "cpx 'src/static/**' 'dist/src/static'",
     "dev:start": "npm run copy; npm run compile",
-    "dev": "nodemon --watch src -e ts --exec npm run dev:start",
+    "dev": "nodemon --watch src -e ts,tsx --exec npm run dev:start",
     "docs": "typedoc --out docs src/",
     "fix": "node ./node_modules/eslint/bin/eslint --fix src/**/*.ts src/**/*.tsx",
     "test": "ava"

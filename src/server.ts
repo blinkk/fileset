@@ -90,7 +90,7 @@ export function createApp(siteId: string, branchOrRef: string) {
   const app = express();
   app.disable('x-powered-by');
   app.use('/fileset/static/', express.static('./dist/'));
-  app.all('/fileset/', async (req: express.Request, res: express.Response) => {
+  app.all('/fileset/*', async (req: express.Request, res: express.Response) => {
     res.sendFile(fsPath.join(__dirname, './static/', 'webui.html'));
   });
   app.all('/*', async (req: express.Request, res: express.Response) => {
@@ -113,82 +113,89 @@ export function createApp(siteId: string, branchOrRef: string) {
       blobPath += 'index.html';
     }
 
-    const manifest = await getManifest(requestSiteId, requestBranchOrRef);
-    if (!manifest || !manifest.paths) {
-      console.log(`Site: ${requestSiteId}, Ref: ${requestBranchOrRef}`);
-      res
-        .status(404)
-        .sendFile(
-          fsPath.join(__dirname, './static/', 'fileset-does-not-exist.html')
-        );
-      return;
-    }
-
-    // Handle redirects.
-    if (manifest.redirects) {
-      const routeTrie = new redirects.RouteTrie();
-      manifest.redirects.forEach((redirect: manifest.Redirect) => {
-        const code = redirect.permanent ? 301 : 302;
-        const route = new redirects.RedirectRoute(code, redirect.to);
-        routeTrie.add(redirect.from, route);
-      });
-      const [route, params] = routeTrie.get(req.path);
-      if (route instanceof redirects.RedirectRoute) {
-        const [code, destination] = route.getRedirect(params);
-        res.redirect(code, destination);
+    try {
+      const manifest = await getManifest(requestSiteId, requestBranchOrRef);
+      if (!manifest || !manifest.paths) {
+        console.log(`Site: ${requestSiteId}, Ref: ${requestBranchOrRef}`);
+        res
+          .status(404)
+          .sendFile(
+            fsPath.join(__dirname, './static/', 'fileset-does-not-exist.html')
+          );
         return;
       }
-    }
 
-    // Handle static content.
-    const manifestPaths = manifest.paths;
-    const blobKey = manifestPaths[blobPath];
-    const updatedUrl = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
+      // Handle redirects.
+      if (manifest.redirects) {
+        const routeTrie = new redirects.RouteTrie();
+        manifest.redirects.forEach((redirect: manifest.Redirect) => {
+          const code = redirect.permanent ? 301 : 302;
+          const route = new redirects.RedirectRoute(code, redirect.to);
+          routeTrie.add(redirect.from, route);
+        });
+        const [route, params] = routeTrie.get(req.path);
+        if (route instanceof redirects.RedirectRoute) {
+          const [code, destination] = route.getRedirect(params);
+          res.redirect(code, destination);
+          return;
+        }
+      }
 
-    // TODO: Add custom 404 support based on site config.
-    if (!blobKey) {
-      console.log(`Blob not found ${req.path} -> ${URL}${updatedUrl}`);
-      res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
+      // Handle static content.
+      const manifestPaths = manifest.paths;
+      const blobKey = manifestPaths[blobPath];
+      const updatedUrl = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
+
+      // TODO: Add custom 404 support based on site config.
+      if (!blobKey) {
+        console.log(`Blob not found ${req.path} -> ${URL}${updatedUrl}`);
+        res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
+        return;
+      }
+
+      // Add Authorization: Bearer ... header to outgoing GCS request.
+      const client = await auth.getClient();
+      const headers = await client.getRequestHeaders();
+      req.headers = headers;
+      req.url = updatedUrl;
+      server.web(req, res, {
+        target: URL,
+        changeOrigin: true,
+        preserveHeaderKeyCase: true,
+      });
+      server.on('error', (error, req, res) => {
+        console.log(`An error occurred while serving ${req.url} (${error})`);
+      });
+      server.on('proxyRes', (proxyRes, req, res) => {
+        delete proxyRes.headers['x-cloud-trace-context'];
+        delete proxyRes.headers['x-goog-generation'];
+        delete proxyRes.headers['x-goog-hash'];
+        delete proxyRes.headers['x-goog-meta-path'];
+        delete proxyRes.headers['x-goog-meta-patn'];
+        delete proxyRes.headers['x-goog-metageneration'];
+        delete proxyRes.headers['x-goog-storage-class'];
+        delete proxyRes.headers['x-goog-stored-content-encoding'];
+        delete proxyRes.headers['x-goog-stored-content-length'];
+        delete proxyRes.headers['x-guploader-response-body-transformations'];
+        delete proxyRes.headers['x-guploader-uploadid'];
+        // This cannot be "private, max-age=0" as this kills perf.
+        // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
+        // The padded "0036" keeps the Content-Length identical with `3600`.
+        proxyRes.headers['cache-control'] = 'public, max-age=0036';
+        proxyRes.headers['x-fileset-blob'] = blobKey;
+        proxyRes.headers['x-fileset-ref'] = manifest.ref;
+        proxyRes.headers['x-fileset-site'] = requestSiteId;
+        if (manifest.ttl) {
+          proxyRes.headers['x-fileset-ttl'] = manifest.ttl;
+        }
+        res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+      });
+    } catch (err) {
+      res.status(500);
+      res.contentType('text/plain');
+      res.send(`Something went wrong. ${err}`);
       return;
     }
-
-    // Add Authorization: Bearer ... header to outgoing GCS request.
-    const client = await auth.getClient();
-    const headers = await client.getRequestHeaders();
-    req.headers = headers;
-    req.url = updatedUrl;
-    server.web(req, res, {
-      target: URL,
-      changeOrigin: true,
-      preserveHeaderKeyCase: true,
-    });
-    server.on('error', (error, req, res) => {
-      console.log(`An error occurred while serving ${req.url} (${error})`);
-    });
-    server.on('proxyRes', (proxyRes, req, res) => {
-      delete proxyRes.headers['x-cloud-trace-context'];
-      delete proxyRes.headers['x-goog-generation'];
-      delete proxyRes.headers['x-goog-hash'];
-      delete proxyRes.headers['x-goog-meta-path'];
-      delete proxyRes.headers['x-goog-meta-patn'];
-      delete proxyRes.headers['x-goog-metageneration'];
-      delete proxyRes.headers['x-goog-storage-class'];
-      delete proxyRes.headers['x-goog-stored-content-encoding'];
-      delete proxyRes.headers['x-goog-stored-content-length'];
-      delete proxyRes.headers['x-guploader-response-body-transformations'];
-      delete proxyRes.headers['x-guploader-uploadid'];
-      // This cannot be "private, max-age=0" as this kills perf.
-      // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
-      // The padded "0036" keeps the Content-Length identical with `3600`.
-      proxyRes.headers['cache-control'] = 'public, max-age=0036';
-      proxyRes.headers['x-fileset-blob'] = blobKey;
-      proxyRes.headers['x-fileset-ref'] = manifest.ref;
-      proxyRes.headers['x-fileset-site'] = requestSiteId;
-      if (manifest.ttl) {
-        proxyRes.headers['x-fileset-ttl'] = manifest.ttl;
-      }
-      res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
-    });
   });
   return app;
 }
