@@ -89,6 +89,10 @@ export function createApp(siteId: string, branchOrRef: string) {
 
   const app = express();
   app.disable('x-powered-by');
+  app.use('/fileset/static/', express.static('./dist/'));
+  app.all('/fileset/', async (req: express.Request, res: express.Response) => {
+    res.sendFile(fsPath.join(__dirname, './static/', 'webui.html'));
+  });
   app.all('/*', async (req: express.Request, res: express.Response) => {
     const envFromHostname = parseHostname(
       req.hostname,

@@ -7,9 +7,15 @@ import {asyncify, mapLimit} from 'async';
 
 import {Datastore} from '@google-cloud/datastore';
 import {Storage} from '@google-cloud/storage';
+import {Type} from 'js-yaml';
 import {entity} from '@google-cloud/datastore/build/src/entity';
 
 const NUM_CONCURRENT_UPLOADS = 64;
+
+const EntityType = {
+  Ref: 'ref',
+  Branch: 'branch',
+};
 
 function getBlobPath(siteId: string, hash: string) {
   return `fileset/sites/${siteId}/blobs/${hash}`;
@@ -161,12 +167,15 @@ async function finalize(
     'Fileset2Manifest',
     `${manifest.site}:ref:${manifest.shortSha}`,
   ]);
+  const modified = new Date();
   await saveManifestEntity(datastore, key, {
     branch: manifest.branch,
+    modified: modified,
     paths: manifestPaths,
     redirects: manifest.redirects,
     ref: manifest.ref,
     site: manifest.site,
+    type: EntityType.Ref,
   });
 
   // Create branch mapping, so a branch name can be used to lookup filesets.
@@ -178,10 +187,12 @@ async function finalize(
     ]);
     await saveManifestEntity(datastore, branchKey, {
       branch: manifest.branch,
+      modified: modified,
       paths: manifestPaths,
       redirects: manifest.redirects,
       ref: manifest.ref,
       site: manifest.site,
+      type: EntityType.Branch,
     });
   }
 
