@@ -12,7 +12,7 @@ export class TopBar extends Component<any, any> {
     return (
       <div class="TopBar">
         <div class="TopBar__inner">
-          <div class="TopBar__inner__project-name">Fileset</div>
+          <div class="TopBar__inner__logo">Fileset</div>
         </div>
       </div>
     );
