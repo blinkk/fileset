@@ -7,6 +7,7 @@ import * as redirects from './redirects';
 
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
+import {ManifestType} from './upload';
 
 const URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -51,6 +52,17 @@ export const getManifest = async (siteId: string, branchOrRef: string) => {
   // if (latestManifest) {
   //   return latestManifest;
   // }
+};
+
+export const listManifests = async (siteId: string) => {
+  const query = datastore.createQuery('Fileset2Manifest');
+  query.filter('site', siteId);
+  query.filter('manifestType', ManifestType.Branch);
+  const result = await query.run();
+  if (result) {
+    return result[0];
+  }
+  return null;
 };
 
 export function parseHostname(

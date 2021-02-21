@@ -11,7 +11,7 @@ import {entity} from '@google-cloud/datastore/build/src/entity';
 
 const NUM_CONCURRENT_UPLOADS = 64;
 
-const EntityType = {
+export const ManifestType = {
   Ref: 'ref',
   Branch: 'branch',
 };
@@ -174,7 +174,7 @@ async function finalize(
     redirects: manifest.redirects,
     ref: manifest.ref,
     site: manifest.site,
-    type: EntityType.Ref,
+    manifestType: ManifestType.Ref,
   });
 
   // Create branch mapping, so a branch name can be used to lookup filesets.
@@ -191,7 +191,7 @@ async function finalize(
       redirects: manifest.redirects,
       ref: manifest.ref,
       site: manifest.site,
-      type: EntityType.Branch,
+      manifestType: ManifestType.Branch,
     });
   }
 

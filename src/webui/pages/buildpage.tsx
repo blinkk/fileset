@@ -2,7 +2,6 @@ import {Component, h} from 'preact';
 
 import {Link} from 'preact-router/match';
 import {Page} from './page';
-import {PassThrough} from 'stream';
 import {rpc} from '../utils/rpc';
 
 interface BuildPageProps {

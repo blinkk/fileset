@@ -2,6 +2,7 @@ import {Component, h} from 'preact';
 
 import {Link} from 'preact-router/match';
 import {Page} from './page';
+import {rpc} from '../utils/rpc';
 
 interface SitePageProps {
   path: string;
@@ -11,6 +12,7 @@ interface SitePageProps {
 interface SitePageState {
   currentPath: string;
   siteId: string;
+  manifests: Array<any>;
 }
 
 export class SitePage extends Page<SitePageProps, SitePageState> {
@@ -19,8 +21,25 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
     this.state = {
       currentPath: '',
       siteId: props.siteId,
+      manifests: [],
     };
   }
+
+  async componentDidMount() {
+    try {
+      const resp: any = await rpc('manifest.list', {
+        site: this.state.siteId,
+      });
+      this.setState({manifests: resp.manifests});
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  filterManifests(manifests: Array<any>) {
+    return manifests;
+  }
+
   render() {
     return (
       <div class="SitePage">
@@ -63,21 +82,33 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
             <table>
               <thead>
                 <tr>
-                  <td>Branch</td>
-                  <td>Commit</td>
-                  <td>Modified</td>
-                  <td>Staging Link</td>
+                  <th>Branch</th>
+                  <th>Commit</th>
+                  <th>Modified</th>
+                  <th>Files</th>
+                  <th>Staging Link</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Master</td>
-                  <td>3259ae</td>
-                  <td>2020/10/19 05:12</td>
-                  <td>
-                    <a href="#">Link</a>
-                  </td>
-                </tr>
+                {this.state.manifests ? (
+                  this.filterManifests(this.state.manifests).map(
+                    (manifest, i) => (
+                      <tr>
+                        <td>{manifest.branch}</td>
+                        <td>{manifest.ref.slice(0, 7)}</td>
+                        <td>{manifest.modified}</td>
+                        <td>{Object.keys(manifest.paths).length}</td>
+                        <td>
+                          <a href="#">Link</a>
+                        </td>
+                      </tr>
+                    )
+                  )
+                ) : (
+                  <tr>
+                    <td>Loading...</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
