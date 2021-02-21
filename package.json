@@ -3,7 +3,7 @@
   "bin": {
     "fileset": "./dist/src/index.js"
   },
-  "version": "0.1.8",
+  "version": "0.1.9",
   "license": "MIT",
   "homepage": "https://github.com/blinkkcode/fileset/",
   "repository": {
@@ -76,6 +76,6 @@
     "mime-types": "^2.1.27"
   },
   "files": [
-    "dist/src"
+    "dist"
   ]
 }
