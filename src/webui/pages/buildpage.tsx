@@ -1,5 +1,6 @@
 import {Component, h} from 'preact';
 
+import {Link} from 'preact-router/match';
 import {Page} from './page';
 import {rpc} from '../utils/rpc';
 
@@ -44,7 +45,14 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
     return (
       <div class="BuildPage">
         <div class="BuildPage__title">
-          Site: {this.state.siteId} @ {this.state.ref}
+          Site:&nbsp;
+          <Link href={`/fileset/sites/${this.state.siteId}`}>
+            {this.state.siteId}
+          </Link>
+          &nbsp;@&nbsp;
+          <Link href={`/fileset/sites/${this.state.siteId}/${this.state.ref}`}>
+            {this.state.ref}
+          </Link>
         </div>
         <div class="BuildPage__content">
           <div class="BuildPage__content__table">
