@@ -1,6 +1,7 @@
 import {Component, h, render} from 'preact';
 import {Router, route} from 'preact-router';
 
+import {BuildPage} from './pages/buildpage';
 import {HomePage} from './pages/homepage';
 import {SitePage} from './pages/sitepage';
 import {TopBar} from './components/topbar';
@@ -34,6 +35,7 @@ class Main extends Component<unknown, MainState> {
           <Router>
             <HomePage path="/fileset/" />
             <SitePage path="/fileset/sites/:siteId" />
+            <BuildPage path="/fileset/sites/:siteId/:ref" />
           </Router>
         </div>
       </div>
