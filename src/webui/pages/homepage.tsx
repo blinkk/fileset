@@ -7,6 +7,7 @@ export class HomePage extends Page<any, any> {
   render() {
     return (
       <div class="HomePage">
+        <div class="HomePage__title">Sites</div>
         <div class="HomePage__sites">
           <div class="HomePage__sites__site">
             <Link

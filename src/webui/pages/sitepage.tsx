@@ -21,10 +21,10 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
     };
   }
   render() {
-    console.log(this.state);
     return (
       <div class="SitePage">
-        Sites: Result: {this} {this.state.siteId}
+        <div class="SitePage__title">Site: {this.state.siteId}</div>
+        <div class="SitePage__content">Result</div>
       </div>
     );
   }

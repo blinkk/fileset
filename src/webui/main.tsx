@@ -30,10 +30,12 @@ class Main extends Component<unknown, MainState> {
     return (
       <div class="Main">
         <TopBar />
-        <Router>
-          <HomePage path="/fileset/" />
-          <SitePage path="/fileset/sites/:siteId" />
-        </Router>
+        <div class="Main__content">
+          <Router>
+            <HomePage path="/fileset/" />
+            <SitePage path="/fileset/sites/:siteId" />
+          </Router>
+        </div>
       </div>
     );
   }
