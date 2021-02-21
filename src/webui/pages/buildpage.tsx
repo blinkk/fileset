@@ -2,6 +2,7 @@ import {Component, h} from 'preact';
 
 import {Link} from 'preact-router/match';
 import {Page} from './page';
+import {PassThrough} from 'stream';
 import {rpc} from '../utils/rpc';
 
 interface BuildPageProps {
@@ -31,14 +32,31 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
 
   async componentDidMount() {
     try {
-      const manifest = await rpc('manifest.get', {
+      const resp: any = await rpc('manifest.get', {
         site: this.state.siteId,
         refOrBranch: this.state.ref,
       });
-      this.setState({manifest: manifest});
+      this.setState({manifest: resp.manifest});
+      console.log(this.state.manifest, resp.manifest);
     } catch (err) {
       console.error(err);
     }
+  }
+
+  filterPaths(paths: Record<string, string>) {
+    return Object.keys(paths)
+      .sort()
+      .filter(path => {
+        return !path.startsWith('/_') && !path.startsWith('/.');
+      });
+  }
+
+  cleanPath(path: string) {
+    return path.replace(/index.html$/, '');
+  }
+
+  createServingUrl(path: string) {
+    return path;
   }
 
   render() {
@@ -60,18 +78,31 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
             <table>
               <thead>
                 <tr>
-                  <td>Path</td>
+                  <th>Path</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>/about/</td>
-                </tr>
+                {this.state.manifest && this.state.manifest.paths ? (
+                  this.filterPaths(this.state.manifest.paths).map((row, i) => (
+                    <tr>
+                      <td>
+                        <a href={this.createServingUrl(this.cleanPath(row))}>
+                          {this.cleanPath(row)}
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td>Loading...</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
           <div class="BuildPage__content__table">
             <div class="BuildPage__content__table__title">Redirects</div>
+            <div>{this.state.manifest && this.state.manifest.redirects}</div>
             <table>
               <thead>
                 <tr>

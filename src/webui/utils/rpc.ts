@@ -11,7 +11,6 @@ export async function rpc(
     onProgress?: (progress: number) => void;
   }
 ) {
-  console.log(endpoint, data);
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
