@@ -1,6 +1,7 @@
 import {Component, h} from 'preact';
 
 import {Link} from 'preact-router/match';
+import {Loading} from '../components/loading';
 import {Page} from './page';
 import {rpc} from '../utils/rpc';
 
@@ -14,6 +15,7 @@ interface BuildPageProps {
 interface BuildPageState {
   currentPath: string;
   siteId: string;
+  loading: boolean;
   ref: string;
   manifest: any;
 }
@@ -24,20 +26,26 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
     this.state = {
       currentPath: '',
       siteId: props.siteId,
+      loading: false,
       ref: props.matches.ref,
       manifest: null,
     };
   }
 
   async componentDidMount() {
+    this.setState({loading: true});
     try {
       const resp: any = await rpc('manifest.get', {
         site: this.state.siteId,
         refOrBranch: this.state.ref,
       });
-      this.setState({manifest: resp.manifest});
+      this.setState({
+        loading: false,
+        manifest: resp.manifest,
+      });
       console.log(this.state.manifest, resp.manifest);
     } catch (err) {
+      this.setState({loading: false});
       console.error(err);
     }
   }
@@ -58,6 +66,80 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
     return path;
   }
 
+  renderLoading() {
+    return <Loading />;
+  }
+
+  renderPathsTable() {
+    return (
+      <div class="BuildPage__content__table">
+        <div class="BuildPage__content__table__title">Files</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Path</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.manifest && this.state.manifest.paths ? (
+              this.filterPaths(this.state.manifest.paths).map((row, i) => (
+                <tr>
+                  <td>
+                    <a href={this.createServingUrl(this.cleanPath(row))}>
+                      {this.cleanPath(row)}
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td>No files uploaded.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  renderRedirectsTable() {
+    return (
+      <div class="BuildPage__content__table">
+        <div class="BuildPage__content__table__title">Redirects</div>
+        {this.state.manifest &&
+        this.state.manifest.redirects &&
+        this.state.manifest.redirects.length ? (
+          <table>
+            <thead>
+              <tr>
+                <th>Path</th>
+                <th>To</th>
+                <th>Permanent</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.manifest.redirects.map((redirect: any) => (
+                <tr>
+                  <td>
+                    <a href={this.createServingUrl(redirect.from)}>
+                      {redirect.from}
+                    </a>
+                  </td>
+                  <td>{redirect.to}</td>
+                  <td>{redirect.permanent}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div class="BuildPage__content__table__empty">
+            No redirects have been configured.
+          </div>
+        )}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div class="BuildPage">
@@ -72,53 +154,8 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
           </Link>
         </div>
         <div class="BuildPage__content">
-          <div class="BuildPage__content__table">
-            <div class="BuildPage__content__table__title">Files</div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Path</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.manifest && this.state.manifest.paths ? (
-                  this.filterPaths(this.state.manifest.paths).map((row, i) => (
-                    <tr>
-                      <td>
-                        <a href={this.createServingUrl(this.cleanPath(row))}>
-                          {this.cleanPath(row)}
-                        </a>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td>Loading...</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div class="BuildPage__content__table">
-            <div class="BuildPage__content__table__title">Redirects</div>
-            <div>{this.state.manifest && this.state.manifest.redirects}</div>
-            <table>
-              <thead>
-                <tr>
-                  <td>From</td>
-                  <td>To</td>
-                  <td>Permanent</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Master</td>
-                  <td>3259ae</td>
-                  <td>2020/10/19 05:12</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          {this.state.loading ? this.renderLoading() : this.renderPathsTable()}
+          {this.state.loading ? '' : this.renderRedirectsTable()}
         </div>
       </div>
     );

@@ -1,6 +1,7 @@
 import {Component, h} from 'preact';
 
 import {Link} from 'preact-router/match';
+import {Loading} from '../components/loading';
 import {Page} from './page';
 import {rpc} from '../utils/rpc';
 
@@ -13,6 +14,7 @@ interface SitePageState {
   currentPath: string;
   siteId: string;
   manifests: Array<any>;
+  loading: boolean;
 }
 
 export class SitePage extends Page<SitePageProps, SitePageState> {
@@ -21,23 +23,89 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
     this.state = {
       currentPath: '',
       siteId: props.siteId,
+      loading: false,
       manifests: [],
     };
   }
 
   async componentDidMount() {
     try {
+      this.setState({loading: true});
       const resp: any = await rpc('manifest.list', {
         site: this.state.siteId,
       });
-      this.setState({manifests: resp.manifests});
+      this.setState({
+        loading: false,
+        manifests: resp.manifests,
+      });
     } catch (err) {
+      this.setState({loading: false});
       console.error(err);
     }
   }
 
   filterManifests(manifests: Array<any>) {
     return manifests;
+  }
+
+  renderLoading() {
+    return <Loading />;
+  }
+
+  renderManifestTable() {
+    return this.state.manifests && this.state.manifests.length ? (
+      <div class="SitePage__content__table">
+        <div class="SitePage__content__table__title">Staging links</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Branch</th>
+              <th>Commit</th>
+              <th>Modified</th>
+              <th>Files</th>
+              <th>Staging link</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.filterManifests(this.state.manifests).map((manifest, i) => (
+              <tr>
+                <td>
+                  <Link
+                    href={`/fileset/sites/${this.state.siteId}/${manifest.branch}/`}
+                  >
+                    {manifest.branch}
+                  </Link>
+                </td>
+                <td>{manifest.ref.slice(0, 7)}</td>
+                <td>{manifest.modified}</td>
+                <td>{Object.keys(manifest.paths).length}</td>
+                <td>
+                  <a href="#">Link</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <div class="SitePage__content__empty">
+        <div class="SitePage__content__empty__headline">
+          No staging links found
+        </div>
+        <div class="SitePage__content__empty__body">
+          Deploy your first staging link by using the{' '}
+          <code>fileset upload</code> command.
+        </div>
+        <div class="SitePage__content__empty__buttons">
+          <a
+            href="https://github.com/blinkkcode/fileset#deployment-setup"
+            class="button button--medium"
+          >
+            View documentation
+          </a>
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -50,6 +118,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
           </Link>
         </div>
         <div class="SitePage__content">
+          {/*
           <div class="SitePage__content__table">
             <div class="SitePage__content__table__title">
               Scheduled launches
@@ -77,41 +146,10 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
               </tbody>
             </table>
           </div>
-          <div class="SitePage__content__table">
-            <div class="SitePage__content__table__title">Previews</div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Branch</th>
-                  <th>Commit</th>
-                  <th>Modified</th>
-                  <th>Files</th>
-                  <th>Staging Link</th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.manifests ? (
-                  this.filterManifests(this.state.manifests).map(
-                    (manifest, i) => (
-                      <tr>
-                        <td>{manifest.branch}</td>
-                        <td>{manifest.ref.slice(0, 7)}</td>
-                        <td>{manifest.modified}</td>
-                        <td>{Object.keys(manifest.paths).length}</td>
-                        <td>
-                          <a href="#">Link</a>
-                        </td>
-                      </tr>
-                    )
-                  )
-                ) : (
-                  <tr>
-                    <td>Loading...</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          */}
+          {this.state.loading
+            ? this.renderLoading()
+            : this.renderManifestTable()}
         </div>
       </div>
     );
