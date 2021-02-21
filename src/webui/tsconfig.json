@@ -1,21 +1,21 @@
 {
-    "compilerOptions": {
-      "target": "es2015",
-      "module": "commonjs",
-      "jsx": "react",
-      "jsxFactory": "h",
-      "declaration": false,
-      "removeComments": true,
-      "allowJs": true,
-      "strict": true,
-      "strictNullChecks": false,
-      "suppressImplicitAnyIndexErrors": true
-    },
-    "lib": [
-      "dom",
-      "es2018"
-    ],
-    "exclude": [
-      "node_modules"
-    ]
-  }
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "jsx": "react",
+    "jsxFactory": "h",
+    "declaration": false,
+    "removeComments": true,
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "suppressImplicitAnyIndexErrors": true
+  },
+  "lib": [
+    "dom",
+    "es2018"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

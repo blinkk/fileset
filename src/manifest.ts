@@ -29,8 +29,14 @@ export interface Redirect {
   permanent?: boolean;
 }
 
-export interface PathToHash {
-  path?: string;
+export interface SerializedManifest {
+  site: string;
+  ref: string;
+  branch?: string;
+  paths: Record<string, string>;
+  redirects: Redirect[];
+  shortSha: string;
+  modified: string;
 }
 
 export class Manifest {

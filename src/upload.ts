@@ -7,7 +7,6 @@ import {asyncify, mapLimit} from 'async';
 
 import {Datastore} from '@google-cloud/datastore';
 import {Storage} from '@google-cloud/storage';
-import {Type} from 'js-yaml';
 import {entity} from '@google-cloud/datastore/build/src/entity';
 
 const NUM_CONCURRENT_UPLOADS = 64;

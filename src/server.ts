@@ -1,12 +1,12 @@
+import * as api from './api';
+import * as express from 'express';
 import * as fsPath from 'path';
+import * as httpProxy from 'http-proxy';
 import * as manifest from './manifest';
 import * as redirects from './redirects';
 
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
-
-import express = require('express');
-import httpProxy = require('http-proxy');
 
 const URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -17,7 +17,7 @@ const auth = new GoogleAuth({
 
 const server = httpProxy.createProxyServer();
 
-const getManifest = async (siteId: string, branchOrRef: string) => {
+export const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
     datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
     datastore.key(['Fileset2Manifest', `${siteId}:ref:${branchOrRef}`]),
@@ -90,6 +90,27 @@ export function createApp(siteId: string, branchOrRef: string) {
   const app = express();
   app.disable('x-powered-by');
   app.use('/fileset/static/', express.static('./dist/'));
+  app.post('/fileset/api/*', async (req, res) => {
+    try {
+      const apiHandler = new api.ApiHandler();
+      const method = req.path.slice(9);
+      const reqData = req.body || {};
+      const data = await apiHandler.handle(method, reqData);
+      res.json({
+        success: true,
+        data: data,
+      });
+    } catch (e) {
+      console.error(e);
+      if (e.stack) {
+        console.error(e.stack);
+      }
+      res.status(500).json({
+        success: false,
+        error: 'unknown server error',
+      });
+    }
+  });
   app.all('/fileset/*', async (req: express.Request, res: express.Response) => {
     res.sendFile(fsPath.join(__dirname, './static/', 'webui.html'));
   });

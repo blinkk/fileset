@@ -1,6 +1,7 @@
 import {Component, h} from 'preact';
 
 import {Page} from './page';
+import {rpc} from '../utils/rpc';
 
 interface BuildPageProps {
   path: string;
@@ -12,6 +13,7 @@ interface BuildPageState {
   currentPath: string;
   siteId: string;
   ref: string;
+  manifest: any;
 }
 
 export class BuildPage extends Page<BuildPageProps, BuildPageState> {
@@ -21,8 +23,23 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
       currentPath: '',
       siteId: props.siteId,
       ref: props.ref,
+      manifest: null,
     };
+    console.log('state', this.state);
   }
+
+  async componentDidMount() {
+    try {
+      const manifest = await rpc('manifest.get', {
+        site: this.state.siteId,
+        refOrBranch: this.state.ref,
+      });
+      this.setState({manifest: manifest});
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   render() {
     return (
       <div class="BuildPage">
