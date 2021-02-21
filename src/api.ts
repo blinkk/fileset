@@ -8,7 +8,7 @@ interface GetManifestRequest {
 }
 
 interface GetManifestResponse {
-  manifest: SerializedManifest;
+  manifest: SerializedManifest | null;
 }
 
 export class ApiHandler {
@@ -24,6 +24,11 @@ export class ApiHandler {
       request.site,
       request.refOrBranch
     );
+    if (!manifest) {
+      return {
+        manifest: null,
+      };
+    }
     return {
       manifest: {
         site: manifest.site,

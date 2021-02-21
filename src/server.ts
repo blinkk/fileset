@@ -89,11 +89,13 @@ export function createApp(siteId: string, branchOrRef: string) {
 
   const app = express();
   app.disable('x-powered-by');
+  app.use(express.json());
   app.use('/fileset/static/', express.static('./dist/'));
   app.post('/fileset/api/*', async (req, res) => {
     try {
+      console.log('body', req.body);
       const apiHandler = new api.ApiHandler();
-      const method = req.path.slice(9);
+      const method = req.path.slice('/fileset/api/'.length);
       const reqData = req.body || {};
       const data = await apiHandler.handle(method, reqData);
       res.json({

@@ -32,7 +32,7 @@ class Main extends Component<unknown, MainState> {
       <div class="Main">
         <TopBar />
         <div class="Main__content">
-          <Router>
+          <Router onChange={this.onRouteChange.bind(this)}>
             <HomePage path="/fileset/" />
             <SitePage path="/fileset/sites/:siteId" />
             <BuildPage path="/fileset/sites/:siteId/:ref" />

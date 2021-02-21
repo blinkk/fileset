@@ -4,6 +4,7 @@ import {Page} from './page';
 import {rpc} from '../utils/rpc';
 
 interface BuildPageProps {
+  matches?: any; // TODO: This isn't right; props.matches required.
   path: string;
   siteId?: string;
   ref?: string;
@@ -22,10 +23,9 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
     this.state = {
       currentPath: '',
       siteId: props.siteId,
-      ref: props.ref,
+      ref: props.matches.ref,
       manifest: null,
     };
-    console.log('state', this.state);
   }
 
   async componentDidMount() {
