@@ -92,7 +92,7 @@ export async function uploadManifest(
       await finalize(googleCloudProject, manifest, ttl);
     });
 
-    mapLimit(
+    await mapLimit(
       filesToUpload,
       NUM_CONCURRENT_UPLOADS,
       asyncify(async (manifestFile: ManifestFile) => {
