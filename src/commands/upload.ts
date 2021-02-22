@@ -68,7 +68,7 @@ export class UploadCommand {
       this.options.ref || gitData.ref,
       this.options.branch || gitData.branch || ''
     );
-    manifestObj.createFromDirectory(path);
+    await manifestObj.createFromDirectory(path);
     if (config.redirects) {
       manifestObj.setRedirects(config.redirects as manifest.Redirect[]);
     }
@@ -76,7 +76,7 @@ export class UploadCommand {
       console.log(`No files found in -> ${path}`);
       return;
     }
-    upload.uploadManifest(
+    await upload.uploadManifest(
       googleCloudProject as string,
       bucket,
       manifestObj,
