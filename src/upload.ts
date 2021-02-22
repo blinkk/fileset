@@ -79,7 +79,7 @@ export async function uploadManifest(
   );
 
   if (numTotalFiles <= 0) {
-    finalize(googleCloudProject, manifest, ttl);
+    await finalize(googleCloudProject, manifest, ttl);
   } else {
     let bytesTransferred = 0;
     let numProcessedFiles = 0;
@@ -88,8 +88,8 @@ export async function uploadManifest(
       speed: 0,
     });
     // @ts-ignore
-    bar.on('stop-pre-clear', () => {
-      finalize(googleCloudProject, manifest, ttl);
+    bar.on('stop-pre-clear', async () => {
+      await finalize(googleCloudProject, manifest, ttl);
     });
 
     mapLimit(
