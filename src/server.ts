@@ -145,9 +145,9 @@ export function createApp(siteId: string, branchOrRef: string) {
       );
     }
 
-    let blobPath = decodeURIComponent(req.path);
-    if (blobPath.endsWith('/')) {
-      blobPath += 'index.html';
+    let urlPath = decodeURIComponent(req.path);
+    if (urlPath.endsWith('/')) {
+      urlPath += 'index.html';
     }
 
     try {
@@ -180,11 +180,17 @@ export function createApp(siteId: string, branchOrRef: string) {
 
       // Handle static content.
       const manifestPaths = manifest.paths;
-      const blobKey = manifestPaths[blobPath];
+      const blobKey = manifestPaths[urlPath];
       const updatedUrl = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
 
       // TODO: Add custom 404 support based on site config.
       if (!blobKey) {
+        // Trailing slash redirect. TODO: Make this configurable in `fileset.yaml`.
+        if (manifestPaths[`${urlPath}/index.html`]) {
+          const destination = `${urlPath}/`;
+          res.redirect(302, destination);
+          return;
+        }
         console.log(`Blob not found ${req.path} -> ${URL}${updatedUrl}`);
         res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
         return;
