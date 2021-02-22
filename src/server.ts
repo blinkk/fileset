@@ -108,7 +108,6 @@ export function createApp(siteId: string, branchOrRef: string) {
   );
   app.post('/fileset/api/*', async (req, res) => {
     try {
-      console.log('body', req.body);
       const apiHandler = new api.ApiHandler();
       const method = req.path.slice('/fileset/api/'.length);
       const reqData = req.body || {};

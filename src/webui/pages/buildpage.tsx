@@ -44,7 +44,6 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
         loading: false,
         manifest: resp.manifest,
       });
-      console.log(this.state.manifest, resp.manifest);
     } catch (err) {
       this.setState({loading: false});
       console.error(err);
@@ -67,6 +66,7 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
     return createStagingLink(
       this.state.manifest.site,
       this.state.manifest.branch,
+      this.state.manifest.ref,
       path
     );
   }

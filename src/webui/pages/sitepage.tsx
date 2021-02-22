@@ -83,7 +83,13 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                 <td>{manifest.modified}</td>
                 <td>{Object.keys(manifest.paths).length}</td>
                 <td>
-                  <a href={createStagingLink(manifest.site, manifest.branch)}>
+                  <a
+                    href={createStagingLink(
+                      manifest.site,
+                      manifest.branch,
+                      manifest.ref
+                    )}
+                  >
                     Link
                   </a>
                 </td>
