@@ -12,11 +12,14 @@ export async function getGitData(path: string) {
     depth: 1,
     ref: 'HEAD',
   });
-  const branch = await git.currentBranch({
-    fs,
-    dir: root,
-    fullname: false,
-  });
+  const branch =
+    process.env.BRANCH_NAME ||
+    process.env.CIRCLE_BRANCH ||
+    (await git.currentBranch({
+      fs,
+      dir: root,
+      fullname: false,
+    }));
   return {
     ref: commits && commits[0].oid,
     branch: branch,
