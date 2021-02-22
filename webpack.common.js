@@ -40,7 +40,7 @@ module.exports = env => {
       ],
     },
     output: {
-      path: path.resolve(__dirname, 'dist'),
+      path: path.resolve(__dirname, 'dist', 'src', 'static'),
       filename: '[name].min.js',
     },
   };
