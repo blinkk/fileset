@@ -3,6 +3,7 @@ import {Component, h} from 'preact';
 import {Link} from 'preact-router/match';
 import {Loading} from '../components/loading';
 import {Page} from './page';
+import {createStagingLink} from '../utils/links';
 import {rpc} from '../utils/rpc';
 
 interface SitePageProps {
@@ -80,7 +81,9 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                 <td>{manifest.modified}</td>
                 <td>{Object.keys(manifest.paths).length}</td>
                 <td>
-                  <a href="#">Link</a>
+                  <a href={createStagingLink(manifest.site, manifest.branch)}>
+                    Link
+                  </a>
                 </td>
               </tr>
             ))}

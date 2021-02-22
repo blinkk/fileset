@@ -3,6 +3,7 @@ import {Component, h} from 'preact';
 import {Link} from 'preact-router/match';
 import {Loading} from '../components/loading';
 import {Page} from './page';
+import {createStagingLink} from '../utils/links';
 import {rpc} from '../utils/rpc';
 
 interface BuildPageProps {
@@ -63,7 +64,11 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
   }
 
   createServingUrl(path: string) {
-    return path;
+    return createStagingLink(
+      this.state.manifest.site,
+      this.state.manifest.branch,
+      path
+    );
   }
 
   renderLoading() {
