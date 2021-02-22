@@ -87,10 +87,6 @@ export async function uploadManifest(
     bar.start(numTotalFiles, numProcessedFiles, {
       speed: 0,
     });
-    // @ts-ignore
-    bar.on('stop-pre-clear', async () => {
-      await finalize(googleCloudProject, manifest, ttl);
-    });
 
     await mapLimit(
       filesToUpload,
@@ -134,6 +130,8 @@ export async function uploadManifest(
         }
       })
     );
+
+    await finalize(googleCloudProject, manifest, ttl);
   }
 }
 
