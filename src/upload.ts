@@ -144,7 +144,7 @@ async function saveManifestEntity(
 ) {
   const ent = {
     key: key,
-    excludeFromIndexes: ['paths'],
+    excludeFromIndexes: ['paths', 'redirects'],
     data: data,
   };
   await datastore.save(ent);
