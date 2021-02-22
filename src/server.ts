@@ -102,7 +102,10 @@ export function createApp(siteId: string, branchOrRef: string) {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json());
-  app.use('/fileset/static/', express.static('./dist/src/static/'));
+  app.use(
+    '/fileset/static/',
+    express.static(fsPath.join(__dirname, './static/'))
+  );
   app.post('/fileset/api/*', async (req, res) => {
     try {
       console.log('body', req.body);
