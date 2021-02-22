@@ -154,7 +154,11 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
             {this.state.siteId}
           </Link>
           &nbsp;@&nbsp;
-          <Link href={`/fileset/sites/${this.state.siteId}/${this.state.ref}`}>
+          <Link
+            href={`/fileset/sites/${this.state.siteId}/${encodeURIComponent(
+              this.state.ref
+            )}`}
+          >
             {this.state.ref}
           </Link>
         </div>

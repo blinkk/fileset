@@ -72,7 +72,9 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
               <tr>
                 <td>
                   <Link
-                    href={`/fileset/sites/${this.state.siteId}/${manifest.branch}/`}
+                    href={`/fileset/sites/${
+                      this.state.siteId
+                    }/${encodeURIComponent(manifest.branch)}/`}
                   >
                     {manifest.branch}
                   </Link>
