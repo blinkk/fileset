@@ -1,9 +1,9 @@
-import * as api from './api';
 import * as express from 'express';
 import * as fsPath from 'path';
 import * as httpProxy from 'http-proxy';
 import * as manifest from './manifest';
 import * as redirects from './redirects';
+import * as webui from './webui';
 
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
@@ -102,34 +102,8 @@ export function createApp(siteId: string, branchOrRef: string) {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json());
-  app.use(
-    '/fileset/static/',
-    express.static(fsPath.join(__dirname, './static/'))
-  );
-  app.post('/fileset/api/*', async (req, res) => {
-    try {
-      const apiHandler = new api.ApiHandler();
-      const method = req.path.slice('/fileset/api/'.length);
-      const reqData = req.body || {};
-      const data = await apiHandler.handle(method, reqData);
-      res.json({
-        success: true,
-        data: data,
-      });
-    } catch (e) {
-      console.error(e);
-      if (e.stack) {
-        console.error(e.stack);
-      }
-      res.status(500).json({
-        success: false,
-        error: 'unknown server error',
-      });
-    }
-  });
-  app.all('/fileset/*', async (req: express.Request, res: express.Response) => {
-    res.sendFile(fsPath.join(__dirname, './static/', 'webui.html'));
-  });
+  webui.configure(app);
+
   app.all('/*', async (req: express.Request, res: express.Response) => {
     const envFromHostname = parseHostname(
       req.hostname,
@@ -153,7 +127,6 @@ export function createApp(siteId: string, branchOrRef: string) {
     try {
       const manifest = await getManifest(requestSiteId, requestBranchOrRef);
       if (!manifest || !manifest.paths) {
-        console.log(`Site: ${requestSiteId}, Ref: ${requestBranchOrRef}`);
         res
           .status(404)
           .sendFile(
