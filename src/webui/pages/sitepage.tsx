@@ -4,6 +4,7 @@ import {Link} from 'preact-router/match';
 import {Loading} from '../components/loading';
 import {Page} from './page';
 import {createStagingLink} from '../utils/links';
+import {prettyDate} from '../utils/formatters';
 import {rpc} from '../utils/rpc';
 
 interface SitePageProps {
@@ -80,7 +81,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                   </Link>
                 </td>
                 <td>{manifest.ref.slice(0, 7)}</td>
-                <td>{manifest.modified}</td>
+                <td>{prettyDate(manifest.modified)}</td>
                 <td>{Object.keys(manifest.paths).length}</td>
                 <td>
                   <a
