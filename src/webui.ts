@@ -43,6 +43,8 @@ export function configure(app: express.Application) {
     );
   }
 
+  // Needed to enforce https with callback URL. https://stackoverflow.com/a/20848306
+  app.enable('trust proxy');
   passport.use(
     new Strategy(
       {
