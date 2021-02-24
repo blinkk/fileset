@@ -55,6 +55,8 @@ export function configure(app: express.Application) {
     );
   }
 
+  // Need to manually specify the base URL in the environment as it needs to
+  // match the Google OAuth 2.0 redirect URI.
   let baseUrl = '';
   if (process.env.FILESET_BASE_URL) {
     if (process.env.FILESET_BASE_URL.startsWith('http')) {
@@ -111,11 +113,18 @@ export function configure(app: express.Application) {
       : req.hostname;
     let authOptions;
     if (req.query.state) {
+      // Example current URL (trusted): https://fileset.com/bar/.
+      // Example original URL (untrusted): https://foo.fileset.com/bar/.
       const currentUrl = new URL(`${req.protocol}://${host}${req.originalUrl}`);
       const originalUrl = new URL(req.query.state as string);
-      // TODO: Verify possible state values. We shouldn't permit redirection to
-      // anything other than a subdomain of the current domain, or an App Engine
-      // wildcard-like subdomain.
+      // Verify the `?returnTo` and `state` parameters are not external URLs.
+      // Subdomains (i.e. staging environment URLs) are permitted, as they are
+      // trusted.
+      if (!originalUrl.host.endsWith(currentUrl.host)) {
+        res.status(400);
+        res.send('External redirects are disallowed.');
+        return;
+      }
       // Short-circuit the OAuth flow and redirect to the staging URL's
       // subdomain, which will resume the flow and pick it up. This allows us to
       // have one canonical domain to act as the redirect URI from Google, and
@@ -131,14 +140,14 @@ export function configure(app: express.Application) {
         : originalUrl.pathname;
       authOptions = {
         scope: ['email', 'profile'],
-        successRedirect: successRedirect,
         failureRedirect: Urls.ERROR,
+        successRedirect: successRedirect,
       };
     } else {
       authOptions = {
         scope: ['email', 'profile'],
-        successReturnToOrRedirect: '/',
         failureRedirect: Urls.ERROR,
+        successReturnToOrRedirect: '/',
       };
     }
     passport.authenticate('google', authOptions)(req, res, next);
