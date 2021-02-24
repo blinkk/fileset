@@ -92,10 +92,29 @@ export function configure(app: express.Application) {
     cb(null, obj);
   });
 
+  // Share session cookie across custom staging domains, and appspot domains, so
+  // that requests to staging URLs are authenticated.
+  let domain = undefined;
+  if (
+    process.env.FILESET_BASE_URL &&
+    !process.env.FILESET_BASE_URL.includes('localhost')
+  ) {
+    domain =
+      '.' +
+      process.env.FILESET_BASE_URL.replace('https://', '').replace(
+        'http://',
+        ''
+      );
+    if (domain.includes('.appspot.com')) {
+      domain = '.appspot.com';
+    }
+  }
+
   app.use(
     CookieSession({
       name: 'fileset.session',
       keys: [sessionSecret],
+      domain: domain,
     })
   );
   app.use(passport.initialize());

@@ -179,7 +179,8 @@ export function createApp(siteId: string, branchOrRef: string) {
       // Handle static content.
       const manifestPaths = manifest.paths;
       const blobKey = manifestPaths[urlPath];
-      const updatedUrl = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs/${blobKey}`;
+      const blobPrefix = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs`;
+      const updatedUrl = `${blobPrefix}/${blobKey}`;
 
       // TODO: Add custom 404 support based on site config.
       if (!blobKey) {
@@ -189,7 +190,7 @@ export function createApp(siteId: string, branchOrRef: string) {
           res.redirect(302, destination);
           return;
         }
-        console.log(`Blob not found ${req.path} -> ${URL}${updatedUrl}`);
+        console.log(`Blob not found in ${blobPrefix} -> ${req.path}`);
         res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
         return;
       }
@@ -205,7 +206,11 @@ export function createApp(siteId: string, branchOrRef: string) {
         preserveHeaderKeyCase: true,
       });
       server.on('error', (error, req, res) => {
-        console.log(`An error occurred while serving ${req.url} (${error})`);
+        // Reduce logspam.
+        if (`${error}`.includes('socket hang up')) {
+          return;
+        }
+        console.log(`Error serving ${req.url}: ${error}`);
       });
       server.on('proxyRes', (proxyRes, req, res) => {
         // Avoid modifying response if headers already sent.
