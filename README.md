@@ -65,7 +65,6 @@ runtime: nodejs10
 env_variables:
   FILESET_SITE: default
   FILESET_LIVE_DOMAIN: example.com
-  FILESET_STAGING_DOMAIN: '{ref}.staging.example.com'
 ```
 
 4. Create a `Makefile` to help run setup commands.

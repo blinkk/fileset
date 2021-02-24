@@ -11,7 +11,11 @@ import {ensureLoggedIn} from 'connect-ensure-login';
 import CookieSession = require('cookie-session');
 
 export const Urls = {
-  CALLBACK: '/fileset/oauth2callback',
+  CALLBACK: `${
+    process.env.FILESET_BASE_URL
+      ? 'https://' + process.env.FILESET_BASE_URL
+      : ''
+  }/fileset/oauth2callback`,
   ERROR: '/fileset/error',
   LOGIN: '/fileset/login',
 };
@@ -56,7 +60,7 @@ export function configure(app: express.Application) {
 
   if (!clientId || !clientSecret || !sessionSecret) {
     throw new Error(
-      'Must specify environment variables: FILESET_CLIENT_ID, FILESET_CLIENT_SECRET'
+      'Must specify environment variables: FILESET_CLIENT_ID, FILESET_CLIENT_SECRET, FILESET_SESSION_SECRET'
     );
   }
 
