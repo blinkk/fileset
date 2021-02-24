@@ -138,8 +138,13 @@ export function createApp(siteId: string, branchOrRef: string) {
       const isLive = ['main', 'master'].includes(requestBranchOrRef);
       if (!isLive) {
         if (!req.isAuthenticated || !req.isAuthenticated()) {
+          // Include the full URL in the return URL in order to traverse
+          // subdomains during the OAuth callback.
+          const returnUrl = `${req.protocol}://${req.hostname}${
+            req.originalUrl || req.url
+          }`;
           // @ts-ignore
-          req.session.returnTo = req.originalUrl || req.url;
+          req.session.returnTo = returnUrl;
           return res.redirect(webui.Urls.LOGIN);
         }
         // TODO: Currently, universal auth is specified when the server is
