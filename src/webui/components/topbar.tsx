@@ -41,8 +41,16 @@ export class TopBar extends Component<any, TopBarState> {
                 <img src={this.state.me.photos[0].value} alt="" />
               )}
             </div>
-            <div class="TopBar__inner__user__name">
-              {(this.state.me && this.state.me.displayName) || '...'}
+            <div class="TopBar__inner__user__details">
+              <div class="TopBar__inner__user__details__name">
+                {(this.state.me && this.state.me.displayName) || '...'}
+              </div>
+              <div class="TopBar__inner__user__details__email">
+                {(this.state.me &&
+                  this.state.me.emails &&
+                  this.state.me.emails[0].value) ||
+                  '...'}
+              </div>
             </div>
           </div>
         </div>

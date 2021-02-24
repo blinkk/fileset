@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as fsPath from 'path';
 import * as httpProxy from 'http-proxy';
 import * as manifest from './manifest';
+import * as nunjucks from 'nunjucks';
 import * as redirects from './redirects';
 import * as webui from './webui';
 
@@ -103,7 +104,6 @@ export function createApp(siteId: string, branchOrRef: string) {
   app.disable('x-powered-by');
   app.use(express.json());
   webui.configure(app);
-
   app.all('/*', async (req: express.Request, res: express.Response) => {
     const envFromHostname = parseHostname(
       req.hostname,
@@ -133,6 +133,30 @@ export function createApp(siteId: string, branchOrRef: string) {
             fsPath.join(__dirname, './static/', 'fileset-does-not-exist.html')
           );
         return;
+      }
+
+      // Access control check for staging environments.
+      const isLive = ['main', 'master'].includes(requestBranchOrRef);
+      if (!isLive) {
+        if (!req.isAuthenticated || !req.isAuthenticated()) {
+          // @ts-ignore
+          req.session.returnTo = req.originalUrl || req.url;
+          return res.redirect(webui.Urls.LOGIN);
+        }
+        // TODO: Currently, universal auth is specified when the server is
+        // deployed. Instead, allow sites to specify auth settings in
+        // their local `fileset.yaml` configuration.
+        // @ts-ignore
+        if (!webui.isUserAllowed(req.user.emails[0].value)) {
+          nunjucks.configure(fsPath.join(__dirname, './static/'), {
+            autoescape: true,
+            express: app,
+          });
+          res.render('access-denied.njk', {
+            me: req.user,
+          });
+          return;
+        }
       }
 
       // Handle redirects.
@@ -183,6 +207,10 @@ export function createApp(siteId: string, branchOrRef: string) {
         console.log(`An error occurred while serving ${req.url} (${error})`);
       });
       server.on('proxyRes', (proxyRes, req, res) => {
+        // Avoid modifying response if headers already sent.
+        if (res.headersSent) {
+          return;
+        }
         delete proxyRes.headers['x-cloud-trace-context'];
         delete proxyRes.headers['x-goog-generation'];
         delete proxyRes.headers['x-goog-hash'];
