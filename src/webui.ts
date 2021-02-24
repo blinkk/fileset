@@ -2,6 +2,7 @@ import express = require('express');
 
 import * as api from './api';
 import * as fsPath from 'path';
+import * as nunjucks from 'nunjucks';
 import * as passport from 'passport';
 
 import {Strategy} from 'passport-google-oauth20';
@@ -20,6 +21,21 @@ const authOptions = {
   successReturnToOrRedirect: '/',
   failureRedirect: Urls.ERROR,
 };
+
+export function renderAccessDenied(
+  app: express.Application,
+  req: express.Request,
+  res: express.Response
+) {
+  nunjucks.configure(fsPath.join(__dirname, './static/'), {
+    autoescape: true,
+    express: app,
+  });
+  res.status(403);
+  res.render('access-denied.njk', {
+    me: req.user,
+  });
+}
 
 export function isUserAllowed(email: string) {
   const allowedOrganizations = (process.env.FILESET_ALLOWED_ORGANIZATIONS || '')
@@ -91,7 +107,8 @@ export function configure(app: express.Application) {
   app.post('/fileset/api/*', ensureLoggedIn(Urls.LOGIN), async (req, res) => {
     // @ts-ignore
     if (!isUserAllowed(req.user.emails[0].value)) {
-      return res.status(403);
+      renderAccessDenied(app, req, res);
+      return;
     }
     try {
       const apiHandler = new api.ApiHandler();
@@ -120,7 +137,8 @@ export function configure(app: express.Application) {
     async (req: express.Request, res: express.Response) => {
       // @ts-ignore
       if (!isUserAllowed(req.user.emails[0].value)) {
-        return res.status(403);
+        renderAccessDenied(app, req, res);
+        return;
       }
       return res.sendFile(fsPath.join(__dirname, './static/', 'webui.html'));
     }

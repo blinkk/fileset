@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as fsPath from 'path';
 import * as httpProxy from 'http-proxy';
 import * as manifest from './manifest';
-import * as nunjucks from 'nunjucks';
 import * as redirects from './redirects';
 import * as webui from './webui';
 
@@ -148,13 +147,7 @@ export function createApp(siteId: string, branchOrRef: string) {
         // their local `fileset.yaml` configuration.
         // @ts-ignore
         if (!webui.isUserAllowed(req.user.emails[0].value)) {
-          nunjucks.configure(fsPath.join(__dirname, './static/'), {
-            autoescape: true,
-            express: app,
-          });
-          res.render('access-denied.njk', {
-            me: req.user,
-          });
+          webui.renderAccessDenied(app, req, res);
           return;
         }
       }
