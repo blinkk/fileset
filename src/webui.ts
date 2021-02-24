@@ -1,12 +1,13 @@
 import express = require('express');
 
 import * as api from './api';
-import * as expressSession from 'express-session';
 import * as fsPath from 'path';
 import * as passport from 'passport';
 
 import {Strategy} from 'passport-google-oauth20';
 import {ensureLoggedIn} from 'connect-ensure-login';
+
+import CookieSession = require('cookie-session');
 
 export const Urls = {
   CALLBACK: '/fileset/oauth2callback',
@@ -68,11 +69,9 @@ export function configure(app: express.Application) {
   });
 
   app.use(
-    expressSession({
-      proxy: false, // Needed for GCS proxy.
-      secret: sessionSecret,
-      resave: true,
-      saveUninitialized: false,
+    CookieSession({
+      name: 'fileset.session',
+      keys: [sessionSecret],
     })
   );
   app.use(passport.initialize());
