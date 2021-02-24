@@ -60,6 +60,14 @@ export function configure(app: express.Application) {
     );
   }
 
+  let baseUrl = '';
+  if (process.env.FILESET_BASE_URL) {
+    if (process.env.FILESET_BASE_URL.startsWith('http')) {
+      baseUrl = process.env.FILESET_BASE_URL;
+    } else {
+      baseUrl = `https://${process.env.FILESET_BASE_URL}`;
+    }
+  }
   // Needed to enforce https with callback URL. https://stackoverflow.com/a/20848306
   app.enable('trust proxy');
   passport.use(
@@ -67,11 +75,7 @@ export function configure(app: express.Application) {
       {
         clientID: clientId,
         clientSecret: clientSecret,
-        callbackURL: `${
-          process.env.FILESET_BASE_URL
-            ? 'https://' + process.env.FILESET_BASE_URL
-            : ''
-        }${Urls.CALLBACK}`,
+        callbackURL: `${baseUrl}${Urls.CALLBACK}`,
       },
       (accessToken, refreshToken, profile, cb) => {
         return cb(undefined, profile);

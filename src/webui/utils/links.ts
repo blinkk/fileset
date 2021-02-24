@@ -15,8 +15,9 @@ export function createStagingLink(
   } else {
     prefix = branch;
   }
+  const sep = url.hostname.includes('appspot.com') ? '-dot-' : '.';
   if (siteId === 'default') {
-    return `${url.protocol}//${prefix}-dot-${url.host}${path || '/'}`;
+    return `${url.protocol}//${prefix}${sep}${url.host}${path || '/'}`;
   }
-  return `${url.protocol}//${siteId}-${prefix}-dot-${url.host}${path || '/'}`;
+  return `${url.protocol}//${siteId}-${prefix}${sep}${url.host}${path || '/'}`;
 }

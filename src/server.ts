@@ -140,7 +140,10 @@ export function createApp(siteId: string, branchOrRef: string) {
         if (!req.isAuthenticated || !req.isAuthenticated()) {
           // Include the full URL in the return URL in order to traverse
           // subdomains during the OAuth callback.
-          const returnUrl = `${req.protocol}://${req.hostname}${
+          const host = req.hostname.endsWith('localhost')
+            ? `${req.hostname}:${process.env.PORT || 8080}`
+            : req.hostname;
+          const returnUrl = `${req.protocol}://${host}${
             req.originalUrl || req.url
           }`;
           // @ts-ignore
