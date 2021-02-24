@@ -11,11 +11,7 @@ import {ensureLoggedIn} from 'connect-ensure-login';
 import CookieSession = require('cookie-session');
 
 export const Urls = {
-  CALLBACK: `${
-    process.env.FILESET_BASE_URL
-      ? 'https://' + process.env.FILESET_BASE_URL
-      : ''
-  }/fileset/oauth2callback`,
+  CALLBACK: '/fileset/oauth2callback',
   ERROR: '/fileset/error',
   LOGIN: '/fileset/login',
 };
@@ -71,7 +67,11 @@ export function configure(app: express.Application) {
       {
         clientID: clientId,
         clientSecret: clientSecret,
-        callbackURL: Urls.CALLBACK,
+        callbackURL: `${
+          process.env.FILESET_BASE_URL
+            ? 'https://' + process.env.FILESET_BASE_URL
+            : ''
+        }${Urls.CALLBACK}`,
       },
       (accessToken, refreshToken, profile, cb) => {
         return cb(undefined, profile);
