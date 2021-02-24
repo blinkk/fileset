@@ -146,9 +146,9 @@ export function createApp(siteId: string, branchOrRef: string) {
           const returnUrl = `${req.protocol}://${host}${
             req.originalUrl || req.url
           }`;
-          // @ts-ignore
-          req.session.returnTo = returnUrl;
-          return res.redirect(webui.Urls.LOGIN);
+          return res.redirect(
+            `${webui.Urls.LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`
+          );
         }
         // TODO: Currently, universal auth is specified when the server is
         // deployed. Instead, allow sites to specify auth settings in

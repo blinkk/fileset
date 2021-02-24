@@ -6,6 +6,7 @@ import * as nunjucks from 'nunjucks';
 import * as passport from 'passport';
 
 import {Strategy} from 'passport-google-oauth20';
+import {URL} from 'url';
 import {ensureLoggedIn} from 'connect-ensure-login';
 
 import CookieSession = require('cookie-session');
@@ -14,12 +15,6 @@ export const Urls = {
   CALLBACK: '/fileset/oauth2callback',
   ERROR: '/fileset/error',
   LOGIN: '/fileset/login',
-};
-
-const authOptions = {
-  scope: ['email', 'profile'],
-  successReturnToOrRedirect: '/',
-  failureRedirect: Urls.ERROR,
 };
 
 export function renderAccessDenied(
@@ -92,35 +87,73 @@ export function configure(app: express.Application) {
     cb(null, obj);
   });
 
-  // Share session cookie across custom staging domains, and appspot domains, so
-  // that requests to staging URLs are authenticated.
-  let domain = undefined;
-  if (
-    process.env.FILESET_BASE_URL &&
-    !process.env.FILESET_BASE_URL.includes('localhost')
-  ) {
-    domain =
-      '.' +
-      process.env.FILESET_BASE_URL.replace('https://', '').replace(
-        'http://',
-        ''
-      );
-    if (domain.includes('.appspot.com')) {
-      domain = '.appspot.com';
+  const outgoingReturnToMiddleware = (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const authOptions = {
+      scope: ['email', 'profile'],
+      successReturnToOrRedirect: '/',
+      failureRedirect: Urls.ERROR,
+      state: (req.query.returnUrl as string) || undefined,
+    };
+    passport.authenticate('google', authOptions)(req, res, next);
+  };
+
+  const incomingReturnToMiddleware = (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const host = req.hostname.endsWith('localhost')
+      ? `${req.hostname}:${process.env.PORT || 8080}`
+      : req.hostname;
+    let authOptions;
+    if (req.query.state) {
+      const currentUrl = new URL(`${req.protocol}://${host}${req.originalUrl}`);
+      const originalUrl = new URL(req.query.state as string);
+      // TODO: Verify possible state values. We shouldn't permit redirection to
+      // anything other than a subdomain of the current domain, or an App Engine
+      // wildcard-like subdomain.
+      // Short-circuit the OAuth flow and redirect to the staging URL's
+      // subdomain, which will resume the flow and pick it up. This allows us to
+      // have one canonical domain to act as the redirect URI from Google, and
+      // forward the OAuth callback parameters to all staging environment
+      // subdomains.
+      if (currentUrl.host !== originalUrl.host) {
+        currentUrl.host = originalUrl.host;
+        res.redirect(302, currentUrl.toString());
+        return;
+      }
+      const successRedirect = originalUrl.search
+        ? `${originalUrl.pathname}${originalUrl.search}`
+        : originalUrl.pathname;
+      authOptions = {
+        scope: ['email', 'profile'],
+        successRedirect: successRedirect,
+        failureRedirect: Urls.ERROR,
+      };
+    } else {
+      authOptions = {
+        scope: ['email', 'profile'],
+        successReturnToOrRedirect: '/',
+        failureRedirect: Urls.ERROR,
+      };
     }
-  }
+    passport.authenticate('google', authOptions)(req, res, next);
+  };
 
   app.use(
     CookieSession({
       name: 'fileset.session',
       keys: [sessionSecret],
-      domain: domain,
     })
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  app.get(Urls.LOGIN, passport.authenticate('google', authOptions));
-  app.get(Urls.CALLBACK, passport.authenticate('google', authOptions));
+  app.get(Urls.LOGIN, outgoingReturnToMiddleware);
+  app.get(Urls.CALLBACK, incomingReturnToMiddleware);
   app.get(Urls.ERROR, (req, res) => {
     res.send('Something went wrong with authentication.');
   });
