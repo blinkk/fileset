@@ -137,8 +137,6 @@ folder, the uploader will abort.
 5. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
    directory is now being served by the application server.
 
-TODO: Document Identity-Aware Proxy setup and CLI authentication.
-
 ## Uploader authentication
 
 You'll need to be authenticated to deploy files and upload the serving manifests.

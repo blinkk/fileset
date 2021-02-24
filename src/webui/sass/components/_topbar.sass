@@ -6,9 +6,32 @@
     border-bottom: 1px solid #dadce0
     margin-bottom: $spacing-40
 
+.TopBar__inner
+    display: flex
+    justify-content: space-between
+    width: 100%
+
 .TopBar__inner__logo
     +type-logo
 
 .TopBar__inner__logo a
     color: inherit
     text-decoration: none
+
+.TopBar__inner__user
+    display: flex
+    align-items: center
+
+.TopBar__inner__user__image
+    border-radius: 100%
+    height: 30px
+    line-height: 0
+    margin: -10px 10px -10px 0
+    overflow: hidden
+    width: 30px
+
+    img
+        width: 100%
+
+.TopBar__inner__user__details__email
+    +type-small

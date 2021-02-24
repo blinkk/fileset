@@ -2,6 +2,8 @@ import * as server from './server';
 
 import {SerializedManifest} from './manifest';
 
+import express = require('express');
+
 interface GetManifestRequest {
   site: string;
   refOrBranch: string;
@@ -19,18 +21,28 @@ interface ListManifestResponse {
   manifests: Array<SerializedManifest> | null;
 }
 
+interface UserMeRequest {}
+
+interface UserMeResponse {
+  me: any;
+}
+
 export class ApiHandler {
-  async handle(method: string, request: any) {
+  async handle(expressRequest: express.Request, method: string, request: any) {
     if (method === 'manifest.get') {
-      return this.manifestGet(request);
+      return this.manifestGet(expressRequest, request);
     }
     if (method === 'manifest.list') {
-      return this.manifestList(request);
+      return this.manifestList(expressRequest, request);
+    }
+    if (method === 'user.me') {
+      return this.userMe(expressRequest, request);
     }
     throw new Error(`unknown method: ${method}`);
   }
 
   async manifestList(
+    expressRequest: express.Request,
     request: ListManifestRequest
   ): Promise<ListManifestResponse> {
     const manifests = await server.listManifests(request.site);
@@ -46,7 +58,10 @@ export class ApiHandler {
     };
   }
 
-  async manifestGet(request: GetManifestRequest): Promise<GetManifestResponse> {
+  async manifestGet(
+    expressRequest: express.Request,
+    request: GetManifestRequest
+  ): Promise<GetManifestResponse> {
     const manifest = await server.getManifest(
       request.site,
       request.refOrBranch
@@ -58,6 +73,15 @@ export class ApiHandler {
     }
     return {
       manifest: this.serializeManifest(manifest),
+    };
+  }
+
+  async userMe(
+    expressRequest: express.Request,
+    request: UserMeRequest
+  ): Promise<UserMeResponse> {
+    return {
+      me: expressRequest.user,
     };
   }
 
