@@ -215,10 +215,15 @@ export function createApp(siteId: string, branchOrRef: string) {
         delete proxyRes.headers['x-goog-stored-content-length'];
         delete proxyRes.headers['x-guploader-response-body-transformations'];
         delete proxyRes.headers['x-guploader-uploadid'];
-        // This cannot be "private, max-age=0" as this kills perf.
-        // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
-        // The padded "0036" keeps the Content-Length identical with `3600`.
-        proxyRes.headers['cache-control'] = 'public, max-age=0036';
+        if (isLive) {
+          // This cannot be "private, max-age=0" as this kills perf.
+          // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
+          // The padded "0036" keeps the Content-Length identical with `3600`.
+          proxyRes.headers['cache-control'] = 'public, max-age=0036';
+        } else {
+          // Authenticated responses cannot be cached publicly.
+          proxyRes.headers['cache-control'] = 'private, max-age=0';
+        }
         proxyRes.headers['x-fileset-blob'] = blobKey;
         proxyRes.headers['x-fileset-ref'] = manifest.ref;
         proxyRes.headers['x-fileset-site'] = requestSiteId;
