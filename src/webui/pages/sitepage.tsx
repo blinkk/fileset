@@ -47,7 +47,9 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
   }
 
   filterManifests(manifests: Array<any>) {
-    return manifests;
+    return manifests.sort(
+      (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime()
+    );
   }
 
   renderLoading() {
