@@ -17,8 +17,6 @@ const auth = new GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/devstorage.read_only',
 });
 
-const server = httpProxy.createProxyServer();
-
 export const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
     datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
@@ -221,6 +219,7 @@ export function createApp(siteId: string) {
       const headers = await client.getRequestHeaders();
       req.headers = headers;
       req.url = updatedUrl;
+      const server = httpProxy.createProxyServer();
       server.web(req, res, {
         target: PROXY_BASE_URL,
         changeOrigin: true,
