@@ -123,9 +123,10 @@
 				<pre><code class="language-yaml"><span class="hljs-attr">service:</span> <span class="hljs-string">fileset</span>
 <span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span>
 <span class="hljs-attr">env_variables:</span>
-  <span class="hljs-attr">FILESET_SITE:</span> <span class="hljs-string">default</span>
-  <span class="hljs-attr">FILESET_LIVE_DOMAIN:</span> <span class="hljs-string">example.com</span>
-  <span class="hljs-attr">FILESET_STAGING_DOMAIN:</span> <span class="hljs-string">&#x27;{ref}.staging.example.com&#x27;</span></code></pre>
+  <span class="hljs-attr">FILESET_ALLOWED_ORGANIZATIONS:</span> <span class="hljs-string">&#x27;example1.com,example2.com&#x27;</span>
+  <span class="hljs-attr">FILESET_BASE_URL:</span> <span class="hljs-string">&#x27;staging.example.com&#x27;</span>
+  <span class="hljs-attr">FILESET_DEFAULT_BRANCH:</span> <span class="hljs-string">main</span>  <span class="hljs-comment"># Optional.</span>
+  <span class="hljs-attr">FILESET_SITE:</span> <span class="hljs-string">default</span>  <span class="hljs-comment"># Optional.</span></code></pre>
 				<ol start="4">
 					<li>Create a <code>Makefile</code> to help run setup commands.</li>
 				</ol>
@@ -187,7 +188,6 @@ make deploy</code></pre>
 					<li>That&#39;s it! Files have been uploaded to Google Cloud Storage and the uploaded
 					directory is now being served by the application server.</li>
 				</ol>
-				<p>TODO: Document Identity-Aware Proxy setup and CLI authentication.</p>
 				<a href="#uploader-authentication" id="uploader-authentication" style="color: inherit; text-decoration: none;">
 					<h2>Uploader authentication</h2>
 				</a>
@@ -322,6 +322,9 @@ fileset upload <span class="hljs-keyword">build</span></code></pre>
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/_api_.html">&quot;api&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/_commands_serve_.html">&quot;commands/serve&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -345,6 +348,18 @@ fileset upload <span class="hljs-keyword">build</span></code></pre>
 					<li class=" tsd-kind-module">
 						<a href="modules/_upload_.html">&quot;upload&quot;</a>
 					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_webui_.html">&quot;webui&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_webui_utils_formatters_.html">&quot;webui/utils/formatters&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_webui_utils_links_.html">&quot;webui/utils/links&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_webui_utils_rpc_.html">&quot;webui/utils/rpc&quot;</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
@@ -359,6 +374,7 @@ fileset upload <span class="hljs-keyword">build</span></code></pre>
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 			</ul>
