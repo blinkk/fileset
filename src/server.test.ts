@@ -3,6 +3,13 @@ import * as server from './server';
 import {ExecutionContext} from 'ava';
 import test from 'ava';
 
+test('Test parseHostnamePrefix', (t: ExecutionContext) => {
+  t.deepEqual(server.parseHostnamePrefix('0d60edf.localhost'), {
+    siteId: '',
+    branchOrRef: '0d60edf',
+  });
+});
+
 test('Test parseHostname', (t: ExecutionContext) => {
   // App Engine wildcard domain.
   t.deepEqual(
@@ -20,22 +27,40 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: 'refname',
     }
   );
-  // Custom live domain.
-  t.deepEqual(server.parseHostname('example.com', 'example', 'example.com'), {
-    siteId: 'example',
-    branchOrRef: 'main',
-  });
-  // Multiple live domains.
+  // Custom staging domain.
   t.deepEqual(
-    server.parseHostname('example.com', 'example', 'example.com,foo.com'),
+    server.parseHostname('example.com', 'example', 'https://example.com'),
     {
       siteId: 'example',
       branchOrRef: 'main',
     }
   );
-  // Some other domain.
-  t.deepEqual(server.parseHostname('something.com', 'example', 'example.com'), {
-    siteId: 'example',
-    branchOrRef: '',
-  });
+  // Custom staging domain.
+  t.deepEqual(
+    server.parseHostname('foo.example.com', 'example', 'https://example.com'),
+    {
+      siteId: 'example',
+      branchOrRef: 'foo',
+    }
+  );
+  // Custom staging domain with site and ref.
+  t.deepEqual(
+    server.parseHostname(
+      'foo-bar.example.com',
+      'example',
+      'https://example.com'
+    ),
+    {
+      siteId: 'foo',
+      branchOrRef: 'bar',
+    }
+  );
+
+  t.deepEqual(
+    server.parseHostname('0d60edf.localhost:8080', '', 'http://localhost:8080'),
+    {
+      siteId: 'default',
+      branchOrRef: '0d60edf',
+    }
+  );
 });

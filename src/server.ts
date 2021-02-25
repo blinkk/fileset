@@ -8,8 +8,9 @@ import * as webui from './webui';
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
+import {URL} from 'url';
 
-const URL = 'https://storage.googleapis.com';
+const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
 const datastore = new Datastore();
 const auth = new GoogleAuth({
@@ -65,39 +66,59 @@ export const listManifests = async (siteId: string) => {
   return null;
 };
 
+export function parseHostnamePrefix(prefix: string) {
+  const result = {
+    siteId: '',
+    branchOrRef: '',
+  };
+  const parts = prefix.split('-'); // Either <Site>-<Ref> or <Ref>.
+  if (parts.length > 1) {
+    // Format is: <Site>-<Ref>-dot-fileset.appspot.com
+    result.siteId = parts[0];
+    result.branchOrRef = parts[1].slice(0, 7);
+  } else {
+    // Format is: <Ref>-dot-fileset.appspot.com
+    result.branchOrRef = parts[0].slice(0, 7);
+  }
+  return result;
+}
+
 export function parseHostname(
   hostname: string,
   defaultSiteId?: string,
-  defaultLiveDomain?: string
+  stagingDomain?: string
 ) {
-  let siteId = defaultSiteId || 'default';
+  // Default site is "default" and default branch is "main".
+  let siteId = '';
   let branchOrRef = '';
-  if (defaultLiveDomain && defaultLiveDomain.split(',').includes(hostname)) {
-    // Hostname is the "live" or "prod" domain. Use the main branch.
-    branchOrRef = 'main';
-  } else if (hostname.includes('-dot-')) {
+  if (hostname.includes('-dot-')) {
     // Use "-dot-" as a sentinel for App Engine wildcard domains.
     const prefix = hostname.split('-dot-')[0];
-    const parts = prefix.split('-'); // Either <Site>-<Ref> or <Ref>.
-    if (parts.length > 1) {
-      // Format is: <Site>-<Ref>
-      siteId = parts[0];
-      branchOrRef = parts[1].slice(0, 7);
-    } else {
-      // Format is: <Ref>
-      siteId = 'default';
-      branchOrRef = parts[0].slice(0, 7);
+    const parsedPrefix = parseHostnamePrefix(prefix);
+    siteId = parsedPrefix.siteId;
+    branchOrRef = parsedPrefix.branchOrRef;
+  } else if (stagingDomain) {
+    const baseUrl = new URL(stagingDomain);
+    if (hostname.endsWith(baseUrl.hostname)) {
+      // Trim off base URL and dot (or dash).
+      const prefix = hostname
+        .replace('http://', '')
+        .replace('https://', '')
+        .slice(0, -baseUrl.hostname.length - 1);
+      // Prefix is either "<Site>-<Ref>" or "<Ref>".
+      const parsedPrefix = parseHostnamePrefix(prefix);
+      siteId = parsedPrefix.siteId;
+      branchOrRef = parsedPrefix.branchOrRef;
     }
   }
-  // TODO: Implement defaultStagingDomain (custom staging domain) support.
   return {
-    siteId: siteId,
-    branchOrRef: branchOrRef,
+    siteId: siteId || defaultSiteId || 'default',
+    branchOrRef: branchOrRef || 'main',
   };
 }
 
-export function createApp(siteId: string, branchOrRef: string) {
-  console.log(`Starting server for site: ${siteId} @ ${branchOrRef}`);
+export function createApp(siteId: string) {
+  console.log(`Starting server for site: ${siteId}`);
 
   const app = express();
   app.disable('x-powered-by');
@@ -107,12 +128,12 @@ export function createApp(siteId: string, branchOrRef: string) {
     const envFromHostname = parseHostname(
       req.hostname,
       process.env.FILESET_SITE,
-      process.env.FILESET_LIVE_DOMAIN
+      process.env.FILESET_BASE_URL
     );
     const requestSiteId = envFromHostname.siteId || siteId;
-    const requestBranchOrRef = envFromHostname.branchOrRef || branchOrRef;
+    const requestBranchOrRef = envFromHostname.branchOrRef;
 
-    if (req.params.debug) {
+    if (req.query.debug) {
       console.log(
         `Site: ${requestSiteId}, Ref: ${requestBranchOrRef}, Bucket: ${process.env.GOOGLE_CLOUD_PROJECT}`
       );
@@ -201,7 +222,7 @@ export function createApp(siteId: string, branchOrRef: string) {
       req.headers = headers;
       req.url = updatedUrl;
       server.web(req, res, {
-        target: URL,
+        target: PROXY_BASE_URL,
         changeOrigin: true,
         preserveHeaderKeyCase: true,
       });
