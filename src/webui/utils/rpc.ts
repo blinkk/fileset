@@ -21,7 +21,7 @@ export async function rpc(
       xhr.upload.addEventListener('progress', (e: ProgressEvent) => {
         if (e.lengthComputable) {
           const progress = Math.floor((e.loaded / e.total) * 100);
-          options.onProgress(progress);
+          (options.onProgress as Function)(progress);
         }
       });
     }

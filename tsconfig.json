@@ -1,6 +1,7 @@
 {
     "extends": "./node_modules/gts/tsconfig-google.json",
     "compilerOptions": {
+      "lib": ["dom"],
       "rootDir": ".",
       "outDir": "dist",
       "types": [
@@ -21,6 +22,7 @@
       ],
       "exclude": [
         "./src/*.test.ts",
+        "./src/**/*.tsx",
       ],
     }
   }
