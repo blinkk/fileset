@@ -205,11 +205,11 @@ async function finalize(
   // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
   if (manifest.site === 'default') {
     console.log(
-      `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
+      `Staged: https://${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
     );
   } else {
     console.log(
-      `Staged: https://${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
+      `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
     );
   }
 }
