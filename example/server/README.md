@@ -6,12 +6,9 @@ server. It only needs to be deployed once.
 ## Deployment
 
 ```bash
-# Create an App Engine app if one doesn't exist yet.
-gcloud app create --project=<AppId>
+# Set up application and roles.
+make project=<AppId> setup
 
-# Enable the Cloud Datastore API.
-gcloud services enable datastore.googleapis.com --project=<AppId>
-
-# Deploy the app.
-gcloud app deploy --project=<AppId> app.yaml
+# Deploy server.
+make project=<AppId> deploy
 ```

@@ -1,6 +1,6 @@
-^build/
 .npmrc
-Makefile
+/Makefile
+^build/
 dist/
 docs/
 key.json
