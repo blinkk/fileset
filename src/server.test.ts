@@ -55,9 +55,8 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: 'bar',
     }
   );
-
   t.deepEqual(
-    server.parseHostname('0d60edf.localhost:8080', '', 'http://localhost:8080'),
+    server.parseHostname('0d60edf.localhost', '', 'http://localhost:8080'),
     {
       siteId: 'default',
       branchOrRef: '0d60edf',
