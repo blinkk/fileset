@@ -12,6 +12,7 @@ async function main() {
     .description('Uploads a directory to cloud storage')
     .option('-s, --site <site>', 'site', '')
     .option('-r, --ref <ref>', 'ref', '')
+    .option('-b, --branch <branch>', 'branch', '')
     .option('-f, --force', 'force', false)
     .option('-t, --ttl <ttl>', 'ttl', undefined)
     .action(async (path, options) => {
