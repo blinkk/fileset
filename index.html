@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for @blinkk/fileset">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -38,8 +39,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -49,11 +48,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>@blinkk/fileset</h1>
 		</div>
 	</div>
@@ -109,29 +103,32 @@
 						run the server.</p>
 					</li>
 				</ol>
-				<pre><code class="language-json">{
-  <span class="hljs-attr">&quot;scripts&quot;</span>: {
-    <span class="hljs-attr">&quot;start&quot;</span>: <span class="hljs-string">&quot;fileset serve&quot;</span>
-  },
-  <span class="hljs-attr">&quot;dependencies&quot;</span>: {
-    <span class="hljs-attr">&quot;@blinkk/fileset&quot;</span>: <span class="hljs-string">&quot;^0.1.0&quot;</span>
-  }
-}</code></pre>
+				<pre><code class="language-json"><span style="color: #000000">{</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;scripts&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;start&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;fileset serve&quot;</span>
+<span style="color: #000000">  },</span>
+<span style="color: #000000">  </span><span style="color: #0451A5">&quot;dependencies&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;@blinkk/fileset&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;^0.1.0&quot;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
 				<ol start="3">
 					<li>Create an <code>app.yaml</code> for Google App Engine deployment.</li>
 				</ol>
-				<pre><code class="language-yaml"><span class="hljs-attr">service:</span> <span class="hljs-string">fileset</span>
-<span class="hljs-attr">runtime:</span> <span class="hljs-string">nodejs10</span>
-<span class="hljs-attr">env_variables:</span>
-  <span class="hljs-attr">FILESET_ALLOWED_ORGANIZATIONS:</span> <span class="hljs-string">&#x27;example1.com,example2.com&#x27;</span>
-  <span class="hljs-attr">FILESET_BASE_URL:</span> <span class="hljs-string">&#x27;staging.example.com&#x27;</span>
-  <span class="hljs-attr">FILESET_DEFAULT_BRANCH:</span> <span class="hljs-string">main</span>  <span class="hljs-comment"># Optional.</span>
-  <span class="hljs-attr">FILESET_SITE:</span> <span class="hljs-string">default</span>  <span class="hljs-comment"># Optional.</span></code></pre>
+				<pre><code class="language-yaml"><span style="color: #800000">service</span><span style="color: #000000">: </span><span style="color: #0000FF">fileset</span>
+<span style="color: #800000">runtime</span><span style="color: #000000">: </span><span style="color: #0000FF">nodejs10</span>
+<span style="color: #800000">env_variables</span><span style="color: #000000">:</span>
+<span style="color: #000000">  </span><span style="color: #800000">FILESET_ALLOWED_ORGANIZATIONS</span><span style="color: #000000">: </span><span style="color: #0000FF">&#039;example1.com,example2.com&#039;</span>
+<span style="color: #000000">  </span><span style="color: #800000">FILESET_BASE_URL</span><span style="color: #000000">: </span><span style="color: #0000FF">&#039;staging.example.com&#039;</span>
+<span style="color: #000000">  </span><span style="color: #800000">FILESET_DEFAULT_BRANCH</span><span style="color: #000000">: </span><span style="color: #0000FF">main</span><span style="color: #000000">  </span><span style="color: #008000"># Optional.</span>
+<span style="color: #000000">  </span><span style="color: #800000">FILESET_SITE</span><span style="color: #000000">: </span><span style="color: #0000FF">default</span><span style="color: #000000">  </span><span style="color: #008000"># Optional.</span>
+</code></pre>
 				<ol start="4">
 					<li>Setup and deploy the app using the provided <a href="./example/server/Makefile">Makefile</a>.</li>
 				</ol>
-				<pre><code class="language-bash">make project=&lt;AppId&gt; setup
-make project=&lt;AppId&gt; deploy</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">make project=&lt;AppId&gt; setup</span>
+<span style="color: #000000">make project=&lt;AppId&gt; deploy</span>
+</code></pre>
 				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
 					<h3>Deployment setup</h3>
 				</a>
@@ -141,24 +138,25 @@ make project=&lt;AppId&gt; deploy</code></pre>
 				<ol>
 					<li>Create a <code>fileset.yaml</code> configuration file.</li>
 				</ol>
-				<pre><code class="language-yaml"><span class="hljs-comment"># Your Google Cloud project&#x27;s ID (required).</span>
-<span class="hljs-attr">google_cloud_project:</span> <span class="hljs-string">&lt;AppId&gt;</span>
+				<pre><code class="language-yaml"><span style="color: #008000"># Your Google Cloud project&#039;s ID (required).</span>
+<span style="color: #800000">google_cloud_project</span><span style="color: #000000">: </span><span style="color: #0000FF">&lt;AppId&gt;</span>
 
-<span class="hljs-comment"># Your site ID (optional). If blank, `default` will be used.</span>
-<span class="hljs-attr">site:</span> <span class="hljs-string">&lt;SiteId&gt;</span>
+<span style="color: #008000"># Your site ID (optional). If blank, `default` will be used.</span>
+<span style="color: #800000">site</span><span style="color: #000000">: </span><span style="color: #0000FF">&lt;SiteId&gt;</span>
 
-<span class="hljs-comment"># Specify a launch schedule. The schedule maps timestamps to branches or commit</span>
-<span class="hljs-comment"># shas. If blank, `main` is used for the default deployment.</span>
-<span class="hljs-attr">schedule:</span>
-  <span class="hljs-attr">default:</span> <span class="hljs-string">main</span>
+<span style="color: #008000"># Specify a launch schedule. The schedule maps timestamps to branches or commit</span>
+<span style="color: #008000"># shas. If blank, `main` is used for the default deployment.</span>
+<span style="color: #800000">schedule</span><span style="color: #000000">:</span>
+<span style="color: #000000">  </span><span style="color: #800000">default</span><span style="color: #000000">: </span><span style="color: #0000FF">main</span>
 
-<span class="hljs-attr">redirects:</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">from:</span> <span class="hljs-string">/foo</span>
-  <span class="hljs-attr">to:</span> <span class="hljs-string">/bar</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">from:</span> <span class="hljs-string">/intl/:locale/</span>
-  <span class="hljs-attr">to:</span> <span class="hljs-string">/$locale/</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">from:</span> <span class="hljs-string">/intl/:locale/*wildcard</span>
-  <span class="hljs-attr">to:</span> <span class="hljs-string">/$locale/$wildcard</span></code></pre>
+<span style="color: #800000">redirects</span><span style="color: #000000">:</span>
+<span style="color: #000000">- </span><span style="color: #800000">from</span><span style="color: #000000">: </span><span style="color: #0000FF">/foo</span>
+<span style="color: #000000">  </span><span style="color: #800000">to</span><span style="color: #000000">: </span><span style="color: #0000FF">/bar</span>
+<span style="color: #000000">- </span><span style="color: #800000">from</span><span style="color: #000000">: </span><span style="color: #0000FF">/intl/:locale/</span>
+<span style="color: #000000">  </span><span style="color: #800000">to</span><span style="color: #000000">: </span><span style="color: #0000FF">/$locale/</span>
+<span style="color: #000000">- </span><span style="color: #800000">from</span><span style="color: #000000">: </span><span style="color: #0000FF">/intl/:locale/*wildcard</span>
+<span style="color: #000000">  </span><span style="color: #800000">to</span><span style="color: #000000">: </span><span style="color: #0000FF">/$locale/$wildcard</span>
+</code></pre>
 				<ol start="2">
 					<li>Generate your files.</li>
 				</ol>
@@ -168,7 +166,8 @@ make project=&lt;AppId&gt; deploy</code></pre>
 				<ol start="4">
 					<li>Upload your files.</li>
 				</ol>
-				<pre><code class="language-bash">fileset upload ./build</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">fileset upload ./build</span>
+</code></pre>
 				<p>NOTE: The uploader will look for <code>fileset.yaml</code> within the <code>./build</code> directory
 					first. If it&#39;s not found, it will look up in the parent folder for a
 					<code>fileset.yaml</code> file. If the config file doesn&#39;t exist in the <code>./build</code> or parent
@@ -187,7 +186,8 @@ make project=&lt;AppId&gt; deploy</code></pre>
 				<p>If you are testing locally, your user account can be used to authenticate to
 					Cloud Datastore and Cloud Storage. Simply run the below command to create
 				credentials used for authentication:</p>
-				<pre><code class="language-bash">gcloud auth application-default login</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">gcloud auth application-default login</span>
+</code></pre>
 				<a href="#continuous-deployment--service-account-authentication" id="continuous-deployment--service-account-authentication" style="color: inherit; text-decoration: none;">
 					<h3>Continuous deployment / service account authentication</h3>
 				</a>
@@ -202,14 +202,16 @@ make project=&lt;AppId&gt; deploy</code></pre>
 					Build, your project&#39;s Cloud Build service account
 				(<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is used.</p>
 				<p>To determine your project&#39;s project number:</p>
-				<pre><code class="language-bash">gcloud projects describe &lt;AppId&gt;</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">gcloud projects describe &lt;AppId&gt;</span>
+</code></pre>
 				<p><strong>Application default service account</strong>: When the command is invoked locally
 					(i.e. for testing or for manual uploads), you&#39;ll likely want to use your App
 					Engine app&#39;s default service account (<code>&lt;AppId&gt;@appspot.gserviceaccount.com</code>).
 				You can download a service account key by running:</p>
-				<pre><code class="language-bash">gcloud iam service-accounts keys create \
-  key.json \
-  --iam-account &lt;AppId&gt;@appspot.gserviceaccount.com</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">gcloud iam service-accounts keys create \</span>
+<span style="color: #000000">  key.json \</span>
+<span style="color: #000000">  --iam-account &lt;AppId&gt;@appspot.gserviceaccount.com</span>
+</code></pre>
 				<p>NOTE: This will download a <code>key.json</code> to your current directory. Avoid
 					committing this to your Git repository. You&#39;ll want to add <code>key.json</code> to
 				<code>.gitignore</code>.</p>
@@ -231,7 +233,8 @@ make project=&lt;AppId&gt; deploy</code></pre>
 					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
 				the <code>gcloud</code> CLI.</p>
 				<p>From the provided <a href="./example/server/Makefile">Makefile</a>.</p>
-				<pre><code class="language-bash">make project=&lt;AppId&gt; setup</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">make project=&lt;AppId&gt; setup</span>
+</code></pre>
 				<a href="#environments" id="environments" style="color: inherit; text-decoration: none;">
 					<h2>Environments</h2>
 				</a>
@@ -240,22 +243,24 @@ make project=&lt;AppId&gt; deploy</code></pre>
 					Git branch is determined by inspecting the local Git environment when the
 				<code>upload</code> command is invoked.</p>
 				<p>The best way to understand how this works is by following the examples below:</p>
-				<pre><code class="language-bash"><span class="hljs-comment"># main branch</span>
-<span class="hljs-comment"># ✓ public</span>
-<span class="hljs-comment"># ✓ production URL</span>
-<span class="hljs-comment"># ✓ also available from staging URL (restricted)</span>
+				<pre><code class="language-bash"><span style="color: #008000"># main branch</span>
+<span style="color: #008000"># ✓ public</span>
+<span style="color: #008000"># ✓ production URL</span>
+<span style="color: #008000"># ✓ also available from staging URL (restricted)</span>
 
-(main) $ fileset upload build
-...
- Public URL: https://appid.appspot.com
-Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com</code></pre>
-				<pre><code class="language-bash"><span class="hljs-comment"># staging branch</span>
-<span class="hljs-comment"># ✓ not public; restricted by Identity-Aware Proxy</span>
-<span class="hljs-comment"># ✓ staging URL only (restricted)</span>
+<span style="color: #000000">(main) $ fileset upload build</span>
+<span style="color: #000000">...</span>
+<span style="color: #000000"> Public URL: https://appid.appspot.com</span>
+<span style="color: #000000">Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com</span>
+</code></pre>
+				<pre><code class="language-bash"><span style="color: #008000"># staging branch</span>
+<span style="color: #008000"># ✓ not public; restricted by Identity-Aware Proxy</span>
+<span style="color: #008000"># ✓ staging URL only (restricted)</span>
 
-(staging) $ fileset upload build
-...
-Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com</code></pre>
+<span style="color: #000000">(staging) $ fileset upload build</span>
+<span style="color: #000000">...</span>
+<span style="color: #000000">Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com</span>
+</code></pre>
 				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
 					<h2>Testing</h2>
 				</a>
@@ -291,59 +296,49 @@ Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com</code></pre>
 					<h3>Usage within Makefile</h3>
 				</a>
 				<p>The absolute path to the <code>fileset</code> executable must be specified to invoke the CLI.</p>
-				<pre><code>.<span class="hljs-regexp">/node_modules/</span>.bin/fileset upload build</code></pre>
+				<pre><code><span style="color: #000000">.</span><span style="color: #811F3F">/node_modules/</span><span style="color: #000000">.</span><span style="color: #001080">bin</span><span style="color: #000000">/</span><span style="color: #001080">fileset</span><span style="color: #000000"> </span><span style="color: #001080">upload</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
+</code></pre>
 				<a href="#usage-with-growdev" id="usage-with-growdev" style="color: inherit; text-decoration: none;">
 					<h3>Usage with Grow.dev</h3>
 				</a>
 				<p>First, build the site to the <code>build</code> directory. Then, upload the directory to Fileset.</p>
-				<pre><code>grow <span class="hljs-keyword">build</span> --deployment=prod
-fileset upload <span class="hljs-keyword">build</span></code></pre>
+				<pre><code><span style="color: #001080">grow</span><span style="color: #000000"> </span><span style="color: #001080">build</span><span style="color: #000000"> --</span><span style="color: #001080">deployment</span><span style="color: #000000">=</span><span style="color: #001080">prod</span>
+<span style="color: #001080">fileset</span><span style="color: #000000"> </span><span style="color: #001080">upload</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
+</code></pre>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_api_.html">&quot;api&quot;</a>
+						<a href="modules/api.html">api</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_serve_.html">&quot;commands/serve&quot;</a>
+						<a href="modules/commands_serve.html">commands/serve</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_commands_upload_.html">&quot;commands/upload&quot;</a>
+						<a href="modules/commands_upload.html">commands/upload</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_gitdata_.html">&quot;gitdata&quot;</a>
+						<a href="modules/gitdata.html">gitdata</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_index_.html">&quot;index&quot;</a>
+						<a href="modules/manifest.html">manifest</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_manifest_.html">&quot;manifest&quot;</a>
+						<a href="modules/redirects.html">redirects</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_redirects_.html">&quot;redirects&quot;</a>
+						<a href="modules/server.html">server</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_server_.html">&quot;server&quot;</a>
+						<a href="modules/upload.html">upload</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/_upload_.html">&quot;upload&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_webui_.html">&quot;webui&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_webui_utils_formatters_.html">&quot;webui/utils/formatters&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_webui_utils_links_.html">&quot;webui/utils/links&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_webui_utils_rpc_.html">&quot;webui/utils/rpc&quot;</a>
+						<a href="modules/webui.html">webui</a>
 					</li>
 				</ul>
 			</nav>
@@ -359,7 +354,6 @@ fileset upload <span class="hljs-keyword">build</span></code></pre>
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 			</ul>

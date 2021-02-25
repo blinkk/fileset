@@ -3,10 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>&quot;server&quot; | @blinkk/fileset</title>
+	<title>server | @blinkk/fileset</title>
 	<meta name="description" content="Documentation for @blinkk/fileset">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -38,8 +39,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -51,13 +50,13 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../modules.html">@blinkk/fileset</a>
 				</li>
 				<li>
-					<a href="_server_.html">&quot;server&quot;</a>
+					<a href="server.html">server</a>
 				</li>
 			</ul>
-			<h1>Module &quot;server&quot;</h1>
+			<h1>Module server</h1>
 		</div>
 	</div>
 </header>
@@ -68,69 +67,17 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Variables</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_server_.html#bucket" class="tsd-kind-icon">BUCKET</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_server_.html#proxy_base_url" class="tsd-kind-icon">PROXY_<wbr>BASE_<wbr>URL</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_server_.html#auth" class="tsd-kind-icon">auth</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported"><a href="_server_.html#datastore" class="tsd-kind-icon">datastore</a></li>
-							</ul>
-						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_server_.html#createapp" class="tsd-kind-icon">create<wbr>App</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_server_.html#getmanifest" class="tsd-kind-icon">get<wbr>Manifest</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_server_.html#listmanifests" class="tsd-kind-icon">list<wbr>Manifests</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_server_.html#parsehostname" class="tsd-kind-icon">parse<wbr>Hostname</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_server_.html#parsehostnameprefix" class="tsd-kind-icon">parse<wbr>Hostname<wbr>Prefix</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="server.html#createapp" class="tsd-kind-icon">create<wbr>App</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="server.html#getmanifest" class="tsd-kind-icon">get<wbr>Manifest</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="server.html#listmanifests" class="tsd-kind-icon">list<wbr>Manifests</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="server.html#parsehostname" class="tsd-kind-icon">parse<wbr>Hostname</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="server.html#parsehostnameprefix" class="tsd-kind-icon">parse<wbr>Hostname<wbr>Prefix</a></li>
 							</ul>
 						</section>
 					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Variables</h2>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="bucket" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> BUCKET</h3>
-					<div class="tsd-signature tsd-kind-icon">BUCKET<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x60;${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com&#x60;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L14">server.ts:14</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="proxy_base_url" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> PROXY_<wbr>BASE_<wbr>URL</h3>
-					<div class="tsd-signature tsd-kind-icon">PROXY_<wbr>BASE_<wbr>URL<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"https://storage.googleapis.com"</span><span class="tsd-signature-symbol"> = &quot;https://storage.googleapis.com&quot;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L13">server.ts:13</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="auth" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> auth</h3>
-					<div class="tsd-signature tsd-kind-icon">auth<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">GoogleAuth</span><span class="tsd-signature-symbol"> = new GoogleAuth({scopes: &#x27;https://www.googleapis.com/auth/devstorage.read_only&#x27;,})</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L16">server.ts:16</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-					<a name="datastore" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> datastore</h3>
-					<div class="tsd-signature tsd-kind-icon">datastore<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Datastore</span><span class="tsd-signature-symbol"> = new Datastore()</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L15">server.ts:15</a></li>
-						</ul>
-					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -145,7 +92,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L118">server.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/759d86c/src/server.ts#L118">server.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -168,7 +115,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L20">server.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/759d86c/src/server.ts#L20">server.ts:20</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -194,7 +141,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L56">server.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/759d86c/src/server.ts#L56">server.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -211,13 +158,13 @@
 					<a name="parsehostname" class="tsd-anchor"></a>
 					<h3>parse<wbr>Hostname</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">parse<wbr>Hostname<span class="tsd-signature-symbol">(</span>hostname<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, defaultSiteId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, stagingDomain<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>branchOrRef<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>siteId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Hostname<span class="tsd-signature-symbol">(</span>hostname<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, defaultSiteId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, stagingDomain<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>branchOrRef<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>siteId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L84">server.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/759d86c/src/server.ts#L84">server.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -226,10 +173,10 @@
 									<h5>hostname: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> defaultSiteId: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> defaultSiteId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> stagingDomain: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> stagingDomain: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>branchOrRef<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>siteId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h4>
@@ -254,7 +201,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/75ec3cb/src/server.ts#L67">server.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/blinkkcode/fileset/blob/759d86c/src/server.ts#L67">server.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -280,78 +227,54 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_api_.html">&quot;api&quot;</a>
+						<a href="api.html">api</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_commands_serve_.html">&quot;commands/serve&quot;</a>
+						<a href="commands_serve.html">commands/serve</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_commands_upload_.html">&quot;commands/upload&quot;</a>
+						<a href="commands_upload.html">commands/upload</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_gitdata_.html">&quot;gitdata&quot;</a>
+						<a href="gitdata.html">gitdata</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_index_.html">&quot;index&quot;</a>
+						<a href="manifest.html">manifest</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_manifest_.html">&quot;manifest&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="_redirects_.html">&quot;redirects&quot;</a>
+						<a href="redirects.html">redirects</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="_server_.html">&quot;server&quot;</a>
+						<a href="server.html">server</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_upload_.html">&quot;upload&quot;</a>
+						<a href="upload.html">upload</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="_webui_.html">&quot;webui&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="_webui_utils_formatters_.html">&quot;webui/utils/formatters&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="_webui_utils_links_.html">&quot;webui/utils/links&quot;</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="_webui_utils_rpc_.html">&quot;webui/utils/rpc&quot;</a>
+						<a href="webui.html">webui</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_server_.html#bucket" class="tsd-kind-icon">BUCKET</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_server_.html#proxy_base_url" class="tsd-kind-icon">PROXY_<wbr>BASE_<wbr>URL</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_server_.html#auth" class="tsd-kind-icon">auth</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_server_.html#datastore" class="tsd-kind-icon">datastore</a>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="server.html#createapp" class="tsd-kind-icon">create<wbr>App</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_server_.html#createapp" class="tsd-kind-icon">create<wbr>App</a>
+						<a href="server.html#getmanifest" class="tsd-kind-icon">get<wbr>Manifest</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_server_.html#getmanifest" class="tsd-kind-icon">get<wbr>Manifest</a>
+						<a href="server.html#listmanifests" class="tsd-kind-icon">list<wbr>Manifests</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_server_.html#listmanifests" class="tsd-kind-icon">list<wbr>Manifests</a>
+						<a href="server.html#parsehostname" class="tsd-kind-icon">parse<wbr>Hostname</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_server_.html#parsehostname" class="tsd-kind-icon">parse<wbr>Hostname</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="_server_.html#parsehostnameprefix" class="tsd-kind-icon">parse<wbr>Hostname<wbr>Prefix</a>
+						<a href="server.html#parsehostnameprefix" class="tsd-kind-icon">parse<wbr>Hostname<wbr>Prefix</a>
 					</li>
 				</ul>
 			</nav>
@@ -363,7 +286,6 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 			</ul>
