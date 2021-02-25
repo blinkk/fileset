@@ -27,6 +27,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: 'refname',
     }
   );
+  // App Engine wildcard domain, no sitename or refname provided.
+  t.deepEqual(server.parseHostname('fileset2-dot-appid.appspot.com'), {
+    siteId: 'default',
+    branchOrRef: 'main',
+  });
   // Custom staging domain.
   t.deepEqual(
     server.parseHostname('example.com', 'example', 'https://example.com'),

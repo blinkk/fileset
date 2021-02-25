@@ -86,11 +86,15 @@ export function parseHostname(
   defaultSiteId?: string,
   stagingDomain?: string
 ) {
-  // Default site is "default" and default branch is "main".
   let siteId = '';
   let branchOrRef = '';
-  if (hostname.includes('-dot-')) {
-    // Use "-dot-" as a sentinel for App Engine wildcard domains.
+  // If there are two occurances of "-dot-", treat domain as an App Engine
+  // wildcard domain. One occurance of "-dot-" is treated as a fall back to the
+  // defaults.
+  if (
+    (hostname.match(/-dot-/g) || []).length > 1 &&
+    hostname.includes('-dot-')
+  ) {
     const prefix = hostname.split('-dot-')[0];
     const parsedPrefix = parseHostnamePrefix(prefix);
     siteId = parsedPrefix.siteId;
