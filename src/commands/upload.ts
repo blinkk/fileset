@@ -64,7 +64,7 @@ export class UploadCommand {
     }
 
     const manifestObj = new manifest.Manifest(
-      site as string,
+      (site as string) || 'default',
       this.options.ref || gitData.ref,
       this.options.branch || gitData.branch || ''
     );
