@@ -16,10 +16,10 @@
       "test/**/*.ts"
     ],
     "typedocOptions": {
-      "excludeExternals": true,
-      "src": [
-        "./src/**/*.ts"
+      "entryPoints": [
+        "./src/",
       ],
+      "excludeExternals": true,
       "exclude": [
         "./src/*.test.ts",
         "./src/**/*.tsx",
