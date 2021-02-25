@@ -69,24 +69,11 @@ env_variables:
   FILESET_SITE: default  # Optional.
 ```
 
-4. Create a `Makefile` to help run setup commands.
-
-```make
-project := <AppId>  # Replace with your App ID.
-
-setup:
-	gcloud app create --project=$(project)
-	gcloud services enable datastore.googleapis.com --project=$(project)
-
-deploy:
-	gcloud app deploy --project=$(project) app.yaml
-```
-
-5. Deploy the app.
+4. Setup and deploy the app using the provided [Makefile](./example/server/Makefile).
 
 ```bash
-make setup
-make deploy
+make project=<AppId> setup
+make project=<AppId> deploy
 ```
 
 ### Deployment setup
@@ -203,16 +190,14 @@ default.
 If using the Cloud Build service account (or any other service account), you'll
 need to add the above two permissions to the account. That can be done via the
 IAM page (`https://console.cloud.google.com/access/iam?project=<AppId>`) or via
-the `gcloud` CLI:
+the `gcloud` CLI.
 
+From the provided [Makefile](./example/server/Makefile).
+
+```bash
+make project=<AppId> setup
 ```
-for role in datastore.owner storage.objectAdmin g; do \
-  gcloud projects add-iam-policy-binding \
-      <AppId>
-      --member=serviceAccount:<ProjectNumber>@cloudbuild.gserviceaccount.com \
-      --role=roles/$role \
-; done
-```
+
 ## Environments
 
 Fileset uses Git branches to determine whether files should be in production
@@ -231,7 +216,7 @@ The best way to understand how this works is by following the examples below:
 (main) $ fileset upload build
 ...
  Public URL: https://appid.appspot.com
-Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com
+Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com
 ```
 
 ```bash
@@ -241,7 +226,7 @@ Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com
 
 (staging) $ fileset upload build
 ...
-Staging URL: https://default-4fb48ce-dot-fileset-dot-appid.appspot.com
+Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com
 ```
 
 ## Testing
