@@ -63,8 +63,10 @@ NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
 service: fileset
 runtime: nodejs10
 env_variables:
-  FILESET_SITE: default
-  FILESET_LIVE_DOMAIN: example.com
+  FILESET_ALLOWED_ORGANIZATIONS: 'example1.com,example2.com'
+  FILESET_BASE_URL: 'staging.example.com'
+  FILESET_DEFAULT_BRANCH: main  # Optional.
+  FILESET_SITE: default  # Optional.
 ```
 
 4. Create a `Makefile` to help run setup commands.

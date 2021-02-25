@@ -111,7 +111,7 @@ export function parseHostname(
   }
   return {
     siteId: siteId || defaultSiteId || 'default',
-    branchOrRef: branchOrRef || 'main',
+    branchOrRef: branchOrRef || process.env.FILESET_DEFAULT_BRANCH || 'main',
   };
 }
 

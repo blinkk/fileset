@@ -2,8 +2,8 @@ service: fileset
 runtime: nodejs10
 env_variables:
   FILESET_ALLOWED_ORGANIZATIONS: 'example1.com,example2.com'
-  FILESET_BASE_URL: 'fileset-dot-appid.uc.r.appspot.com'
-  FILESET_LIVE_DOMAIN: example.com
+  FILESET_BASE_URL: 'staging.example.com'
+  FILESET_DEFAULT_BRANCH: main
   FILESET_SITE: default
 includes:
 - secrets.yaml
