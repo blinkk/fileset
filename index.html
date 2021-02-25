@@ -128,21 +128,10 @@
   <span class="hljs-attr">FILESET_DEFAULT_BRANCH:</span> <span class="hljs-string">main</span>  <span class="hljs-comment"># Optional.</span>
   <span class="hljs-attr">FILESET_SITE:</span> <span class="hljs-string">default</span>  <span class="hljs-comment"># Optional.</span></code></pre>
 				<ol start="4">
-					<li>Create a <code>Makefile</code> to help run setup commands.</li>
+					<li>Setup and deploy the app using the provided <a href="./example/server/Makefile">Makefile</a>.</li>
 				</ol>
-				<pre><code class="language-make">project := &lt;AppId&gt;  <span class="hljs-comment"># Replace with your App ID.</span>
-
-<span class="hljs-section">setup:</span>
-    gcloud app create --project=<span class="hljs-variable">$(project)</span>
-    gcloud services enable datastore.googleapis.com --project=<span class="hljs-variable">$(project)</span>
-
-<span class="hljs-section">deploy:</span>
-    gcloud app deploy --project=<span class="hljs-variable">$(project)</span> app.yaml</code></pre>
-				<ol start="5">
-					<li>Deploy the app.</li>
-				</ol>
-				<pre><code class="language-bash">make setup
-make deploy</code></pre>
+				<pre><code class="language-bash">make project=&lt;AppId&gt; setup
+make project=&lt;AppId&gt; deploy</code></pre>
 				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
 					<h3>Deployment setup</h3>
 				</a>
@@ -240,13 +229,9 @@ make deploy</code></pre>
 				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
 					need to add the above two permissions to the account. That can be done via the
 					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
-				the <code>gcloud</code> CLI:</p>
-				<pre><code>for role in datastore.owner storage.objectAdmin g; do \
-  gcloud projects<span class="hljs-built_in"> add-iam-policy-binding </span>\
-      &lt;AppId&gt;
-      --member=serviceAccount:&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com \
-      --role=roles/$role \
-; done</code></pre>
+				the <code>gcloud</code> CLI.</p>
+				<p>From the provided <a href="./example/server/Makefile">Makefile</a>.</p>
+				<pre><code class="language-bash">make project=&lt;AppId&gt; setup</code></pre>
 				<a href="#environments" id="environments" style="color: inherit; text-decoration: none;">
 					<h2>Environments</h2>
 				</a>
@@ -263,14 +248,14 @@ make deploy</code></pre>
 (main) $ fileset upload build
 ...
  Public URL: https://appid.appspot.com
-Staging URL: https://default-f3a9abb-dot-fileset-dot-appid.appspot.com</code></pre>
+Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com</code></pre>
 				<pre><code class="language-bash"><span class="hljs-comment"># staging branch</span>
 <span class="hljs-comment"># ✓ not public; restricted by Identity-Aware Proxy</span>
 <span class="hljs-comment"># ✓ staging URL only (restricted)</span>
 
 (staging) $ fileset upload build
 ...
-Staging URL: https://default-4fb48ce-dot-fileset-dot-appid.appspot.com</code></pre>
+Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com</code></pre>
 				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
 					<h2>Testing</h2>
 				</a>
