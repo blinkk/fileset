@@ -117,11 +117,15 @@ export function parseHostname(
 
 export function createApp(siteId: string) {
   console.log(`Starting server for site: ${siteId}`);
+  const webUiEnabled = webui.isEnabled();
 
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json());
-  webui.configure(app);
+  // If the webui isn't enabled, serve live filesets only.
+  if (webUiEnabled) {
+    webui.configure(app);
+  }
   app.all('/*', async (req: express.Request, res: express.Response) => {
     const envFromHostname = parseHostname(
       req.hostname,
@@ -154,8 +158,15 @@ export function createApp(siteId: string) {
       }
 
       // Access control check for staging environments.
+      // TODO: Make the `isLive` check work with scheduled branches.
       const isLive = ['main', 'master'].includes(requestBranchOrRef);
       if (!isLive) {
+        // If the webui isn't enabled, only live filesets are served. All other
+        // paths are disabled.
+        if (!webUiEnabled) {
+          webui.renderAccessDenied(app, req, res);
+          return;
+        }
         if (!req.isAuthenticated || !req.isAuthenticated()) {
           // Include the full URL in the return URL in order to traverse
           // subdomains during the OAuth callback.

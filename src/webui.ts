@@ -32,6 +32,23 @@ export function renderAccessDenied(
   });
 }
 
+export function getConfig() {
+  return {
+    clientId: process.env.FILESET_CLIENT_ID || '',
+    clientSecret: process.env.FILESET_CLIENT_SECRET || '',
+    sessionSecret: process.env.FILESET_SESSION_SECRET || '',
+  };
+}
+
+export function isEnabled() {
+  const config = getConfig();
+  return (
+    Boolean(config.clientId) &&
+    Boolean(config.clientSecret) &&
+    Boolean(config.sessionSecret)
+  );
+}
+
 export function isUserAllowed(email: string) {
   const allowedOrganizations = (process.env.FILESET_ALLOWED_ORGANIZATIONS || '')
     .split(',')
@@ -45,15 +62,10 @@ export function isUserAllowed(email: string) {
 }
 
 export function configure(app: express.Application) {
-  const clientId = process.env.FILESET_CLIENT_ID;
-  const clientSecret = process.env.FILESET_CLIENT_SECRET;
-  const sessionSecret = process.env.FILESET_SESSION_SECRET;
-
-  if (!clientId || !clientSecret || !sessionSecret) {
-    throw new Error(
-      'Must specify environment variables: FILESET_CLIENT_ID, FILESET_CLIENT_SECRET, FILESET_SESSION_SECRET'
-    );
-  }
+  const config = getConfig();
+  const clientId = config.clientId;
+  const clientSecret = config.clientSecret;
+  const sessionSecret = config.sessionSecret;
 
   // Need to manually specify the base URL in the environment as it needs to
   // match the Google OAuth 2.0 redirect URI.

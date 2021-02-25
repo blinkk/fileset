@@ -21,4 +21,6 @@
 <body>
 <h1>Something went&nbsp;wrong</h1>
 <p>You don't have access to this page.</p>
+{% if me and me.emails %}
 <p>You are signed in as: <b>{{me.emails[0].value}}</b>
+{% endif %}
