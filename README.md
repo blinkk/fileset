@@ -1,6 +1,11 @@
 # Fileset
 
-![Master](https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg)
+[![NPM Version][npm-image]][npm-url]
+[![GitHub Actions][github-image]][github-url]
+[![Dependency Status][david-image]][david-url]
+[![Known Vulnerabilities][snyk-image]][snyk-url]
+[![codecov][codecov-image]][codecov-url]
+[![TypeScript Style Guide][gts-image]][gts-url]
 
 Fileset is a light, high-performance TypeScript static web server intended for
 high-traffic sites. Features include preview branches backed by Google Account
@@ -258,3 +263,16 @@ First, build the site to the `build` directory. Then, upload the directory to Fi
 grow build --deployment=prod
 fileset upload build
 ```
+
+[github-image]: https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg
+[github-url]: https://github.com/blinkkcode/fileset/actions
+[codecov-image]: https://codecov.io/gh/blinkkcode/fileset/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/blinkkcode/fileset
+[david-image]: https://david-dm.org/blinkkcode/fileset.svg
+[david-url]: https://david-dm.org/blinkkcode/fileset
+[gts-image]: https://img.shields.io/badge/code%20style-google-blueviolet.svg
+[gts-url]: https://github.com/google/gts
+[npm-image]: https://img.shields.io/npm/v/@blinkk/fileset.svg
+[npm-url]: https://npmjs.org/package/@blinkk/fileset
+[snyk-image]: https://snyk.io/test/github/blinkkcode/fileset/badge.svg
+[snyk-url]: https://snyk.io/test/github/blinkkcode/fileset
