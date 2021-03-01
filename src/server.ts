@@ -18,6 +18,8 @@ const auth = new GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/devstorage.read_only',
 });
 
+const DEFAULT_404_PAGE = '/404.html';
+
 export const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
     datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
@@ -238,11 +240,11 @@ export function createApp(siteId: string) {
 
       // Handle static content.
       const manifestPaths = manifest.paths;
-      const blobKey =
+      let blobKey =
         manifest.paths[urlPath] || manifest.paths[urlPath.toLowerCase()];
       let localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
       const blobPrefix = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs`;
-      const updatedUrl = `${blobPrefix}/${blobKey}`;
+      let is404Page = req.path === DEFAULT_404_PAGE;
 
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
       if (localizedUrlPath && !req.params.ncr) {
@@ -253,7 +255,6 @@ export function createApp(siteId: string) {
         return;
       }
 
-      // TODO: Add custom 404 support based on site config.
       if (!blobKey) {
         // Trailing slash redirect.
         if (
@@ -265,9 +266,17 @@ export function createApp(siteId: string) {
           return;
         }
         console.log(`Blob not found in ${blobPrefix} -> ${req.path}`);
-        res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
-        return;
+        if (manifest.paths[DEFAULT_404_PAGE]) {
+          is404Page = true;
+          blobKey = manifest.paths[DEFAULT_404_PAGE];
+        } else {
+          res.status(404);
+          res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
+          return;
+        }
       }
+
+      const updatedUrl = `${blobPrefix}/${blobKey}`;
 
       // Add Authorization: Bearer ... header to outgoing GCS request.
       const client = await auth.getClient();
@@ -303,7 +312,7 @@ export function createApp(siteId: string) {
         delete proxyRes.headers['x-goog-stored-content-length'];
         delete proxyRes.headers['x-guploader-response-body-transformations'];
         delete proxyRes.headers['x-guploader-uploadid'];
-        if (isLive) {
+        if (isLive && !is404Page) {
           // This cannot be "private, max-age=0" as this kills perf.
           // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
           // The padded "0036" keeps the Content-Length identical with `3600`.
@@ -318,7 +327,8 @@ export function createApp(siteId: string) {
         if (manifest.ttl) {
           proxyRes.headers['x-fileset-ttl'] = manifest.ttl;
         }
-        res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+        const statusCode = is404Page ? 404 : proxyRes.statusCode || 200;
+        res.writeHead(statusCode, proxyRes.headers);
       });
     } catch (err) {
       res.status(500);
