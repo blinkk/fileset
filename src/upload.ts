@@ -61,6 +61,9 @@ export async function uploadManifest(
   force?: boolean,
   ttl?: Date
 ) {
+  console.log(
+    `Uploading fileset for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
+  );
   console.log(`Using storage: ${bucket}/${getBlobPath(manifest.site, '')}`);
   const storageBucket = new Storage({
     projectId: googleCloudProject,
