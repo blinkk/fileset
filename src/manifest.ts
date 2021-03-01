@@ -86,9 +86,11 @@ export class Manifest {
 
   async addFile(path: string, dir: string) {
     const hash = this.createHash(path);
+    // Normalize the upload by lowercasing all paths.
     const cleanPath = path
       .replace(dir.replace(/^\\+|\\+$/g, ''), '/')
-      .replace('//', '/');
+      .replace('//', '/')
+      .toLowerCase();
     const manifestFile: ManifestFile = {
       cleanPath: cleanPath,
       hash: hash,

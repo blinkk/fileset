@@ -135,7 +135,10 @@ function findLocalizedUrlPath(
       manifest.DEFAULT_LOCALIZATION_PATH_FORMAT;
     localizedUrlPath.replace(':locale', locale);
     localizedUrlPath.replace(':path', urlPath.slice(1));
-    if (reqManifest.paths[localizedUrlPath]) {
+    if (
+      reqManifest.paths[localizedUrlPath] ||
+      reqManifest.paths[localizedUrlPath.toLowerCase()]
+    ) {
       foundUrlPath = localizedUrlPath;
     }
   });
@@ -235,7 +238,8 @@ export function createApp(siteId: string) {
 
       // Handle static content.
       const manifestPaths = manifest.paths;
-      const blobKey = manifest.paths[urlPath];
+      const blobKey =
+        manifest.paths[urlPath] || manifest.paths[urlPath.toLowerCase()];
       const localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
       const blobPrefix = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs`;
       const updatedUrl = `${blobPrefix}/${blobKey}`;
