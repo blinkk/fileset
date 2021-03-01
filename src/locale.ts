@@ -4,8 +4,13 @@ import {getCountry} from 'country-language';
 
 import express = require('express');
 
+const DEFAULT_COUNTRY = 'US';
+const DEFAULT_LANG = 'en';
+
 export function getFallbackLocales(req: express.Request): string[] {
-  const countryCode = (req.get('x-appengine-country') || 'US').toUpperCase();
+  const countryCode = (
+    req.get('x-appengine-country') || DEFAULT_COUNTRY
+  ).toUpperCase();
   const locales = new Set();
 
   // Add locales from ?hl= query parameter.
@@ -32,7 +37,7 @@ export function getFallbackLocales(req: express.Request): string[] {
 
 function getFallbackLanguages(
   req: express.Request,
-  countryCode = 'US'
+  countryCode = DEFAULT_COUNTRY
 ): string[] {
   const langs = new Set();
 
@@ -52,8 +57,8 @@ function getFallbackLanguages(
   getCountryLanguages(countryCode).forEach(lang => langs.add(lang));
 
   // Fall back to "en" as a last resort.
-  if (!langs.has('en')) {
-    langs.add('en');
+  if (!langs.has(DEFAULT_LANG)) {
+    langs.add(DEFAULT_LANG);
   }
 
   return Array.from(langs) as string[];
