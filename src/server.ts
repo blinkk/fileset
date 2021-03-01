@@ -10,6 +10,7 @@ import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
 import {URL} from 'url';
+import {normalize} from 'path';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -103,7 +104,14 @@ export function parseHostname(
     siteId = parsedPrefix.siteId;
     branchOrRef = parsedPrefix.branchOrRef;
   } else if (stagingDomain) {
-    const baseUrl = new URL(stagingDomain);
+    let normalizedStagingDomain = stagingDomain;
+    if (!stagingDomain.startsWith('http')) {
+      const prefix = stagingDomain.includes('localhost')
+        ? 'http://'
+        : 'https://';
+      normalizedStagingDomain = `${prefix}${normalizedStagingDomain}`;
+    }
+    const baseUrl = new URL(normalizedStagingDomain);
     if (hostname.endsWith(baseUrl.hostname)) {
       // Trim off base URL and dot (or dash).
       const prefix = hostname

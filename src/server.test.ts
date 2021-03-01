@@ -48,6 +48,13 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: 'foo',
     }
   );
+  t.deepEqual(
+    server.parseHostname('foo.example.com', 'example', 'example.com'),
+    {
+      siteId: 'example',
+      branchOrRef: 'foo',
+    }
+  );
   // Custom staging domain with site and ref.
   t.deepEqual(
     server.parseHostname(
@@ -67,4 +74,8 @@ test('Test parseHostname', (t: ExecutionContext) => {
       branchOrRef: '0d60edf',
     }
   );
+  t.deepEqual(server.parseHostname('0d60edf.localhost', '', 'localhost:8080'), {
+    siteId: 'default',
+    branchOrRef: '0d60edf',
+  });
 });
