@@ -36,6 +36,7 @@
     ]
   },
   "devDependencies": {
+    "@types/accept-language-parser": "^1.5.1",
     "@types/async": "^3.2.5",
     "@types/cli-progress": "^3.9.0",
     "@types/connect-ensure-login": "^0.1.5",
@@ -72,11 +73,13 @@
   "dependencies": {
     "@google-cloud/datastore": "^6.3.1",
     "@google-cloud/storage": "^5.7.0",
+    "accept-language-parser": "^1.5.0",
     "async": "^3.2.0",
     "cli-progress": "^3.9.0",
     "commander": "^6.2.1",
     "connect-ensure-login": "^0.1.1",
     "cookie-session": "^1.4.0",
+    "country-language": "bdswiss/country-language#df3b8c0c94e27de14b6c139134ed309af4aea86f",
     "express": "^4.17.1",
     "fast-crc32c": "^2.0.0",
     "google-auth-library": "^6.1.3",

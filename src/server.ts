@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as fsPath from 'path';
 import * as httpProxy from 'http-proxy';
+import * as locale from './locale';
 import * as manifest from './manifest';
 import * as redirects from './redirects';
 import * as webui from './webui';
@@ -119,6 +120,28 @@ export function parseHostname(
   };
 }
 
+function findLocalizedUrlPath(
+  req: express.Request,
+  reqManifest: manifest.SerializedManifest,
+  urlPath: string
+) {
+  let foundUrlPath: string | undefined = undefined;
+  locale.getFallbackLocales(req).forEach(locale => {
+    if (foundUrlPath) {
+      return;
+    }
+    const localizedUrlPath =
+      reqManifest.localizationPathFormat ||
+      manifest.DEFAULT_LOCALIZATION_PATH_FORMAT;
+    localizedUrlPath.replace(':locale', locale);
+    localizedUrlPath.replace(':path', urlPath.slice(1));
+    if (reqManifest.paths[localizedUrlPath]) {
+      foundUrlPath = localizedUrlPath;
+    }
+  });
+  return foundUrlPath;
+}
+
 export function createApp(siteId: string) {
   console.log(`Starting server for site: ${siteId}`);
   const webUiEnabled = webui.isEnabled();
@@ -212,15 +235,22 @@ export function createApp(siteId: string) {
 
       // Handle static content.
       const manifestPaths = manifest.paths;
-      const blobKey = manifestPaths[urlPath];
+      const blobKey = manifest.paths[urlPath];
+      const localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
       const blobPrefix = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs`;
       const updatedUrl = `${blobPrefix}/${blobKey}`;
+
+      // If a localized URL path was found, and if `?ncr` is not present, redirect.
+      if (localizedUrlPath && !req.params.ncr) {
+        res.redirect(302, localizedUrlPath);
+        return;
+      }
 
       // TODO: Add custom 404 support based on site config.
       if (!blobKey) {
         // Trailing slash redirect.
         if (
-          manifest.redirect_trailing_slashes !== false &&
+          manifest.redirectTrailingSlashes !== false &&
           manifestPaths[`${urlPath}/index.html`]
         ) {
           const destination = `${urlPath}/`;

@@ -16,6 +16,8 @@ const walk = function (path: string, newFiles?: string[]) {
   return files;
 };
 
+export const DEFAULT_LOCALIZATION_PATH_FORMAT = '/:locale/:path';
+
 export interface ManifestFile {
   hash: string;
   path: string;
@@ -37,7 +39,8 @@ export interface SerializedManifest {
   redirects: Redirect[];
   shortSha: string;
   modified: string;
-  redirect_trailing_slashes: boolean;
+  redirectTrailingSlashes: boolean;
+  localizationPathFormat: string;
 }
 
 export class Manifest {
@@ -47,7 +50,8 @@ export class Manifest {
   files: ManifestFile[];
   redirects: Redirect[];
   shortSha: string;
-  redirect_trailing_slashes: boolean;
+  redirectTrailingSlashes: boolean;
+  localizationPathFormat: string;
 
   constructor(site: string, ref: string, branch?: string) {
     this.files = [];
@@ -56,7 +60,8 @@ export class Manifest {
     this.ref = ref;
     this.shortSha = ref.slice(0, 7);
     this.branch = branch;
-    this.redirect_trailing_slashes = true;
+    this.redirectTrailingSlashes = true;
+    this.localizationPathFormat = DEFAULT_LOCALIZATION_PATH_FORMAT;
   }
 
   async createFromDirectory(path: string) {

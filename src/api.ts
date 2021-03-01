@@ -88,11 +88,12 @@ export class ApiHandler {
   serializeManifest(manifest: any) {
     return {
       branch: manifest.branch,
+      localizationPathFormat: manifest.localizationPathFormat,
       manifestType: manifest.manifestType,
       modified: manifest.modified,
       paths: manifest.paths,
-      redirect_trailing_slashes: manifest.redirect_trailing_slashes,
       redirects: manifest.redirects,
+      redirectTrailingSlashes: manifest.redirectTrailingSlashes,
       ref: manifest.ref,
       shortSha: manifest.shortSha,
       site: manifest.site,

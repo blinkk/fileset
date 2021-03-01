@@ -2,7 +2,9 @@ google_cloud_project: <AppId>
 site: <SiteId>
 schedule:
   default: main
-redirect_trailing_slashes: true
+localization:
+  pathFormat: '/:locale/:path'
+redirectTrailingSlashes: true
 redirects:
 - from: /foo
   to: /bar
@@ -11,3 +13,5 @@ redirects:
   to: /$locale/
 - from: /intl/:locale/*wildcard
   to: /$locale/$wildcard
+- from: /intl/:locale/
+  to: /$locale/

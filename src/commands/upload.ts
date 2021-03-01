@@ -15,7 +15,25 @@ interface UploadOptions {
   ttl?: string;
 }
 
-function findConfig(path: string) {
+interface LocalizationConfig {
+  pathFormat?: string;
+}
+
+interface RedirectConfig {
+  from: string;
+  to: string;
+  permanent?: boolean;
+}
+
+interface Config {
+  google_cloud_project?: string;
+  site?: string;
+  localization?: LocalizationConfig;
+  redirectTrailingSlashes?: boolean;
+  redirects?: RedirectConfig[];
+}
+
+function findConfig(path: string): Config {
   let configPath = null;
   const immediatePath = fsPath.join(path, 'fileset.yaml');
   const ancestorPath = fsPath.join(fsPath.dirname(path), 'fileset.yaml');
@@ -27,11 +45,7 @@ function findConfig(path: string) {
     return {};
   }
   // TODO: Validate config schema.
-  const config = yaml.safeLoad(fs.readFileSync(configPath, 'utf8')) as Record<
-    string,
-    unknown
-  >;
-  return config;
+  return yaml.safeLoad(fs.readFileSync(configPath, 'utf8')) as Config;
 }
 
 export class UploadCommand {
@@ -69,8 +83,16 @@ export class UploadCommand {
       this.options.branch || gitData.branch || ''
     );
     await manifestObj.createFromDirectory(path);
-    if (config.redirect_trailing_slashes === false) {
-      manifestObj.redirect_trailing_slashes = config.redirect_trailing_slashes;
+    if (config.redirectTrailingSlashes === false) {
+      manifestObj.redirectTrailingSlashes = config.redirectTrailingSlashes;
+    }
+    if (config.redirectTrailingSlashes === false) {
+      manifestObj.redirectTrailingSlashes = config.redirectTrailingSlashes;
+    }
+    if (config.localization) {
+      if (config.localization.pathFormat) {
+        manifestObj.localizationPathFormat = config.localization.pathFormat;
+      }
     }
     if (config.redirects) {
       manifestObj.setRedirects(config.redirects as manifest.Redirect[]);
