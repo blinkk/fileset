@@ -218,8 +218,11 @@ export function createApp(siteId: string) {
 
       // TODO: Add custom 404 support based on site config.
       if (!blobKey) {
-        // Trailing slash redirect. TODO: Make this configurable in `fileset.yaml`.
-        if (manifestPaths[`${urlPath}/index.html`]) {
+        // Trailing slash redirect.
+        if (
+          manifest.redirect_trailing_slashes !== false &&
+          manifestPaths[`${urlPath}/index.html`]
+        ) {
           const destination = `${urlPath}/`;
           res.redirect(302, destination);
           return;

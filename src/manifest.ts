@@ -37,6 +37,7 @@ export interface SerializedManifest {
   redirects: Redirect[];
   shortSha: string;
   modified: string;
+  redirect_trailing_slashes: boolean;
 }
 
 export class Manifest {
@@ -46,6 +47,7 @@ export class Manifest {
   files: ManifestFile[];
   redirects: Redirect[];
   shortSha: string;
+  redirect_trailing_slashes: boolean;
 
   constructor(site: string, ref: string, branch?: string) {
     this.files = [];
@@ -54,6 +56,7 @@ export class Manifest {
     this.ref = ref;
     this.shortSha = ref.slice(0, 7);
     this.branch = branch;
+    this.redirect_trailing_slashes = true;
   }
 
   async createFromDirectory(path: string) {

@@ -69,6 +69,9 @@ export class UploadCommand {
       this.options.branch || gitData.branch || ''
     );
     await manifestObj.createFromDirectory(path);
+    if (config.redirect_trailing_slashes === false) {
+      manifestObj.redirect_trailing_slashes = config.redirect_trailing_slashes;
+    }
     if (config.redirects) {
       manifestObj.setRedirects(config.redirects as manifest.Redirect[]);
     }
