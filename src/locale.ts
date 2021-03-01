@@ -9,7 +9,9 @@ const DEFAULT_LANG = 'en';
 
 export function getFallbackLocales(req: express.Request): string[] {
   const countryCode = (
-    req.get('x-appengine-country') || DEFAULT_COUNTRY
+    (req.query.gl && (req.query.gl as string)) ||
+    req.get('x-appengine-country') ||
+    DEFAULT_COUNTRY
   ).toUpperCase();
   const locales = new Set();
 

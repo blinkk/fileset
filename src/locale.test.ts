@@ -7,12 +7,14 @@ import express = require('express');
 
 function mockRequest(
   hlParam: string | undefined,
+  glParam: string | undefined,
   acceptLanguageHeader: string,
   countryHeader: string
 ) {
   return ({
     query: {
       hl: hlParam,
+      gl: glParam,
     },
     get: (arg: string | undefined) => {
       if (arg === 'accept-language') {
@@ -26,15 +28,16 @@ function mockRequest(
 }
 
 test('Test locale', (t: ExecutionContext) => {
-  t.deepEqual(locale.getFallbackLocales(mockRequest(undefined, 'ja', 'JP')), [
-    'ja_JP',
-    'ja-JP_JP',
-    'en_JP',
-    'ja',
-    'ja-JP',
-    'en',
-  ]);
-  t.deepEqual(locale.getFallbackLocales(mockRequest('de', 'de', 'US')), [
+  t.deepEqual(
+    locale.getFallbackLocales(mockRequest(undefined, undefined, 'ja', 'JP')),
+    ['ja_JP', 'ja-JP_JP', 'en_JP', 'ja', 'ja-JP', 'en']
+  );
+  t.deepEqual(
+    locale.getFallbackLocales(mockRequest('de', undefined, 'de', 'US')),
+    ['de_US', 'de', 'en-US_US', 'en_US', 'en-US', 'en']
+  );
+  // ?hl=de&gl=US
+  t.deepEqual(locale.getFallbackLocales(mockRequest('de', 'US', 'de', 'DE')), [
     'de_US',
     'de',
     'en-US_US',
@@ -42,12 +45,17 @@ test('Test locale', (t: ExecutionContext) => {
     'en-US',
     'en',
   ]);
-  t.deepEqual(locale.getFallbackLocales(mockRequest(undefined, 'de', 'US')), [
-    'de_US',
-    'en-US_US',
-    'en_US',
+  // ?hl=de&gl=DE
+  t.deepEqual(locale.getFallbackLocales(mockRequest('de', 'DE', 'de', 'US')), [
+    'de_DE',
     'de',
-    'en-US',
+    'de-DE_DE',
+    'en_DE',
+    'de-DE',
     'en',
   ]);
+  t.deepEqual(
+    locale.getFallbackLocales(mockRequest(undefined, undefined, 'de', 'US')),
+    ['de_US', 'en-US_US', 'en_US', 'de', 'en-US', 'en']
+  );
 });
