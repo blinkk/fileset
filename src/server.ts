@@ -125,21 +125,21 @@ function findLocalizedUrlPath(
   reqManifest: manifest.SerializedManifest,
   urlPath: string
 ) {
-  let foundUrlPath: string | undefined = undefined;
+  let foundUrlPath: string | undefined;
   locale.getFallbackLocales(req).forEach(locale => {
     if (foundUrlPath) {
       return;
     }
     const localizedUrlPath =
       reqManifest.localizationPathFormat ||
-      manifest.DEFAULT_LOCALIZATION_PATH_FORMAT;
-    localizedUrlPath.replace(':locale', locale);
-    localizedUrlPath.replace(':path', urlPath.slice(1));
-    if (
-      reqManifest.paths[localizedUrlPath] ||
-      reqManifest.paths[localizedUrlPath.toLowerCase()]
-    ) {
+      manifest.DEFAULT_LOCALIZATION_PATH_FORMAT.replace(
+        ':locale',
+        locale
+      ).replace(':path', urlPath.slice(1));
+    if (reqManifest.paths[localizedUrlPath]) {
       foundUrlPath = localizedUrlPath;
+    } else if (reqManifest.paths[localizedUrlPath.toLowerCase()]) {
+      foundUrlPath = localizedUrlPath.toLowerCase();
     }
   });
   return foundUrlPath;
@@ -240,12 +240,15 @@ export function createApp(siteId: string) {
       const manifestPaths = manifest.paths;
       const blobKey =
         manifest.paths[urlPath] || manifest.paths[urlPath.toLowerCase()];
-      const localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
+      let localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
       const blobPrefix = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs`;
       const updatedUrl = `${blobPrefix}/${blobKey}`;
 
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
       if (localizedUrlPath && !req.params.ncr) {
+        if (localizedUrlPath.endsWith('/index.html')) {
+          localizedUrlPath = localizedUrlPath.slice(0, -10);
+        }
         res.redirect(302, localizedUrlPath);
         return;
       }
