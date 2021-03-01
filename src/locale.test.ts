@@ -58,4 +58,11 @@ test('Test locale', (t: ExecutionContext) => {
     locale.getFallbackLocales(mockRequest(undefined, undefined, 'de', 'US')),
     ['de_US', 'en-US_US', 'en_US', 'de', 'en-US', 'en']
   );
+  // ?hl=en&gl=AU
+  t.deepEqual(locale.getFallbackLocales(mockRequest('en', 'AU', 'en', 'US')), [
+    'en_AU',
+    'en',
+    'en-AU_AU',
+    'en-AU',
+  ]);
 });
