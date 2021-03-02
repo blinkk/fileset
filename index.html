@@ -96,13 +96,10 @@
 				<a href="#server-setup" id="server-setup" style="color: inherit; text-decoration: none;">
 					<h3>Server setup</h3>
 				</a>
-				<p>NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
-				(<code>gs://appid.appspot.com</code>) to upload files.</p>
+				<p>Refer to the example in <code>./example/server</code> or follow the steps below.</p>
 				<ol>
-					<li><p>Within your project, create a directory to house the server files, e.g.
-							<code>./backend/server</code>. Avoid mixing the server configuration with any tools to
-							build your website. The <code>package.json</code>, etc. should be kept separate in order
-						to keep the deployment slim.</p>
+					<li><p>Within your project, create a directory to house the server configuration, e.g.
+						<code>./backend/server</code>.</p>
 					</li>
 					<li><p>Create a <code>package.json</code> like the below. App Engine will use <code>npm start</code> to
 						run the server.</p>
@@ -113,7 +110,7 @@
 <span style="color: #000000">    </span><span style="color: #0451A5">&quot;start&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;fileset serve&quot;</span>
 <span style="color: #000000">  },</span>
 <span style="color: #000000">  </span><span style="color: #0451A5">&quot;dependencies&quot;</span><span style="color: #000000">: {</span>
-<span style="color: #000000">    </span><span style="color: #0451A5">&quot;@blinkk/fileset&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;^0.1.0&quot;</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;@blinkk/fileset&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;^0.1.45&quot;</span>
 <span style="color: #000000">  }</span>
 <span style="color: #000000">}</span>
 </code></pre>
@@ -122,11 +119,10 @@
 				</ol>
 				<pre><code class="language-yaml"><span style="color: #800000">service</span><span style="color: #000000">: </span><span style="color: #0000FF">fileset</span>
 <span style="color: #800000">runtime</span><span style="color: #000000">: </span><span style="color: #0000FF">nodejs10</span>
-<span style="color: #800000">env_variables</span><span style="color: #000000">:</span>
-<span style="color: #000000">  </span><span style="color: #800000">FILESET_ALLOWED_ORGANIZATIONS</span><span style="color: #000000">: </span><span style="color: #0000FF">&#039;example1.com,example2.com&#039;</span>
-<span style="color: #000000">  </span><span style="color: #800000">FILESET_BASE_URL</span><span style="color: #000000">: </span><span style="color: #0000FF">&#039;staging.example.com&#039;</span>
-<span style="color: #000000">  </span><span style="color: #800000">FILESET_DEFAULT_BRANCH</span><span style="color: #000000">: </span><span style="color: #0000FF">main</span><span style="color: #000000">  </span><span style="color: #008000"># Optional.</span>
-<span style="color: #000000">  </span><span style="color: #800000">FILESET_SITE</span><span style="color: #000000">: </span><span style="color: #0000FF">default</span><span style="color: #000000">  </span><span style="color: #008000"># Optional.</span>
+<span style="color: #800000">handlers</span><span style="color: #000000">:</span>
+<span style="color: #000000">- </span><span style="color: #800000">url</span><span style="color: #000000">: </span><span style="color: #0000FF">/.*</span>
+<span style="color: #000000">  </span><span style="color: #800000">script</span><span style="color: #000000">: </span><span style="color: #0000FF">auto</span>
+<span style="color: #000000">  </span><span style="color: #800000">secure</span><span style="color: #000000">: </span><span style="color: #0000FF">always</span>
 </code></pre>
 				<ol start="4">
 					<li>Setup and deploy the app using the provided <a href="./example/server/Makefile">Makefile</a>.</li>
@@ -137,92 +133,51 @@
 				<a href="#deployment-setup" id="deployment-setup" style="color: inherit; text-decoration: none;">
 					<h3>Deployment setup</h3>
 				</a>
-				<p>NOTE: Before you can deploy, you&#39;ll need to authenticate. Refer to the
-					<a href="#uploader-authentication">authentication documentation</a> if you have not used
-				Google Cloud Platform services before and need information on authentication.</p>
 				<ol>
-					<li>Create a <code>fileset.yaml</code> configuration file.</li>
+					<li>Create a <code>fileset.yaml</code> configuration file. The minimum example is below. See
+						the <a href="./example/fileset.yaml">example fileset.yaml</a> for full configuration
+					options.</li>
 				</ol>
-				<pre><code class="language-yaml"><span style="color: #008000"># Your Google Cloud project&#039;s ID (required).</span>
-<span style="color: #800000">google_cloud_project</span><span style="color: #000000">: </span><span style="color: #0000FF">&lt;AppId&gt;</span>
-
-<span style="color: #008000"># Your site ID (optional). If blank, `default` will be used.</span>
-<span style="color: #800000">site</span><span style="color: #000000">: </span><span style="color: #0000FF">&lt;SiteId&gt;</span>
-
-<span style="color: #008000"># Specify a launch schedule. The schedule maps timestamps to branches or commit</span>
-<span style="color: #008000"># shas. If blank, `main` is used for the default deployment.</span>
-<span style="color: #800000">schedule</span><span style="color: #000000">:</span>
-<span style="color: #000000">  </span><span style="color: #800000">default</span><span style="color: #000000">: </span><span style="color: #0000FF">main</span>
-
-<span style="color: #800000">redirects</span><span style="color: #000000">:</span>
-<span style="color: #000000">- </span><span style="color: #800000">from</span><span style="color: #000000">: </span><span style="color: #0000FF">/foo</span>
-<span style="color: #000000">  </span><span style="color: #800000">to</span><span style="color: #000000">: </span><span style="color: #0000FF">/bar</span>
-<span style="color: #000000">- </span><span style="color: #800000">from</span><span style="color: #000000">: </span><span style="color: #0000FF">/intl/:locale/</span>
-<span style="color: #000000">  </span><span style="color: #800000">to</span><span style="color: #000000">: </span><span style="color: #0000FF">/$locale/</span>
-<span style="color: #000000">- </span><span style="color: #800000">from</span><span style="color: #000000">: </span><span style="color: #0000FF">/intl/:locale/*wildcard</span>
-<span style="color: #000000">  </span><span style="color: #800000">to</span><span style="color: #000000">: </span><span style="color: #0000FF">/$locale/$wildcard</span>
+				<pre><code class="language-yaml"><span style="color: #800000">google_cloud_project</span><span style="color: #000000">: </span><span style="color: #0000FF">&lt;AppId&gt;</span>
 </code></pre>
 				<ol start="2">
 					<li>Generate your files.</li>
 				</ol>
 				<p>Use a static site generator or just manually create a directory containing files
-					to upload. In the below example, the files in the directory <code>build</code> are
+					to upload. In the below example, the files in the directory <code>./build</code> are
 				uploaded.</p>
-				<ol start="4">
+				<ol start="3">
 					<li>Upload your files.</li>
 				</ol>
-				<pre><code class="language-bash"><span style="color: #000000">fileset upload ./build</span>
-</code></pre>
-				<p>NOTE: The uploader will look for <code>fileset.yaml</code> within the <code>./build</code> directory
+				<p>The uploader will look for <code>fileset.yaml</code> within the <code>./build</code> directory
 					first. If it&#39;s not found, it will look up in the parent folder for a
 					<code>fileset.yaml</code> file. If the config file doesn&#39;t exist in the <code>./build</code> or parent
 				folder, the uploader will abort.</p>
-				<ol start="5">
+				<pre><code class="language-bash"><span style="color: #000000">fileset upload ./build</span>
+</code></pre>
+				<ol start="4">
 					<li>That&#39;s it! Files have been uploaded to Google Cloud Storage and the uploaded
 					directory is now being served by the application server.</li>
 				</ol>
 				<a href="#uploader-authentication" id="uploader-authentication" style="color: inherit; text-decoration: none;">
 					<h2>Uploader authentication</h2>
 				</a>
-				<p>You&#39;ll need to be authenticated to deploy files and upload the serving manifests.</p>
-				<a href="#local-testing--user-account-authentication" id="local-testing--user-account-authentication" style="color: inherit; text-decoration: none;">
-					<h3>Local testing / user account authentication</h3>
+				<p>You&#39;ll need to be authenticated to upload files and deploy the serving manifests.</p>
+				<a href="#local-testing-authenticate-using-user-account" id="local-testing-authenticate-using-user-account" style="color: inherit; text-decoration: none;">
+					<h3>Local testing (authenticate using user account)</h3>
 				</a>
 				<p>If you are testing locally, your user account can be used to authenticate to
 					Cloud Datastore and Cloud Storage. Simply run the below command to create
 				credentials used for authentication:</p>
 				<pre><code class="language-bash"><span style="color: #000000">gcloud auth application-default login</span>
 </code></pre>
-				<a href="#continuous-deployment--service-account-authentication" id="continuous-deployment--service-account-authentication" style="color: inherit; text-decoration: none;">
-					<h3>Continuous deployment / service account authentication</h3>
+				<a href="#continuous-deployment-authenticate-using-service-account" id="continuous-deployment-authenticate-using-service-account" style="color: inherit; text-decoration: none;">
+					<h3>Continuous deployment (authenticate using service account)</h3>
 				</a>
 				<p>If you are using a service account for deployment, you&#39;ll need to ensure it has
-				the right permissions.</p>
-				<a href="#1-identify-the-service-account-to-use" id="1-identify-the-service-account-to-use" style="color: inherit; text-decoration: none;">
-					<h4>1. Identify the service account to use.</h4>
-				</a>
-				<p>Authentication to upload your files is done using a service account. You&#39;ll
-				generally want to use one of two service accounts:</p>
-				<p><strong>Cloud Build service account</strong>: When the command is invoked from Google Cloud
-					Build, your project&#39;s Cloud Build service account
-				(<code>&lt;ProjectNumber&gt;@cloudbuild.gserviceaccount.com</code>) is used.</p>
-				<p>To determine your project&#39;s project number:</p>
-				<pre><code class="language-bash"><span style="color: #000000">gcloud projects describe &lt;AppId&gt;</span>
-</code></pre>
-				<p><strong>Application default service account</strong>: When the command is invoked locally
-					(i.e. for testing or for manual uploads), you&#39;ll likely want to use your App
-					Engine app&#39;s default service account (<code>&lt;AppId&gt;@appspot.gserviceaccount.com</code>).
-				You can download a service account key by running:</p>
-				<pre><code class="language-bash"><span style="color: #000000">gcloud iam service-accounts keys create \</span>
-<span style="color: #000000">  key.json \</span>
-<span style="color: #000000">  --iam-account &lt;AppId&gt;@appspot.gserviceaccount.com</span>
-</code></pre>
-				<p>NOTE: This will download a <code>key.json</code> to your current directory. Avoid
-					committing this to your Git repository. You&#39;ll want to add <code>key.json</code> to
-				<code>.gitignore</code>.</p>
-				<a href="#2-ensure-service-account-has-permissions" id="2-ensure-service-account-has-permissions" style="color: inherit; text-decoration: none;">
-					<h4>2. Ensure service account has permissions.</h4>
-				</a>
+					the right permissions. When using Fileset with Google Cloud Build, simply run
+					<code>make setup</code> from the <code>example/server</code> directory to configure your project&#39;s
+				Cloud Build Service account with the right permissions.</p>
 				<p>The following permissions are needed:</p>
 				<ul>
 					<li>Cloud Datastore (manifests are stored here): Cloud Datastore Owner
@@ -230,14 +185,11 @@
 					<li>Cloud Storage (files are uploaded here): Storage Object Admin
 					(<code>storage.objectAdmin</code>)</li>
 				</ul>
-				<p>If using the App Engine default service account, you will not need to modify the
-					permissions, as the service account has the &quot;Project Editor&quot; permission by
-				default.</p>
 				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
 					need to add the above two permissions to the account. That can be done via the
 					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
 				the <code>gcloud</code> CLI.</p>
-				<p>From the provided <a href="./example/server/Makefile">Makefile</a>.</p>
+				<p>The provided <a href="./example/server/Makefile">Makefile</a> also does it for you:</p>
 				<pre><code class="language-bash"><span style="color: #000000">make project=&lt;AppId&gt; setup</span>
 </code></pre>
 				<a href="#environments" id="environments" style="color: inherit; text-decoration: none;">
@@ -269,6 +221,9 @@
 				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
 					<h2>Testing</h2>
 				</a>
+				<a href="#response-headers" id="response-headers" style="color: inherit; text-decoration: none;">
+					<h3>Response headers</h3>
+				</a>
 				<p>You can verify Fileset server is working as you expect by looking for the following headers:</p>
 				<table>
 					<thead>
@@ -294,6 +249,34 @@
 							<td>For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served.</td>
 						</tr>
 				</tbody></table>
+				<a href="#query-parameters" id="query-parameters" style="color: inherit; text-decoration: none;">
+					<h3>Query parameters</h3>
+				</a>
+				<p>You can simulate geolocation behavior using query parameters:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Parameter</th>
+							<th>Name</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>hl</code></td>
+							<td>Language</td>
+							<td>Overrides the incoming <code>accept-language</code> header.</td>
+						</tr>
+						<tr>
+							<td><code>gl</code></td>
+							<td>Geolocation</td>
+							<td>Overrides the incoming <code>x-appengine-country</code> header.</td>
+						</tr>
+						<tr>
+							<td><code>ncr</code></td>
+							<td>No country redirect</td>
+							<td>Disables localization-aware redirects.</td>
+						</tr>
+				</tbody></table>
 				<a href="#tips" id="tips" style="color: inherit; text-decoration: none;">
 					<h2>Tips</h2>
 				</a>
@@ -306,7 +289,7 @@
 				<a href="#usage-with-growdev" id="usage-with-growdev" style="color: inherit; text-decoration: none;">
 					<h3>Usage with Grow.dev</h3>
 				</a>
-				<p>First, build the site to the <code>build</code> directory. Then, upload the directory to Fileset.</p>
+				<p>First, build the site to the <code>./build</code> directory. Then, upload the directory to Fileset.</p>
 				<pre><code><span style="color: #001080">grow</span><span style="color: #000000"> </span><span style="color: #001080">build</span><span style="color: #000000"> --</span><span style="color: #001080">deployment</span><span style="color: #000000">=</span><span style="color: #001080">prod</span>
 <span style="color: #001080">fileset</span><span style="color: #000000"> </span><span style="color: #001080">upload</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
 </code></pre>
