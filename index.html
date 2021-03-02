@@ -66,16 +66,22 @@
 					<a href="https://codecov.io/gh/blinkkcode/fileset"><img src="https://codecov.io/gh/blinkkcode/fileset/branch/main/graph/badge.svg" alt="codecov"></a>
 				<a href="https://github.com/google/gts"><img src="https://img.shields.io/badge/code%20style-google-blueviolet.svg" alt="TypeScript Style Guide"></a></p>
 				<p>Fileset is a light, high-performance TypeScript static web server intended for
-					high-traffic sites. Features include preview branches backed by Google Account
-					authentication, redirects, localization-aware serving, atomic deployments, and
-				timed deployments.</p>
-				<p>Instructions for deployment onto Google App Engine (backed by Cloud Datastore
-				and Cloud Storage) are provided.</p>
+				high-traffic static sites. Features include:</p>
+				<ul>
+					<li>Atomic deployments</li>
+					<li>(To be implemented) Scheduled deployments</li>
+					<li>Redirects</li>
+					<li>Localization-aware redirects</li>
+					<li>Isolated per-branch staging environments backed by Google Account authentication</li>
+					<li>Ultra-fast TTFB and payload transfer speeds</li>
+					<li>A simple web UI for inspecting uploaded files</li>
+				</ul>
+				<p>The server runs on Google App Engine and proxies requests to Google Cloud Storage.</p>
 				<a href="#concept" id="concept" style="color: inherit; text-decoration: none;">
 					<h2>Concept</h2>
 				</a>
-				<p>Many websites can be built and deployed as fully static packages (i.e. just
-					HTML, CSS, and JavaScript – with no dynamic backend). In these instances,
+				<p>Many websites can be built and deployed as fully static content (i.e. just HTML,
+					CSS, and JavaScript – with no dynamic backend). Despite being static content,
 					websites may still have other requirements such as localization, redirects, or
 					atomic deployments that end up adding slight dynamic functionality to an
 				otherwise fully static project.</p>
@@ -88,11 +94,13 @@
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
-				<p>There are two main tasks required in order to use Fileset. First, you&#39;ll need to
-					deploy the application server and configure the Identity-Aware Proxy. This only
-					needs to be done once, when the project is originally set up. Secondly, you&#39;ll
-					need to upload files to be served. Files must be uploaded each time you want to
-				serve new files to users, or update redirects, etc.</p>
+				<p>There are two main tasks required in order to use Fileset:</p>
+				<ol>
+					<li>First, you&#39;ll need to deploy the server. This only needs to be done once,
+					when the project is originally set up.</li>
+					<li>Second, you&#39;ll need to upload files to be served. Files must be uploaded each
+					time you want to serve new files, update redirects, etc.</li>
+				</ol>
 				<a href="#server-setup" id="server-setup" style="color: inherit; text-decoration: none;">
 					<h3>Server setup</h3>
 				</a>
@@ -196,8 +204,8 @@
 					<h2>Environments</h2>
 				</a>
 				<p>Fileset uses Git branches to determine whether files should be in production
-					(and public) or in staging (and restricted via the Identity-Aware Proxy). The
-					Git branch is determined by inspecting the local Git environment when the
+					(and public) or in staging (and restricted via Google Account authentication).
+					The Git branch is determined by inspecting the local Git environment when the
 				<code>upload</code> command is invoked.</p>
 				<p>The best way to understand how this works is by following the examples below:</p>
 				<pre><code class="language-bash"><span style="color: #008000"># main branch</span>
@@ -211,7 +219,7 @@
 <span style="color: #000000">Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com</span>
 </code></pre>
 				<pre><code class="language-bash"><span style="color: #008000"># staging branch</span>
-<span style="color: #008000"># ✓ not public; restricted by Identity-Aware Proxy</span>
+<span style="color: #008000"># ✓ not public</span>
 <span style="color: #008000"># ✓ staging URL only (restricted)</span>
 
 <span style="color: #000000">(staging) $ fileset upload build</span>
