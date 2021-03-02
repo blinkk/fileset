@@ -140,12 +140,12 @@ function findLocalizedUrlPath(
     if (foundUrlPath) {
       return;
     }
-    const localizedUrlPath =
+    let localizedUrlPath =
       reqManifest.localizationPathFormat ||
-      manifest.DEFAULT_LOCALIZATION_PATH_FORMAT.replace(
-        ':locale',
-        locale
-      ).replace(':path', urlPath.slice(1));
+      manifest.DEFAULT_LOCALIZATION_PATH_FORMAT;
+    localizedUrlPath = localizedUrlPath
+      .replace(':locale', locale)
+      .replace(':path', urlPath.slice(1));
     if (reqManifest.paths[localizedUrlPath]) {
       foundUrlPath = localizedUrlPath;
     } else if (reqManifest.paths[localizedUrlPath.toLowerCase()]) {
@@ -255,7 +255,7 @@ export function createApp(siteId: string) {
       let is404Page = req.path === DEFAULT_404_PAGE;
 
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
-      if (localizedUrlPath && !req.params.ncr) {
+      if (localizedUrlPath && req.query.ncr === undefined) {
         if (localizedUrlPath.endsWith('/index.html')) {
           localizedUrlPath = localizedUrlPath.slice(0, -10);
         }

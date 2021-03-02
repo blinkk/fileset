@@ -65,4 +65,9 @@ test('Test locale', (t: ExecutionContext) => {
     'en-AU_AU',
     'en-AU',
   ]);
+  // ?hl=en-GB&gl=GB
+  t.deepEqual(
+    locale.getFallbackLocales(mockRequest('en-GB', 'GB', 'en', 'US')),
+    ['en-GB_GB', 'en-GB', 'en_GB', 'cy_GB', 'en', 'cy']
+  );
 });
