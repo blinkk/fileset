@@ -8,17 +8,21 @@
 [![TypeScript Style Guide][gts-image]][gts-url]
 
 Fileset is a light, high-performance TypeScript static web server intended for
-high-traffic sites. Features include preview branches backed by Google Account
-authentication, redirects, localization-aware serving, atomic deployments, and
-timed deployments.
+high-traffic static sites. Features include:
 
-Instructions for deployment onto Google App Engine (backed by Cloud Datastore
-and Cloud Storage) are provided.
+- Atomic deployments
+- (To be implemented) Scheduled deployments
+- Redirects
+- Localization-aware redirects
+- Isolated per-branch staging environments backed by Google Account authentication
+- Ultra-fast TTFB and payload transfer speeds
+- A simple web UI for inspecting uploaded files
 
+The server runs on Google App Engine and proxies requests to Google Cloud Storage.
 ## Concept
 
-Many websites can be built and deployed as fully static packages (i.e. just
-HTML, CSS, and JavaScript – with no dynamic backend). In these instances,
+Many websites can be built and deployed as fully static content (i.e. just HTML,
+CSS, and JavaScript – with no dynamic backend). Despite being static content,
 websites may still have other requirements such as localization, redirects, or
 atomic deployments that end up adding slight dynamic functionality to an
 otherwise fully static project.
@@ -32,11 +36,12 @@ global network for performance.
 
 ## Usage
 
-There are two main tasks required in order to use Fileset. First, you'll need to
-deploy the application server and configure the Identity-Aware Proxy. This only
-needs to be done once, when the project is originally set up. Secondly, you'll
-need to upload files to be served. Files must be uploaded each time you want to
-serve new files to users, or update redirects, etc.
+There are two main tasks required in order to use Fileset:
+
+1. First, you'll need to deploy the server. This only needs to be done once,
+   when the project is originally set up.
+2. Second, you'll need to upload files to be served. Files must be uploaded each
+   time you want to serve new files, update redirects, etc.
 
 ### Server setup
 
@@ -90,7 +95,7 @@ google_cloud_project: <AppId>
 2. Generate your files.
 
 Use a static site generator or just manually create a directory containing files
-to upload. In the below example, the files in the directory `./build` are
+to upload. In step (3) below, the files in the directory `./build` are
 uploaded.
 
 3. Upload your files.
@@ -150,8 +155,8 @@ make project=<AppId> setup
 ## Environments
 
 Fileset uses Git branches to determine whether files should be in production
-(and public) or in staging (and restricted via the Identity-Aware Proxy). The
-Git branch is determined by inspecting the local Git environment when the
+(and public) or in staging (and restricted via Google Account authentication).
+The Git branch is determined by inspecting the local Git environment when the
 `upload` command is invoked.
 
 The best way to understand how this works is by following the examples below:
@@ -170,7 +175,7 @@ Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com
 
 ```bash
 # staging branch
-# ✓ not public; restricted by Identity-Aware Proxy
+# ✓ not public
 # ✓ staging URL only (restricted)
 
 (staging) $ fileset upload build
@@ -186,10 +191,10 @@ You can verify Fileset server is working as you expect by looking for the follow
 
 | Header | Description |
 |-|-|
-| `x-fileset-site` | The site being served. Usually this will be `default` but for multi-site installations, this will be useful for determining which site is serving. |
-| `x-fileset-ref` | The Git commit sha that corresponds to the serving manifest that is handling your request. |
-| `x-fileset-blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content. |
-| `x-fileset-ttl` | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served. |
+| `x‑fileset‑site` | The site being served. Usually this will be `default` but for multi-site installations, this will be useful for determining which site is serving. |
+| `x‑fileset‑ref` | The Git commit sha that corresponds to the serving manifest that is handling your request. |
+| `x‑fileset‑blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content. |
+| `x‑fileset‑ttl` | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served. |
 
 ### Query parameters
 
