@@ -40,13 +40,10 @@ serve new files to users, or update redirects, etc.
 
 ### Server setup
 
-NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
-(`gs://appid.appspot.com`) to upload files.
+Refer to the example in `./example/server` or follow the steps below.
 
-1. Within your project, create a directory to house the server files, e.g.
-   `./backend/server`. Avoid mixing the server configuration with any tools to
-   build your website. The `package.json`, etc. should be kept separate in order
-   to keep the deployment slim.
+1. Within your project, create a directory to house the server configuration, e.g.
+   `./backend/server`.
 
 2. Create a `package.json` like the below. App Engine will use `npm start` to
    run the server.
@@ -57,7 +54,7 @@ NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
     "start": "fileset serve"
   },
   "dependencies": {
-    "@blinkk/fileset": "^0.1.0"
+    "@blinkk/fileset": "^0.1.45"
   }
 }
 ```
@@ -67,11 +64,10 @@ NOTE: Fileset uses the default App Engine Google Cloud Storage bucket
 ```yaml
 service: fileset
 runtime: nodejs10
-env_variables:
-  FILESET_ALLOWED_ORGANIZATIONS: 'example1.com,example2.com'
-  FILESET_BASE_URL: 'staging.example.com'
-  FILESET_DEFAULT_BRANCH: main  # Optional.
-  FILESET_SITE: default  # Optional.
+handlers:
+- url: /.*
+  script: auto
+  secure: always
 ```
 
 4. Setup and deploy the app using the provided [Makefile](./example/server/Makefile).
@@ -83,58 +79,39 @@ make project=<AppId> deploy
 
 ### Deployment setup
 
-NOTE: Before you can deploy, you'll need to authenticate. Refer to the
-[authentication documentation](#uploader-authentication) if you have not used
-Google Cloud Platform services before and need information on authentication.
-
-1. Create a `fileset.yaml` configuration file.
+1. Create a `fileset.yaml` configuration file. The minimum example is below. See
+   the [example fileset.yaml](./example/fileset.yaml) for full configuration
+   options.
 
 ```yaml
-# Your Google Cloud project's ID (required).
 google_cloud_project: <AppId>
-
-# Your site ID (optional). If blank, `default` will be used.
-site: <SiteId>
-
-# Specify a launch schedule. The schedule maps timestamps to branches or commit
-# shas. If blank, `main` is used for the default deployment.
-schedule:
-  default: main
-
-redirects:
-- from: /foo
-  to: /bar
-- from: /intl/:locale/
-  to: /$locale/
-- from: /intl/:locale/*wildcard
-  to: /$locale/$wildcard
 ```
 
 2. Generate your files.
 
 Use a static site generator or just manually create a directory containing files
-to upload. In the below example, the files in the directory `build` are
+to upload. In the below example, the files in the directory `./build` are
 uploaded.
 
-4. Upload your files.
+3. Upload your files.
+
+The uploader will look for `fileset.yaml` within the `./build` directory
+first. If it's not found, it will look up in the parent folder for a
+`fileset.yaml` file. If the config file doesn't exist in the `./build` or parent
+folder, the uploader will abort.
 
 ```bash
 fileset upload ./build
 ```
 
-NOTE: The uploader will look for `fileset.yaml` within the `./build` directory
-first. If it's not found, it will look up in the parent folder for a
-`fileset.yaml` file. If the config file doesn't exist in the `./build` or parent
-folder, the uploader will abort.
-
-5. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
+4. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
    directory is now being served by the application server.
 
 ## Uploader authentication
 
-You'll need to be authenticated to deploy files and upload the serving manifests.
+You'll need to be authenticated to upload files and deploy the serving manifests.
 
-### Local testing / user account authentication
+### Local testing (authenticate using user account)
 
 If you are testing locally, your user account can be used to authenticate to
 Cloud Datastore and Cloud Storage. Simply run the below command to create
@@ -144,42 +121,13 @@ credentials used for authentication:
 gcloud auth application-default login
 ```
 
-### Continuous deployment / service account authentication
+### Continuous deployment (authenticate using service account)
 
 If you are using a service account for deployment, you'll need to ensure it has
-the right permissions.
+the right permissions. When using Fileset with Google Cloud Build, simply run
+`make setup` from the `example/server` directory to configure your project's
+Cloud Build Service account with the right permissions.
 
-#### 1. Identify the service account to use.
-
-Authentication to upload your files is done using a service account. You'll
-generally want to use one of two service accounts:
-
-__Cloud Build service account__: When the command is invoked from Google Cloud
-Build, your project's Cloud Build service account
-(`<ProjectNumber>@cloudbuild.gserviceaccount.com`) is used.
-
-To determine your project's project number:
-
-```bash
-gcloud projects describe <AppId>
-```
-
-__Application default service account__: When the command is invoked locally
-(i.e. for testing or for manual uploads), you'll likely want to use your App
-Engine app's default service account (`<AppId>@appspot.gserviceaccount.com`).
-You can download a service account key by running:
-
-```bash
-gcloud iam service-accounts keys create \
-  key.json \
-  --iam-account <AppId>@appspot.gserviceaccount.com
-```
-
-NOTE: This will download a `key.json` to your current directory. Avoid
-committing this to your Git repository. You'll want to add `key.json` to
-`.gitignore`.
-
-#### 2. Ensure service account has permissions.
 
 The following permissions are needed:
 
@@ -188,16 +136,12 @@ The following permissions are needed:
 - Cloud Storage (files are uploaded here): Storage Object Admin
   (`storage.objectAdmin`)
 
-If using the App Engine default service account, you will not need to modify the
-permissions, as the service account has the "Project Editor" permission by
-default.
-
 If using the Cloud Build service account (or any other service account), you'll
 need to add the above two permissions to the account. That can be done via the
 IAM page (`https://console.cloud.google.com/access/iam?project=<AppId>`) or via
 the `gcloud` CLI.
 
-From the provided [Makefile](./example/server/Makefile).
+The provided [Makefile](./example/server/Makefile) also does it for you:
 
 ```bash
 make project=<AppId> setup
@@ -236,6 +180,8 @@ Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com
 
 ## Testing
 
+### Response headers
+
 You can verify Fileset server is working as you expect by looking for the following headers:
 
 | Header | Description |
@@ -244,6 +190,16 @@ You can verify Fileset server is working as you expect by looking for the follow
 | `x-fileset-ref` | The Git commit sha that corresponds to the serving manifest that is handling your request. |
 | `x-fileset-blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content. |
 | `x-fileset-ttl` | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served. |
+
+### Query parameters
+
+You can simulate geolocation behavior using query parameters:
+
+| Parameter | Name | Description |
+|-|-|-|
+| `hl` | Language | Overrides the incoming `accept-language` header. |
+| `gl` | Geolocation | Overrides the incoming `x-appengine-country` header. |
+| `ncr` | No country redirect | Disables localization-aware redirects. |
 
 ## Tips
 
@@ -257,7 +213,7 @@ The absolute path to the `fileset` executable must be specified to invoke the CL
 
 ### Usage with Grow.dev
 
-First, build the site to the `build` directory. Then, upload the directory to Fileset.
+First, build the site to the `./build` directory. Then, upload the directory to Fileset.
 
 ```
 grow build --deployment=prod
