@@ -1,10 +1,12 @@
 google_cloud_project: <AppId>
+
 site: <SiteId>
-schedule:
-  default: main
+
 localization:
   pathFormat: '/:locale/:path'
+
 redirectTrailingSlashes: true
+
 redirects:
 - from: /foo
   to: /bar
@@ -15,3 +17,8 @@ redirects:
   to: /$locale/$wildcard
 - from: /intl/:locale/
   to: /$locale/
+
+headers:
+  '/page/':
+    X-Frame-Options: DENY
+    X-XSS-Protection: 1; mode=block

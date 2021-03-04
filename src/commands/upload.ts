@@ -31,6 +31,7 @@ interface Config {
   localization?: LocalizationConfig;
   redirectTrailingSlashes?: boolean;
   redirects?: RedirectConfig[];
+  headers?: Record<string, Record<string, string>>;
 }
 
 function findConfig(path: string): Config {
@@ -96,6 +97,11 @@ export class UploadCommand {
     }
     if (config.redirects) {
       manifestObj.setRedirects(config.redirects as manifest.Redirect[]);
+    }
+    if (config.headers) {
+      manifestObj.setHeaders(
+        config.headers as Record<string, Record<string, string>>
+      );
     }
     if (!manifestObj.files.length) {
       console.log(`No files found in -> ${path}`);
