@@ -50,6 +50,19 @@ export class RedirectRoute extends Route {
   }
 }
 
+export class CustomHeaderRoute extends Route {
+  private readonly headers: Record<string, string>;
+
+  constructor(headers: Record<string, string>) {
+    super();
+    this.headers = headers;
+  }
+
+  getHeaders() {
+    return this.headers;
+  }
+}
+
 /**
  * A trie data structure that stores routes. The trie supports `:param` and
  * `*wildcard` values.

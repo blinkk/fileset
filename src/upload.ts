@@ -145,7 +145,12 @@ async function saveManifestEntity(
 ) {
   const ent = {
     key: key,
-    excludeFromIndexes: ['paths', 'redirects'],
+    excludeFromIndexes: [
+      'headers',
+      'localizationPathFormat',
+      'paths',
+      'redirects',
+    ],
     data: data,
   };
   await datastore.save(ent);
@@ -177,6 +182,7 @@ async function finalize(
     ref: manifest.ref,
     site: manifest.site,
     manifestType: ManifestType.Ref,
+    headers: manifest.headers,
   });
 
   // Create branch mapping, so a branch name can be used to lookup filesets.
@@ -195,6 +201,7 @@ async function finalize(
       ref: manifest.ref,
       site: manifest.site,
       manifestType: ManifestType.Branch,
+      headers: manifest.headers,
     });
   }
 

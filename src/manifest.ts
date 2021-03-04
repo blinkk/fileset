@@ -41,6 +41,7 @@ export interface SerializedManifest {
   modified: string;
   redirectTrailingSlashes: boolean;
   localizationPathFormat: string;
+  headers: Record<string, Record<string, string>>;
 }
 
 export class Manifest {
@@ -52,6 +53,7 @@ export class Manifest {
   shortSha: string;
   redirectTrailingSlashes: boolean;
   localizationPathFormat: string;
+  headers: Record<string, Record<string, string>>;
 
   constructor(site: string, ref: string, branch?: string) {
     this.files = [];
@@ -62,6 +64,7 @@ export class Manifest {
     this.branch = branch;
     this.redirectTrailingSlashes = true;
     this.localizationPathFormat = DEFAULT_LOCALIZATION_PATH_FORMAT;
+    this.headers = {};
   }
 
   async createFromDirectory(path: string) {
@@ -69,6 +72,10 @@ export class Manifest {
     paths.forEach(filePath => {
       this.addFile(filePath, path);
     });
+  }
+
+  setHeaders(headers: Record<string, Record<string, string>>) {
+    Object.assign(this.headers, headers);
   }
 
   setRedirects(redirects: Redirect[]) {

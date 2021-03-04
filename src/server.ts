@@ -3,14 +3,13 @@ import * as fsPath from 'path';
 import * as httpProxy from 'http-proxy';
 import * as locale from './locale';
 import * as manifest from './manifest';
-import * as redirects from './redirects';
+import * as trie from './trie';
 import * as webui from './webui';
 
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
 import {URL} from 'url';
-import {normalize} from 'path';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -232,14 +231,14 @@ export function createApp(siteId: string) {
 
       // Handle redirects.
       if (manifest.redirects) {
-        const routeTrie = new redirects.RouteTrie();
+        const routeTrie = new trie.RouteTrie();
         manifest.redirects.forEach((redirect: manifest.Redirect) => {
           const code = redirect.permanent ? 301 : 302;
-          const route = new redirects.RedirectRoute(code, redirect.to);
+          const route = new trie.RedirectRoute(code, redirect.to);
           routeTrie.add(redirect.from, route);
         });
         const [route, params] = routeTrie.get(req.path);
-        if (route instanceof redirects.RedirectRoute) {
+        if (route instanceof trie.RedirectRoute) {
           const [code, destination] = route.getRedirect(params);
           res.redirect(code, destination);
           return;
@@ -304,7 +303,7 @@ export function createApp(siteId: string) {
         }
         console.log(`Error serving ${req.url}: ${error}`);
       });
-      server.on('proxyRes', (proxyRes, req, res) => {
+      server.on('proxyRes', (proxyRes, message, res) => {
         // Avoid modifying response if headers already sent.
         if (res.headersSent) {
           return;
@@ -329,6 +328,23 @@ export function createApp(siteId: string) {
           // Authenticated responses cannot be cached publicly.
           proxyRes.headers['cache-control'] = 'private, max-age=0';
         }
+
+        // Handle custom headers.
+        if (manifest.headers) {
+          const routeTrie = new trie.RouteTrie();
+          Object.entries(manifest.headers).forEach(([path, customHeaders]) => {
+            const route = new trie.CustomHeaderRoute(
+              customHeaders as Record<string, string>
+            );
+            routeTrie.add(path, route);
+          });
+          const [route] = routeTrie.get(req.path);
+          if (route instanceof trie.CustomHeaderRoute) {
+            const customHeaders = route.getHeaders();
+            Object.assign(proxyRes.headers, customHeaders);
+          }
+        }
+
         proxyRes.headers['x-fileset-blob'] = blobKey;
         proxyRes.headers['x-fileset-ref'] = manifest.ref;
         proxyRes.headers['x-fileset-site'] = requestSiteId;

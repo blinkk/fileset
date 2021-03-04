@@ -88,6 +88,7 @@ export class ApiHandler {
   serializeManifest(manifest: any) {
     return {
       branch: manifest.branch,
+      headers: manifest.headers,
       localizationPathFormat: manifest.localizationPathFormat,
       manifestType: manifest.manifestType,
       modified: manifest.modified,
