@@ -239,7 +239,13 @@ export function createApp(siteId: string) {
         });
         const [route, params] = routeTrie.get(req.path);
         if (route instanceof trie.RedirectRoute) {
-          const [code, destination] = route.getRedirect(params);
+          // Preserve query parameters when redirecting.
+          const result = route.getRedirect(params);
+          const code = result[0];
+          let destination = result[1];
+          destination = req.originalUrl.includes('?')
+            ? `${destination}?${req.originalUrl.split('?')[1]}`
+            : destination;
           res.redirect(code, destination);
           return;
         }
