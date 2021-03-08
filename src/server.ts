@@ -268,6 +268,13 @@ export function createApp(siteId: string) {
         return;
       }
 
+      // If a blob wasn't found, and if trailing slash redirects are off, try
+      // serving an `index.html` file, and 404 (instead of redirect) if the file
+      // doesn't exist.
+      if (!blobKey && manifest.redirectTrailingSlashes === false) {
+        blobKey = manifest.paths[`${urlPath}/index.html`];
+      }
+
       if (!blobKey) {
         // Trailing slash redirect.
         if (
