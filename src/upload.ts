@@ -175,14 +175,15 @@ async function finalize(
   const modified = new Date();
   await saveManifestEntity(datastore, key, {
     branch: manifest.branch,
+    headers: manifest.headers,
+    localizationPathFormat: manifest.localizationPathFormat,
+    manifestType: ManifestType.Ref,
     modified: modified,
     paths: manifestPaths,
     redirects: manifest.redirects,
-    localizationPathFormat: manifest.localizationPathFormat,
+    redirectTrailingSlashes: manifest.redirectTrailingSlashes,
     ref: manifest.ref,
     site: manifest.site,
-    manifestType: ManifestType.Ref,
-    headers: manifest.headers,
   });
 
   // Create branch mapping, so a branch name can be used to lookup filesets.
@@ -194,14 +195,15 @@ async function finalize(
     ]);
     await saveManifestEntity(datastore, branchKey, {
       branch: manifest.branch,
+      headers: manifest.headers,
+      localizationPathFormat: manifest.localizationPathFormat,
+      manifestType: ManifestType.Branch,
       modified: modified,
       paths: manifestPaths,
       redirects: manifest.redirects,
-      localizationPathFormat: manifest.localizationPathFormat,
+      redirectTrailingSlashes: manifest.redirectTrailingSlashes,
       ref: manifest.ref,
       site: manifest.site,
-      manifestType: ManifestType.Branch,
-      headers: manifest.headers,
     });
   }
 

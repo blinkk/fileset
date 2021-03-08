@@ -87,9 +87,6 @@ export class UploadCommand {
     if (config.redirectTrailingSlashes === false) {
       manifestObj.redirectTrailingSlashes = config.redirectTrailingSlashes;
     }
-    if (config.redirectTrailingSlashes === false) {
-      manifestObj.redirectTrailingSlashes = config.redirectTrailingSlashes;
-    }
     if (config.localization) {
       if (config.localization.pathFormat) {
         manifestObj.localizationPathFormat = config.localization.pathFormat;
