@@ -14,7 +14,6 @@ async function main() {
     .option('-r, --ref <ref>', 'ref', '')
     .option('-b, --branch <branch>', 'branch', '')
     .option('-f, --force', 'force', false)
-    .option('-t, --ttl <ttl>', 'ttl', undefined)
     .action(async (path, options) => {
       const cmd = new UploadCommand(options);
       await cmd.run(path);

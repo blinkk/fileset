@@ -38,7 +38,6 @@ const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
         });
     })
   );
-
   return filesToUpload;
 };
 
@@ -54,12 +53,32 @@ function createProgressBar() {
   );
 }
 
+export async function uploadSchedule(
+  googleCloudProject: string,
+  site: string,
+  schedule?: Record<string, string>
+) {
+  // TODO: Validate schedule by ensuring a manifest exists for all entries.
+  // Replicate the manifest table onto the schedule so only one RPC is needed per request.
+  const data = {
+    schedule: schedule,
+  };
+  const datastore = new Datastore({
+    projectId: googleCloudProject,
+  });
+  const key = datastore.key(['Fileset2Schedule', `${site}`]);
+  const ent = {
+    key: key,
+    data: data,
+  };
+  await datastore.save(ent);
+}
+
 export async function uploadManifest(
   googleCloudProject: string,
   bucket: string,
   manifest: Manifest,
-  force?: boolean,
-  ttl?: Date
+  force?: boolean
 ) {
   console.log(
     `Uploading fileset for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
@@ -82,7 +101,7 @@ export async function uploadManifest(
   );
 
   if (numTotalFiles <= 0) {
-    await finalize(googleCloudProject, manifest, ttl);
+    await finalize(googleCloudProject, manifest);
   } else {
     let bytesTransferred = 0;
     let numProcessedFiles = 0;
@@ -134,7 +153,7 @@ export async function uploadManifest(
       })
     );
 
-    await finalize(googleCloudProject, manifest, ttl);
+    await finalize(googleCloudProject, manifest);
   }
 }
 
@@ -156,11 +175,7 @@ async function saveManifestEntity(
   await datastore.save(ent);
 }
 
-async function finalize(
-  googleCloudProject: string,
-  manifest: Manifest,
-  ttl?: Date
-) {
+async function finalize(googleCloudProject: string, manifest: Manifest) {
   const datastore = new Datastore({
     projectId: googleCloudProject,
     // keyFilename: '/path/to/keyfile.json',
@@ -204,13 +219,6 @@ async function finalize(
       headers: manifest.headers,
     });
   }
-
-  // TODO: Update the site's playbook and use the playbook for timed launches.
-  // The playbook should contain copies of all future launches. Each site should only
-  // have one playbook.
-  // const routerKey = datastore.key(['Fileset2Router', manifest.site]);
-  // const router =  await datastore.get(routerKey);
-  // const entity = router && router[0];
   console.log(
     `Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
   );
@@ -225,3 +233,57 @@ async function finalize(
     );
   }
 }
+
+export const getManifest = async (
+  datastore: Datastore,
+  siteId: string,
+  branchOrRef: string
+) => {
+  const keys = [
+    datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
+    datastore.key(['Fileset2Manifest', `${siteId}:ref:${branchOrRef}`]),
+  ];
+  const resp = await datastore.get(keys);
+  if (!resp || !resp[0]) {
+    return;
+  }
+  const entities = resp[0];
+  const result = entities[0] || entities[1];
+  if (!result) {
+    return;
+  }
+  return result;
+};
+
+export const getServingManifest = async (
+  datastore: Datastore,
+  siteId: string
+) => {
+  const key = datastore.key(['Fileset2Schedule', `${siteId}`]);
+  const schedule = await datastore.get(key);
+  const ent = schedule[0];
+  const now = new Date();
+  let latestTimestamp: Date;
+  let latestBranchOrRef;
+  Object.entries(ent.schedule).forEach(([timestamp, branchOrRef]) => {
+    const entryTime = new Date(timestamp);
+    const eligible =
+      latestTimestamp === undefined || entryTime > latestTimestamp;
+    if (eligible && now >= entryTime) {
+      latestTimestamp = entryTime;
+      latestBranchOrRef = branchOrRef;
+    }
+  });
+  return latestBranchOrRef ? ent.manifests[latestBranchOrRef] : undefined;
+};
+
+export const listManifests = async (datastore: Datastore, siteId: string) => {
+  const query = datastore.createQuery('Fileset2Manifest');
+  query.filter('site', siteId);
+  query.filter('manifestType', ManifestType.Branch);
+  const result = await query.run();
+  if (result) {
+    return result[0];
+  }
+  return null;
+};

@@ -4,11 +4,11 @@ import * as httpProxy from 'http-proxy';
 import * as locale from './locale';
 import * as manifest from './manifest';
 import * as trie from './trie';
+import * as upload from './upload';
 import * as webui from './webui';
 
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
-import {ManifestType} from './upload';
 import {URL} from 'url';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
@@ -19,53 +19,6 @@ const auth = new GoogleAuth({
 });
 
 const DEFAULT_404_PAGE = '/404.html';
-
-export const getManifest = async (siteId: string, branchOrRef: string) => {
-  const keys = [
-    datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
-    datastore.key(['Fileset2Manifest', `${siteId}:ref:${branchOrRef}`]),
-  ];
-  const resp = await datastore.get(keys);
-  if (!resp || !resp[0]) {
-    return;
-  }
-  const entities = resp[0];
-  const result = entities[0] || entities[1];
-  if (!result) {
-    return;
-  }
-  return result;
-
-  // TODO: Add getPlaybook which can be used for prod serving and TTLs.
-  // getManifest is only used for staging.
-  // // TODO: Allow this to be overwritten.
-  // const now = new Date();
-  // let latestManifest = null;
-  // for (const ttlString in result.schedule) {
-  //   const ttlDate = new Date(ttlString);
-  //   const isLaterThanManifestDate = now >= ttlDate;
-  //   const isLaterThanAllManifests =
-  //     !latestManifest || ttlDate >= latestManifest.ttl;
-  //   if (isLaterThanManifestDate && isLaterThanAllManifests) {
-  //     latestManifest = result.schedule[ttlString];
-  //     latestManifest.ttl = ttlDate;
-  //   }
-  // }
-  // if (latestManifest) {
-  //   return latestManifest;
-  // }
-};
-
-export const listManifests = async (siteId: string) => {
-  const query = datastore.createQuery('Fileset2Manifest');
-  query.filter('site', siteId);
-  query.filter('manifestType', ManifestType.Branch);
-  const result = await query.run();
-  if (result) {
-    return result[0];
-  }
-  return null;
-};
 
 export function parseHostnamePrefix(prefix: string) {
   const result = {
@@ -125,7 +78,7 @@ export function parseHostname(
   }
   return {
     siteId: siteId || defaultSiteId || 'default',
-    branchOrRef: branchOrRef || process.env.FILESET_DEFAULT_BRANCH || 'main',
+    branchOrRef: branchOrRef || null,
   };
 }
 
@@ -172,7 +125,14 @@ export function createApp(siteId: string) {
       process.env.FILESET_BASE_URL
     );
     const requestSiteId = envFromHostname.siteId || siteId;
-    const requestBranchOrRef = envFromHostname.branchOrRef;
+    // Access control check for staging environments.
+    // TODO: Make the `isLive` check work with scheduled branches.
+    // const isLive = ['main', 'master'].includes(requestBranchOrRef);
+    const isLive = envFromHostname.branchOrRef === undefined;
+    const requestBranchOrRef =
+      envFromHostname.branchOrRef ||
+      process.env.FILESET_DEFAULT_BRANCH ||
+      'main';
 
     if (req.query.debug) {
       console.log(
@@ -186,7 +146,14 @@ export function createApp(siteId: string) {
     }
 
     try {
-      const manifest = await getManifest(requestSiteId, requestBranchOrRef);
+      const manifest =
+        (await upload.getServingManifest(datastore, requestSiteId)) ||
+        (await upload.getManifest(
+          datastore,
+          requestSiteId,
+          requestBranchOrRef
+        ));
+
       if (!manifest || !manifest.paths) {
         res
           .status(404)
@@ -196,9 +163,6 @@ export function createApp(siteId: string) {
         return;
       }
 
-      // Access control check for staging environments.
-      // TODO: Make the `isLive` check work with scheduled branches.
-      const isLive = ['main', 'master'].includes(requestBranchOrRef);
       if (!isLive) {
         // If the webui isn't enabled, only live filesets are served. All other
         // paths are disabled.

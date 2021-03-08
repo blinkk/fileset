@@ -12,7 +12,6 @@ interface UploadOptions {
   site: string;
   ref?: string;
   branch?: string;
-  ttl?: string;
 }
 
 interface LocalizationConfig {
@@ -32,6 +31,7 @@ interface Config {
   redirectTrailingSlashes?: boolean;
   redirects?: RedirectConfig[];
   headers?: Record<string, Record<string, string>>;
+  schedule?: Record<string, string>;
 }
 
 function findConfig(path: string): Config {
@@ -57,8 +57,7 @@ export class UploadCommand {
   async run(path = './') {
     const gitData = await getGitData(path);
     const config = findConfig(path);
-    const ttl = this.options.ttl ? new Date(this.options.ttl) : undefined;
-    const site = this.options.site || config.site;
+    const site = this.options.site || (config.site as string) || 'default';
 
     let bucket = this.options.bucket;
     if (!bucket && config.google_cloud_project) {
@@ -79,7 +78,7 @@ export class UploadCommand {
     }
 
     const manifestObj = new manifest.Manifest(
-      (site as string) || 'default',
+      site,
       this.options.ref || gitData.ref,
       this.options.branch || gitData.branch || ''
     );
@@ -111,8 +110,12 @@ export class UploadCommand {
       googleCloudProject as string,
       bucket,
       manifestObj,
-      this.options.force,
-      ttl
+      this.options.force
+    );
+    await upload.uploadSchedule(
+      googleCloudProject as string,
+      site,
+      config.schedule
     );
   }
 }
