@@ -29,15 +29,38 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'default',
       },
       {
-        branchOrRef: 'feature/0d60edf',
-        siteId: 'default',
-      },
-      {
         branchOrRef: 'workspace/0d60edf',
         siteId: 'default',
       },
       {
+        branchOrRef: 'feature/0d60edf',
+        siteId: 'default',
+      },
+      {
         branchOrRef: 'b/0d60edf',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'main',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'master',
+        siteId: 'default',
+      },
+    ]
+  );
+  t.deepEqual(
+    server.parseHostname({
+      hostname: 'feature--foo.localhost',
+    }),
+    [
+      {
+        branchOrRef: 'feature--foo',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'feature/foo',
         siteId: 'default',
       },
       {
@@ -61,11 +84,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'sitename',
       },
       {
-        branchOrRef: 'feature/refname',
+        branchOrRef: 'workspace/refname',
         siteId: 'sitename',
       },
       {
-        branchOrRef: 'workspace/refname',
+        branchOrRef: 'feature/refname',
         siteId: 'sitename',
       },
       {
@@ -77,11 +100,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'default',
       },
       {
-        branchOrRef: 'feature/sitename-refname',
+        branchOrRef: 'workspace/sitename-refname',
         siteId: 'default',
       },
       {
-        branchOrRef: 'workspace/sitename-refname',
+        branchOrRef: 'feature/sitename-refname',
         siteId: 'default',
       },
       {
@@ -110,15 +133,38 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'default',
       },
       {
-        branchOrRef: 'feature/refname',
-        siteId: 'default',
-      },
-      {
         branchOrRef: 'workspace/refname',
         siteId: 'default',
       },
       {
+        branchOrRef: 'feature/refname',
+        siteId: 'default',
+      },
+      {
         branchOrRef: 'b/refname',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'main',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'master',
+        siteId: 'default',
+      },
+    ]
+  );
+  t.deepEqual(
+    server.parseHostname({
+      hostname: 'feature--foo-dot-fileset2-dot-appid.appspot.com',
+    }),
+    [
+      {
+        branchOrRef: 'feature--foo',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'feature/foo',
         siteId: 'default',
       },
       {
@@ -143,11 +189,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'default',
       },
       {
-        branchOrRef: 'feature/fileset2',
+        branchOrRef: 'workspace/fileset2',
         siteId: 'default',
       },
       {
-        branchOrRef: 'workspace/fileset2',
+        branchOrRef: 'feature/fileset2',
         siteId: 'default',
       },
       {
@@ -196,11 +242,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'example',
       },
       {
-        branchOrRef: 'feature/foo',
+        branchOrRef: 'workspace/foo',
         siteId: 'example',
       },
       {
-        branchOrRef: 'workspace/foo',
+        branchOrRef: 'feature/foo',
         siteId: 'example',
       },
       {
@@ -229,11 +275,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'example',
       },
       {
-        branchOrRef: 'feature/foo',
+        branchOrRef: 'workspace/foo',
         siteId: 'example',
       },
       {
-        branchOrRef: 'workspace/foo',
+        branchOrRef: 'feature/foo',
         siteId: 'example',
       },
       {
@@ -263,11 +309,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'foo',
       },
       {
-        branchOrRef: 'feature/bar',
+        branchOrRef: 'workspace/bar',
         siteId: 'foo',
       },
       {
-        branchOrRef: 'workspace/bar',
+        branchOrRef: 'feature/bar',
         siteId: 'foo',
       },
       {
@@ -279,11 +325,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'example',
       },
       {
-        branchOrRef: 'feature/foo-bar',
+        branchOrRef: 'workspace/foo-bar',
         siteId: 'example',
       },
       {
-        branchOrRef: 'workspace/foo-bar',
+        branchOrRef: 'feature/foo-bar',
         siteId: 'example',
       },
       {
@@ -311,11 +357,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'default',
       },
       {
-        branchOrRef: 'feature/0d60edf',
+        branchOrRef: 'workspace/0d60edf',
         siteId: 'default',
       },
       {
-        branchOrRef: 'workspace/0d60edf',
+        branchOrRef: 'feature/0d60edf',
         siteId: 'default',
       },
       {
@@ -343,11 +389,11 @@ test('Test parseHostname', (t: ExecutionContext) => {
         siteId: 'default',
       },
       {
-        branchOrRef: 'feature/0d60edf',
+        branchOrRef: 'workspace/0d60edf',
         siteId: 'default',
       },
       {
-        branchOrRef: 'workspace/0d60edf',
+        branchOrRef: 'feature/0d60edf',
         siteId: 'default',
       },
       {

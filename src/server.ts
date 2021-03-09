@@ -1,3 +1,4 @@
+import * as defaults from './defaults';
 import * as express from 'express';
 import * as fsPath from 'path';
 import * as httpProxy from 'http-proxy';
@@ -10,7 +11,6 @@ import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
 import {entity} from '@google-cloud/datastore/build/src/entity';
-import {option} from 'commander';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -18,10 +18,6 @@ const datastore = new Datastore();
 const auth = new GoogleAuth({
   scopes: 'https://www.googleapis.com/auth/devstorage.read_only',
 });
-
-const DEFAULT_404_PAGE = '/404.html';
-export const COMMON_BRANCH_PREFIXES = ['feature/', 'workspace/', 'b/'];
-const DEFAULT_BRANCHES = ['main', 'master'];
 
 interface ParseHostnameOptions {
   hostname: string;
@@ -108,7 +104,8 @@ export function parseHostname(
   //   site-ref-with-dashes
   //   ref-with-dashes
   const defaultSiteOption = options.defaultSite || 'default';
-  const defaultBranchesOption = options.defaultBranches || DEFAULT_BRANCHES;
+  const defaultBranchesOption =
+    options.defaultBranches || defaults.LIVE_BRANCHES;
   const results = [];
   const prefix = options.hostname.split('-dot-')[0].split('.')[0];
   const cleanHostname = options.hostname.split(':')[0];
@@ -124,7 +121,7 @@ export function parseHostname(
   ) {
     // site-ref
     // site-ref-with-dashes
-    if (prefix.includes('-')) {
+    if (prefix.includes('-') && !prefix.includes('--')) {
       const cleanSiteId = prefix.split('-')[0];
       const cleanBranchOrRef = prefix.slice(prefix.indexOf('-') + 1);
       if (cleanSiteId !== defaultSiteOption) {
@@ -132,12 +129,19 @@ export function parseHostname(
           siteId: cleanSiteId,
           branchOrRef: cleanBranchOrRef,
         });
-        COMMON_BRANCH_PREFIXES.forEach(commonPrefix => {
+        if (!cleanBranchOrRef.includes('--')) {
+          defaults.COMMON_BRANCH_PREFIXES.forEach(commonPrefix => {
+            results.push({
+              siteId: cleanSiteId,
+              branchOrRef: `${commonPrefix}${cleanBranchOrRef}`,
+            });
+          });
+        } else {
           results.push({
             siteId: cleanSiteId,
-            branchOrRef: `${commonPrefix}${cleanBranchOrRef}`,
+            branchOrRef: cleanBranchOrRef.replace('--', '/'),
           });
-        });
+        }
       }
     }
     // ref
@@ -145,12 +149,19 @@ export function parseHostname(
       siteId: defaultSiteOption,
       branchOrRef: prefix,
     });
-    COMMON_BRANCH_PREFIXES.forEach(commonPrefix => {
+    if (!prefix.includes('--')) {
+      defaults.COMMON_BRANCH_PREFIXES.forEach(commonPrefix => {
+        results.push({
+          siteId: defaultSiteOption,
+          branchOrRef: `${commonPrefix}${prefix}`,
+        });
+      });
+    } else {
       results.push({
         siteId: defaultSiteOption,
-        branchOrRef: `${commonPrefix}${prefix}`,
+        branchOrRef: prefix.replace('--', '/'),
       });
-    });
+    }
   }
   // Likely prod, try defaults.
   defaultBranchesOption.forEach(defaultBranch => {
@@ -229,7 +240,7 @@ export function createApp(siteId: string) {
 
       // Access control check for staging environments.
       // TODO: Make the `isLive` check work with scheduled branches.
-      const isLive = DEFAULT_BRANCHES.includes(manifest.branch);
+      const isLive = defaults.LIVE_BRANCHES.includes(manifest.branch);
       if (!isLive) {
         // If the webui isn't enabled, only live filesets are served. All other
         // paths are disabled.
@@ -293,7 +304,7 @@ export function createApp(siteId: string) {
         manifest.paths[urlPath] || manifest.paths[urlPath.toLowerCase()];
       let localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
       const blobPrefix = `/${BUCKET}/fileset/sites/${manifest.site}/blobs`;
-      let is404Page = req.path === DEFAULT_404_PAGE;
+      let is404Page = req.path === defaults.DEFAULT_404_PAGE;
 
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
       if (localizedUrlPath && req.query.ncr === undefined) {
@@ -322,9 +333,9 @@ export function createApp(siteId: string) {
           return;
         }
         console.log(`Blob not found in ${blobPrefix} -> ${req.path}`);
-        if (manifest.paths[DEFAULT_404_PAGE]) {
+        if (manifest.paths[defaults.DEFAULT_404_PAGE]) {
           is404Page = true;
-          blobKey = manifest.paths[DEFAULT_404_PAGE];
+          blobKey = manifest.paths[defaults.DEFAULT_404_PAGE];
         } else {
           res.status(404);
           res.sendFile(fsPath.join(__dirname, './static/', '404.html'));
