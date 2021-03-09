@@ -1,12 +1,13 @@
 import * as defaults from '../../defaults';
 
 export function createStagingLink(
+  baseUrl: string,
   siteId: string,
   branch: string,
   ref: string,
   path?: string
 ) {
-  const url = new URL(window.location.href);
+  const url = new URL(baseUrl);
   // Fileset previews work by using either the branch or the short sha. If the
   // branch includes non-URL safe characters, revert to using the short sha
   // temporarily until we have a canonical way to normalize branch names for

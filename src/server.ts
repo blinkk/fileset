@@ -117,7 +117,7 @@ export function parseHostname(
   if (
     (options.baseUrl && cleanHostname.includes(cleanBaseUrl) && !isLive) ||
     options.hostname.includes('.localhost') ||
-    options.hostname.includes('-dot-')
+    (options.hostname.includes('-dot-') && !isLive)
   ) {
     // site-ref
     // site-ref-with-dashes

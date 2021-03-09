@@ -88,6 +88,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                 <td>
                   <a
                     href={createStagingLink(
+                      window.location.href,
                       manifest.site,
                       manifest.branch,
                       manifest.ref

@@ -177,8 +177,24 @@ test('Test parseHostname', (t: ExecutionContext) => {
       },
     ]
   );
-
+  t.deepEqual(
+    server.parseHostname({
+      hostname: 'appid.appspot.com',
+    }),
+    [
+      {
+        branchOrRef: 'main',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'master',
+        siteId: 'default',
+      },
+    ]
+  );
   // App Engine wildcard domain, no sitename or refname provided.
+  // NOTE: Conflict when GAE service and branch are both named "fileset2", and
+  // when the baseUrl is not supplied.
   t.deepEqual(
     server.parseHostname({
       hostname: 'fileset2-dot-appid.appspot.com',
@@ -210,7 +226,23 @@ test('Test parseHostname', (t: ExecutionContext) => {
       },
     ]
   );
-
+  // When baseUrl is supplied, no conflict exists.
+  t.deepEqual(
+    server.parseHostname({
+      hostname: 'fileset2-dot-appid.appspot.com',
+      baseUrl: 'fileset2-dot-appid.appspot.com',
+    }),
+    [
+      {
+        branchOrRef: 'main',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'master',
+        siteId: 'default',
+      },
+    ]
+  );
   // Custom staging domain.
   t.deepEqual(
     server.parseHostname({

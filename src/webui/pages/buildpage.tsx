@@ -64,6 +64,7 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
 
   createServingUrl(path: string) {
     return createStagingLink(
+      window.location.href,
       this.state.manifest.site,
       this.state.manifest.branch,
       this.state.manifest.ref,
