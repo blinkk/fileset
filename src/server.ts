@@ -9,7 +9,8 @@ import * as webui from './webui';
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
-import {URL} from 'url';
+import {entity} from '@google-cloud/datastore/build/src/entity';
+import {option} from 'commander';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -19,6 +20,20 @@ const auth = new GoogleAuth({
 });
 
 const DEFAULT_404_PAGE = '/404.html';
+export const COMMON_BRANCH_PREFIXES = ['feature/', 'workspace/', 'b/'];
+const DEFAULT_BRANCHES = ['main', 'master'];
+
+interface ParseHostnameOptions {
+  hostname: string;
+  defaultSite?: string;
+  defaultBranches?: string[];
+  baseUrl?: string;
+}
+
+interface ManifestLookupOptions {
+  siteId: string;
+  branchOrRef: string;
+}
 
 export const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
@@ -35,25 +50,32 @@ export const getManifest = async (siteId: string, branchOrRef: string) => {
     return;
   }
   return result;
+};
 
-  // TODO: Add getPlaybook which can be used for prod serving and TTLs.
-  // getManifest is only used for staging.
-  // // TODO: Allow this to be overwritten.
-  // const now = new Date();
-  // let latestManifest = null;
-  // for (const ttlString in result.schedule) {
-  //   const ttlDate = new Date(ttlString);
-  //   const isLaterThanManifestDate = now >= ttlDate;
-  //   const isLaterThanAllManifests =
-  //     !latestManifest || ttlDate >= latestManifest.ttl;
-  //   if (isLaterThanManifestDate && isLaterThanAllManifests) {
-  //     latestManifest = result.schedule[ttlString];
-  //     latestManifest.ttl = ttlDate;
-  //   }
-  // }
-  // if (latestManifest) {
-  //   return latestManifest;
-  // }
+export const lookupManifest = async (options: ManifestLookupOptions[]) => {
+  const keys: entity.Key[] = [];
+  options.forEach(option => {
+    if (option.branchOrRef.length === 7) {
+      keys.push(
+        datastore.key([
+          'Fileset2Manifest',
+          `${option.siteId}:ref:${option.branchOrRef}`,
+        ])
+      );
+    }
+    keys.push(
+      datastore.key([
+        'Fileset2Manifest',
+        `${option.siteId}:branch:${option.branchOrRef}`,
+      ])
+    );
+  });
+  const resp = await datastore.get(keys);
+  if (!resp || !resp[0]) {
+    return;
+  }
+  const entities = resp[0];
+  return entities.find(Boolean);
 };
 
 export const listManifests = async (siteId: string) => {
@@ -67,66 +89,77 @@ export const listManifests = async (siteId: string) => {
   return null;
 };
 
-export function parseHostnamePrefix(prefix: string) {
-  const result = {
-    siteId: '',
-    branchOrRef: '',
-  };
-  const parts = prefix.split('-'); // Either <Site>-<Ref> or <Ref>.
-  if (parts.length > 1) {
-    // Format is: <Site>-<Ref>-dot-fileset.appspot.com
-    result.siteId = parts[0];
-    result.branchOrRef = parts[1].slice(0, 7);
-  } else {
-    // Format is: <Ref>-dot-fileset.appspot.com
-    result.branchOrRef = parts[0].slice(0, 7);
-  }
-  return result;
-}
-
 export function parseHostname(
-  hostname: string,
-  defaultSiteId?: string,
-  stagingDomain?: string
-) {
-  let siteId = '';
-  let branchOrRef = '';
-  // If there are two occurances of "-dot-", treat domain as an App Engine
-  // wildcard domain. One occurance of "-dot-" is treated as a fall back to the
-  // defaults.
+  options: ParseHostnameOptions
+): ManifestLookupOptions[] {
+  // Supported hostname patterns:
+  //   https://ref-dot-appid.appspot.com/
+  //   https://site-ref-dot-appid.appspot.com/
+  //   https://site-ref-dot-fileset-dot-appid.appspot.com/
+  //   https://site-ref-with-dashes-dot-fileset-dot-appid.appspot.com/
+  //   https://ref-with-dashes-dot-fileset-dot-appid.appsot.com/
+  //   https://ref-with-dashes-dot-appid.appspot.com/
+  //   https://site-ref.example.com
+  //   https://site-ref.foo.example.com
+  //   https://foo.localhost:8080
+  // Supported prefix patterns:
+  //   ref
+  //   site-ref
+  //   site-ref-with-dashes
+  //   ref-with-dashes
+  const defaultSiteOption = options.defaultSite || 'default';
+  const defaultBranchesOption = options.defaultBranches || DEFAULT_BRANCHES;
+  const results = [];
+  const prefix = options.hostname.split('-dot-')[0].split('.')[0];
+  const cleanHostname = options.hostname.split(':')[0];
+  const cleanBaseUrl = options.baseUrl
+    ? options.baseUrl.replace(/^(https?):\/\//, '').split(':')[0]
+    : '';
+  const isLive = cleanHostname === cleanBaseUrl;
+  // Staging, run through supported prefixes.
   if (
-    (hostname.match(/-dot-/g) || []).length > 1 &&
-    hostname.includes('-dot-')
+    (options.baseUrl && cleanHostname.includes(cleanBaseUrl) && !isLive) ||
+    options.hostname.includes('.localhost') ||
+    options.hostname.includes('-dot-')
   ) {
-    const prefix = hostname.split('-dot-')[0];
-    const parsedPrefix = parseHostnamePrefix(prefix);
-    siteId = parsedPrefix.siteId;
-    branchOrRef = parsedPrefix.branchOrRef;
-  } else if (stagingDomain) {
-    let normalizedStagingDomain = stagingDomain;
-    if (!stagingDomain.startsWith('http')) {
-      const prefix = stagingDomain.includes('localhost')
-        ? 'http://'
-        : 'https://';
-      normalizedStagingDomain = `${prefix}${normalizedStagingDomain}`;
+    // site-ref
+    // site-ref-with-dashes
+    if (prefix.includes('-')) {
+      const cleanSiteId = prefix.split('-')[0];
+      const cleanBranchOrRef = prefix.slice(prefix.indexOf('-') + 1);
+      if (cleanSiteId !== defaultSiteOption) {
+        results.push({
+          siteId: cleanSiteId,
+          branchOrRef: cleanBranchOrRef,
+        });
+        COMMON_BRANCH_PREFIXES.forEach(commonPrefix => {
+          results.push({
+            siteId: cleanSiteId,
+            branchOrRef: `${commonPrefix}${cleanBranchOrRef}`,
+          });
+        });
+      }
     }
-    const baseUrl = new URL(normalizedStagingDomain);
-    if (hostname.endsWith(baseUrl.hostname)) {
-      // Trim off base URL and dot (or dash).
-      const prefix = hostname
-        .replace('http://', '')
-        .replace('https://', '')
-        .slice(0, -baseUrl.hostname.length - 1);
-      // Prefix is either "<Site>-<Ref>" or "<Ref>".
-      const parsedPrefix = parseHostnamePrefix(prefix);
-      siteId = parsedPrefix.siteId;
-      branchOrRef = parsedPrefix.branchOrRef;
-    }
+    // ref
+    results.push({
+      siteId: defaultSiteOption,
+      branchOrRef: prefix,
+    });
+    COMMON_BRANCH_PREFIXES.forEach(commonPrefix => {
+      results.push({
+        siteId: defaultSiteOption,
+        branchOrRef: `${commonPrefix}${prefix}`,
+      });
+    });
   }
-  return {
-    siteId: siteId || defaultSiteId || 'default',
-    branchOrRef: branchOrRef || process.env.FILESET_DEFAULT_BRANCH || 'main',
-  };
+  // Likely prod, try defaults.
+  defaultBranchesOption.forEach(defaultBranch => {
+    results.push({
+      siteId: defaultSiteOption,
+      branchOrRef: defaultBranch,
+    });
+  });
+  return results;
 }
 
 function findLocalizedUrlPath(
@@ -166,27 +199,25 @@ export function createApp(siteId: string) {
     webui.configure(app);
   }
   app.all('/*', async (req: express.Request, res: express.Response) => {
-    const envFromHostname = parseHostname(
-      req.hostname,
-      process.env.FILESET_SITE,
-      process.env.FILESET_BASE_URL
-    );
-    const requestSiteId = envFromHostname.siteId || siteId;
-    const requestBranchOrRef = envFromHostname.branchOrRef;
+    const manifestsToLookup = parseHostname({
+      hostname: req.hostname,
+      defaultSite: process.env.FILESET_SITE,
+      baseUrl: process.env.FILESET_BASE_URL,
+      defaultBranches: process.env.FILESET_DEFAULT_BRANCH
+        ? process.env.FILESET_DEFAULT_BRANCH.split(',')
+        : undefined,
+    });
 
     if (req.query.debug) {
       console.log(
-        `Site: ${requestSiteId}, Ref: ${requestBranchOrRef}, Bucket: ${process.env.GOOGLE_CLOUD_PROJECT}`
+        `Attempting to find manifest matching -> ${JSON.stringify(
+          manifestsToLookup
+        )}`
       );
     }
 
-    let urlPath = decodeURIComponent(req.path);
-    if (urlPath.endsWith('/')) {
-      urlPath += 'index.html';
-    }
-
     try {
-      const manifest = await getManifest(requestSiteId, requestBranchOrRef);
+      const manifest = await lookupManifest(manifestsToLookup);
       if (!manifest || !manifest.paths) {
         res
           .status(404)
@@ -198,7 +229,7 @@ export function createApp(siteId: string) {
 
       // Access control check for staging environments.
       // TODO: Make the `isLive` check work with scheduled branches.
-      const isLive = ['main', 'master'].includes(requestBranchOrRef);
+      const isLive = DEFAULT_BRANCHES.includes(manifest.branch);
       if (!isLive) {
         // If the webui isn't enabled, only live filesets are served. All other
         // paths are disabled.
@@ -251,12 +282,17 @@ export function createApp(siteId: string) {
         }
       }
 
+      let urlPath = decodeURIComponent(req.path);
+      if (urlPath.endsWith('/')) {
+        urlPath += 'index.html';
+      }
+
       // Handle static content.
       const manifestPaths = manifest.paths;
       let blobKey =
         manifest.paths[urlPath] || manifest.paths[urlPath.toLowerCase()];
       let localizedUrlPath = findLocalizedUrlPath(req, manifest, urlPath);
-      const blobPrefix = `/${BUCKET}/fileset/sites/${requestSiteId}/blobs`;
+      const blobPrefix = `/${BUCKET}/fileset/sites/${manifest.site}/blobs`;
       let is404Page = req.path === DEFAULT_404_PAGE;
 
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
@@ -360,9 +396,12 @@ export function createApp(siteId: string) {
 
         proxyRes.headers['x-fileset-blob'] = blobKey;
         proxyRes.headers['x-fileset-ref'] = manifest.ref;
-        proxyRes.headers['x-fileset-site'] = requestSiteId;
+        proxyRes.headers['x-fileset-site'] = manifest.site;
         if (manifest.ttl) {
           proxyRes.headers['x-fileset-ttl'] = manifest.ttl;
+        }
+        if (!isLive) {
+          proxyRes.headers['x-fileset-branch'] = manifest.branch;
         }
         const statusCode = is404Page ? 404 : proxyRes.statusCode || 200;
         res.writeHead(statusCode, proxyRes.headers);
