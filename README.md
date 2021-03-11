@@ -45,46 +45,26 @@ There are two main tasks required in order to use Fileset:
 
 ### Server setup
 
-Refer to the example in `./example/server` or follow the steps below.
-
 1. Within your project, create a directory to house the server configuration, e.g.
    `./backend/server`.
 
-2. Create a `package.json` like the below. App Engine will use `npm start` to
-   run the server.
+2. Copy the files from [./example/server/](./example/server/) into this directory.
 
-```json
-{
-  "scripts": {
-    "start": "fileset serve"
-  },
-  "dependencies": {
-    "@blinkk/fileset": "^0.1.45"
-  }
-}
-```
+3. Modify the settings in `app.yaml` and `secrets.yaml`.
 
-3. Create an `app.yaml` for Google App Engine deployment.
-
-```yaml
-service: fileset
-runtime: nodejs10
-handlers:
-- url: /.*
-  script: auto
-  secure: always
-```
-
-4. Setup and deploy the app using the provided [Makefile](./example/server/Makefile).
+4. Setup and deploy the app using the provided
+   [Makefile](./example/server/Makefile). The app will be deployed to an App
+   Engine service named `fileset`, so it will not conflict with your current
+   deployment.
 
 ```bash
 make project=<AppId> setup
 make project=<AppId> deploy
 ```
 
-### Deployment setup
+### Upload files
 
-1. Create a `fileset.yaml` configuration file. The minimum example is below. See
+1. **Create a `fileset.yaml` configuration file.** The minimum example is below. See
    the [example fileset.yaml](./example/fileset.yaml) for full configuration
    options.
 
@@ -92,25 +72,26 @@ make project=<AppId> deploy
 google_cloud_project: <AppId>
 ```
 
-2. Generate your files.
-
-Use a static site generator or just manually create a directory containing files
+2. **Generate your files.** Use a static site generator or just manually create a directory containing files
 to upload. In step (3) below, the files in the directory `./build` are
 uploaded.
 
-3. Upload your files.
-
-The uploader will look for `fileset.yaml` within the `./build` directory
-first. If it's not found, it will look up in the parent folder for a
-`fileset.yaml` file. If the config file doesn't exist in the `./build` or parent
-folder, the uploader will abort.
+3. **Upload your files.** The uploader will look for `fileset.yaml` within the
+   specified directory first. If it's not found, it will look up in the parent
+   folder. If the config file doesn't exist in either folder, the uploader will
+   abort.
 
 ```bash
-fileset upload ./build
+npx fileset upload ./build
 ```
 
-4. That's it! Files have been uploaded to Google Cloud Storage and the uploaded
-   directory is now being served by the application server.
+That's it! Files have been uploaded to Google Cloud Storage and the uploaded
+directory is now being served by the application server. You can verify by
+visiting:
+
+```
+https://fileset-dot-<AppId>.appspot.com
+```
 
 ## Uploader authentication
 
@@ -146,7 +127,8 @@ need to add the above two permissions to the account. That can be done via the
 IAM page (`https://console.cloud.google.com/access/iam?project=<AppId>`) or via
 the `gcloud` CLI.
 
-The provided [Makefile](./example/server/Makefile) also does it for you:
+The provided [Makefile](./example/server/Makefile) also sets up Google Cloud
+Build permissions for you.
 
 ```bash
 make project=<AppId> setup
@@ -165,12 +147,13 @@ The best way to understand how this works is by following the examples below:
 # main branch
 # ✓ public
 # ✓ production URL
-# ✓ also available from staging URL (restricted)
+# ✓ also available from staging URLs (restricted)
 
-(main) $ fileset upload build
+(main) $ npx fileset upload build
 ...
- Public URL: https://appid.appspot.com
-Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com
+Public URL:            https://appid.appspot.com
+URL (via commit):      https://f3a9abb-dot-fileset-dot-appid.appspot.com
+URL (via branch name): https://master-dot-fileset-dot-appid.appspot.com
 ```
 
 ```bash
@@ -178,9 +161,10 @@ Staging URL: https://f3a9abb-dot-fileset-dot-appid.appspot.com
 # ✓ not public
 # ✓ staging URL only (restricted)
 
-(staging) $ fileset upload build
+(staging) $ npx fileset upload build
 ...
-Staging URL: https://4fb48ce-dot-fileset-dot-appid.appspot.com
+URL (via commit):      https://4fb48ce-dot-fileset-dot-appid.appspot.com
+URL (via branch name): https://staging-dot-fileset-dot-appid.appspot.com
 ```
 
 ## Testing
@@ -210,7 +194,7 @@ You can simulate geolocation behavior using query parameters:
 
 ### Usage within Makefile
 
-The absolute path to the `fileset` executable must be specified to invoke the CLI.
+The absolute path to the `fileset` executable can be specified to invoke the CLI.
 
 ```
 ./node_modules/.bin/fileset upload build
@@ -222,7 +206,7 @@ First, build the site to the `./build` directory. Then, upload the directory to 
 
 ```
 grow build --deployment=prod
-fileset upload build
+npx fileset upload build
 ```
 
 [github-image]: https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg
