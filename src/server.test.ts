@@ -21,6 +21,21 @@ test('Test parseHostname', (t: ExecutionContext) => {
   );
   t.deepEqual(
     server.parseHostname({
+      hostname: 'www.example.com',
+    }),
+    [
+      {
+        branchOrRef: 'main',
+        siteId: 'default',
+      },
+      {
+        branchOrRef: 'master',
+        siteId: 'default',
+      },
+    ]
+  );
+  t.deepEqual(
+    server.parseHostname({
       hostname: '0d60edf.localhost',
     }),
     [
