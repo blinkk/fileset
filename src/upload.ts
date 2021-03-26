@@ -77,13 +77,14 @@ export async function uploadManifest(
     ? manifest.files
     : await findUploadedFiles(manifest, storageBucket);
   const numTotalFiles = filesToUpload.length;
-  console.log(
-    `Found new ${filesToUpload.length} files out of ${manifest.files.length} total...`
-  );
 
   if (numTotalFiles <= 0) {
+    console.log('No new files to upload. Updating the manifest...');
     await finalize(googleCloudProject, manifest, ttl);
   } else {
+    console.log(
+      `Found ${numTotalFiles} new files out of ${manifest.files.length} total...`
+    );
     let bytesTransferred = 0;
     let numProcessedFiles = 0;
     const startTime = Math.floor(Date.now() / 1000);
@@ -146,6 +147,7 @@ async function saveManifestEntity(
   const ent = {
     key: key,
     excludeFromIndexes: [
+      'commit',
       'headers',
       'localizationPathFormat',
       'paths',
@@ -184,6 +186,7 @@ async function finalize(
     redirectTrailingSlashes: manifest.redirectTrailingSlashes,
     ref: manifest.ref,
     site: manifest.site,
+    commit: manifest.commit,
   });
 
   // Create branch mapping, so a branch name can be used to lookup filesets.
@@ -204,6 +207,7 @@ async function finalize(
       redirectTrailingSlashes: manifest.redirectTrailingSlashes,
       ref: manifest.ref,
       site: manifest.site,
+      commit: manifest.commit,
     });
   }
 

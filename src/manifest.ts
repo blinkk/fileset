@@ -31,6 +31,16 @@ export interface Redirect {
   permanent?: boolean;
 }
 
+interface GitAuthor {
+  email: string;
+  name: string;
+}
+
+export interface Commit {
+  message: string;
+  author: GitAuthor;
+}
+
 export interface SerializedManifest {
   site: string;
   ref: string;
@@ -42,20 +52,22 @@ export interface SerializedManifest {
   redirectTrailingSlashes: boolean;
   localizationPathFormat: string;
   headers: Record<string, Record<string, string>>;
+  commit: Commit;
 }
 
 export class Manifest {
   site: string;
   ref: string;
-  branch?: string;
+  branch: string;
   files: ManifestFile[];
   redirects: Redirect[];
   shortSha: string;
   redirectTrailingSlashes: boolean;
   localizationPathFormat: string;
   headers: Record<string, Record<string, string>>;
+  commit: Commit;
 
-  constructor(site: string, ref: string, branch?: string) {
+  constructor(site: string, ref: string, branch: string, commit: Commit) {
     this.files = [];
     this.redirects = [];
     this.site = site;
@@ -65,6 +77,7 @@ export class Manifest {
     this.redirectTrailingSlashes = true;
     this.localizationPathFormat = DEFAULT_LOCALIZATION_PATH_FORMAT;
     this.headers = {};
+    this.commit = commit;
   }
 
   async createFromDirectory(path: string) {

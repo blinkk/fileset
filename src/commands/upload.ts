@@ -81,7 +81,8 @@ export class UploadCommand {
     const manifestObj = new manifest.Manifest(
       (site as string) || 'default',
       this.options.ref || gitData.ref,
-      this.options.branch || gitData.branch || ''
+      this.options.branch || gitData.branch || '',
+      gitData.commit
     );
     await manifestObj.createFromDirectory(path);
     if (config.redirectTrailingSlashes === false) {
