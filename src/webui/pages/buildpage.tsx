@@ -4,6 +4,7 @@ import {Link} from 'preact-router/match';
 import {Loading} from '../components/loading';
 import {Page} from './page';
 import {createStagingLink} from '../utils/links';
+import {prettyDate} from '../utils/formatters';
 import {rpc} from '../utils/rpc';
 
 interface BuildPageProps {
@@ -146,6 +147,39 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
     );
   }
 
+  renderGitData() {
+    return (
+      <div>
+        {this.state.manifest && this.state.manifest.commit ? (
+          <div class="BuildPage__content__gitData">
+            <div class="BuildPage__content__gitData__primary">
+              <span
+                class="BuildPage__content__gitData__primary__author"
+                title="{this.state.manifest.commit.author.email}"
+              >
+                {this.state.manifest.commit.author.name}
+              </span>
+              <span class="BuildPage__content__gitData__primary__message">
+                {this.state.manifest.commit.message}
+              </span>
+            </div>
+            <div class="BuildPage__content__gitData__secondary">
+              <span class="BuildPage__content__gitData__secondary__shortSha">
+                {this.state.manifest.ref.slice(0, 7)}
+              </span>
+              &nbsp;on&nbsp;
+              <span class="BuildPage__content__gitData__secondary__modified">
+                {prettyDate(this.state.manifest.modified)}
+              </span>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div class="BuildPage">
@@ -164,6 +198,7 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
           </Link>
         </div>
         <div class="BuildPage__content">
+          {this.state.loading ? '' : this.renderGitData()}
           {this.state.loading ? this.renderLoading() : this.renderPathsTable()}
           {this.state.loading ? '' : this.renderRedirectsTable()}
         </div>

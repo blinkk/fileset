@@ -98,6 +98,7 @@ export class ApiHandler {
       ref: manifest.ref,
       shortSha: manifest.shortSha,
       site: manifest.site,
+      commit: manifest.commit,
     };
   }
 }
