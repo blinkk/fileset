@@ -10,6 +10,7 @@ import {rpc} from '../utils/rpc';
 interface SitePageProps {
   path: string;
   siteId?: string;
+  tab?: string;
 }
 
 interface SitePageState {
@@ -17,6 +18,7 @@ interface SitePageState {
   siteId: string;
   manifests: Array<any>;
   loading: boolean;
+  tab?: string;
 }
 
 export class SitePage extends Page<SitePageProps, SitePageState> {
@@ -27,6 +29,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
       siteId: props.siteId,
       loading: false,
       manifests: [],
+      tab: props.tab,
     };
   }
 
@@ -47,6 +50,10 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
     }
   }
 
+  async componentWillReceiveProps(props: SitePageProps) {
+    this.setState({tab: props.tab});
+  }
+
   filterManifests(manifests: Array<any>) {
     return manifests.sort(
       (a, b) => new Date(b.modified).getTime() - new Date(a.modified).getTime()
@@ -57,10 +64,44 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
     return <Loading />;
   }
 
+  renderTabSet() {
+    return (
+      <div class="BuildPage__tabset">
+        <div class="BuildPage__tabset__bar">
+          <Link
+            className={`BuildPage__tabset__bar__tab ${
+              this.state.tab === undefined
+                ? 'BuildPage__tabset__bar__tab--active'
+                : ''
+            }`}
+            href={this.state.currentPath}
+          >
+            <span class="material-icons-outlined">link</span>
+            Staging links
+          </Link>
+          <Link
+            className={`BuildPage__tabset__bar__tab ${
+              this.state.tab === 'history'
+                ? 'BuildPage__tabset__bar__tab--active'
+                : ''
+            }`}
+            href={`${this.state.currentPath}?tab=history`}
+          >
+            <span class="material-icons-outlined">history</span>
+            Builds
+          </Link>
+        </div>
+        <div>
+          {this.state.tab === undefined ? this.renderManifestTable() : ''}
+          {this.state.tab === 'history' ? this.renderManifestTable() : ''}
+        </div>
+      </div>
+    );
+  }
+
   renderManifestTable() {
     return this.state.manifests && this.state.manifests.length ? (
       <div class="SitePage__content__table">
-        <div class="SitePage__content__table__title">Staging links</div>
         <table>
           <thead>
             <tr>
@@ -138,38 +179,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
           </Link>
         </div>
         <div class="SitePage__content">
-          {/*
-          <div class="SitePage__content__table">
-            <div class="SitePage__content__table__title">
-              Scheduled launches
-            </div>
-            <table>
-              <thead>
-                <tr>
-                  <td>TTL</td>
-                  <td>Commit</td>
-                  <td>Modified</td>
-                  <td>Staging Link</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Master</td>
-                  <td>
-                    <Link href="/fileset/sites/default/abc">abc</Link>
-                  </td>
-                  <td>2020/10/19 05:12</td>
-                  <td>
-                    <a href="#">Link</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          */}
-          {this.state.loading
-            ? this.renderLoading()
-            : this.renderManifestTable()}
+          {this.state.loading ? this.renderLoading() : this.renderTabSet()}
         </div>
       </div>
     );

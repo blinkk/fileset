@@ -1,4 +1,5 @@
 @import ../utils/spacing
+@import ../utils/tabset
 @import ../utils/type
 
 .BuildPage__title
@@ -49,25 +50,7 @@
     margin-right: 5px
 
 .BuildPage__tabset__bar
-    display: flex
-    border-bottom: 1px solid #EAECEF
-    margin-bottom: $spacing-40
+    +tabset-bar
 
 .BuildPage__tabset__bar__tab
-    color: inherit
-    padding: $spacing-15 $spacing-20
-    border-bottom: 3px solid transparent
-    font-weight: 700
-
-    .material-icons-outlined
-        margin-right: 7px
-        color: #969DA4
-
-    &--active
-        border-bottom-color: $color-primary
-
-        .material-icons-outlined
-            color: #25292E
-
-    &:hover
-        border-bottom-color: $color-primary-hover
+    +tabset-bar-tab

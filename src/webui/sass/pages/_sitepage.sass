@@ -1,4 +1,5 @@
 @import ../utils/spacing
+@import ../utils/tabset
 @import ../utils/type
 
 .SitePage__title
@@ -36,3 +37,9 @@
 
 .SitePage__content__empty__body + .SitePage__content__empty__buttons
     margin-top: $spacing-20
+
+.SitePage__tabset__bar
+    +tabset-bar
+
+.SitePage__tabset__bar__tab
+    +tabset-bar-tab
