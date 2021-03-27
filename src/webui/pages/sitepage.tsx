@@ -35,10 +35,20 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
 
   async componentDidMount() {
     document.title = `${this.state.siteId} – Fileset`;
+    this.updateTable(this.state.tab === undefined ? 'branch' : 'ref');
+  }
+
+  async componentWillReceiveProps(props: SitePageProps) {
+    this.setState({tab: props.tab});
+    this.updateTable(props.tab === undefined ? 'branch' : 'ref');
+  }
+
+  async updateTable(manifestType: string) {
     try {
       this.setState({loading: true});
       const resp: any = await rpc('manifest.list', {
         site: this.state.siteId,
+        manifestType: manifestType,
       });
       this.setState({
         loading: false,
@@ -48,10 +58,6 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
       this.setState({loading: false});
       console.error(err);
     }
-  }
-
-  async componentWillReceiveProps(props: SitePageProps) {
-    this.setState({tab: props.tab});
   }
 
   filterManifests(manifests: Array<any>) {
@@ -92,24 +98,25 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
           </Link>
         </div>
         <div>
-          {this.state.tab === undefined ? this.renderManifestTable() : ''}
-          {this.state.tab === 'history' ? this.renderManifestTable() : ''}
+          {this.state.loading
+            ? this.renderLoading()
+            : this.renderManifestTable()}
         </div>
       </div>
     );
   }
 
-  renderManifestTable() {
-    return this.state.manifests && this.state.manifests.length ? (
+  renderStagingLinkTable() {
+    return (
       <div class="SitePage__content__table">
         <table>
           <thead>
             <tr>
               <th>Branch</th>
-              <th>Commit</th>
+              <th data-extra-small>Commit</th>
               <th>Modified</th>
-              <th>Files</th>
-              <th>Staging link</th>
+              <th data-extra-small>Files</th>
+              <th data-extra-small>Staging link</th>
             </tr>
           </thead>
           <tbody>
@@ -148,6 +155,78 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
           </tbody>
         </table>
       </div>
+    );
+  }
+
+  renderHistoryTable() {
+    return (
+      <div class="SitePage__content__table">
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th data-extra-small>Commit</th>
+              <th>Modified</th>
+              <th data-extra-small>Files</th>
+              <th data-small>Links</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.filterManifests(this.state.manifests).map((manifest, i) => (
+              <tr>
+                <td>
+                  {manifest.commit ? (
+                    <div>
+                      {manifest.commit.message}{' '}
+                      <small>{manifest.commit.author.name}</small>
+                    </div>
+                  ) : (
+                    <small>(unknown)</small>
+                  )}
+                </td>
+                <td>
+                  <code>{manifest.ref.slice(0, 7)}</code>
+                </td>
+                <td>{prettyDate(manifest.modified)}</td>
+                <td>{Object.keys(manifest.paths).length}</td>
+                <td>
+                  <a
+                    class="button button--tonal button--small"
+                    href={`/fileset/sites/${
+                      this.state.siteId
+                    }/${encodeURIComponent(manifest.ref.slice(0, 7))}/`}
+                  >
+                    <span class="material-icons-outlined">view_list</span>
+                    Details
+                  </a>
+                  <a
+                    class="button button--tonal button--small"
+                    href={createStagingLink(
+                      window.location.href,
+                      manifest.site,
+                      '',
+                      manifest.ref
+                    )}
+                  >
+                    <span class="material-icons-outlined">open_in_new</span>
+                    Staging
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  renderManifestTable() {
+    return this.state.manifests && this.state.manifests.length ? (
+      this.state.tab === 'history' ? (
+        this.renderHistoryTable()
+      ) : (
+        this.renderStagingLinkTable()
+      )
     ) : (
       <div class="SitePage__content__empty">
         <div class="SitePage__content__empty__headline">
@@ -178,9 +257,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
             {this.state.siteId}
           </Link>
         </div>
-        <div class="SitePage__content">
-          {this.state.loading ? this.renderLoading() : this.renderTabSet()}
-        </div>
+        <div class="SitePage__content">{this.renderTabSet()}</div>
       </div>
     );
   }

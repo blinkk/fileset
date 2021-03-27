@@ -15,6 +15,7 @@ interface GetManifestResponse {
 
 interface ListManifestRequest {
   site: string;
+  manifestType: string;
 }
 
 interface ListManifestResponse {
@@ -45,7 +46,10 @@ export class ApiHandler {
     expressRequest: express.Request,
     request: ListManifestRequest
   ): Promise<ListManifestResponse> {
-    const manifests = await server.listManifests(request.site);
+    const manifests = await server.listManifests(
+      request.site,
+      request.manifestType
+    );
     if (!manifests) {
       return {
         manifests: null,
