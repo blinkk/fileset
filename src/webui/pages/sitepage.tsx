@@ -82,11 +82,14 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                     {manifest.branch}
                   </Link>
                 </td>
-                <td>{manifest.ref.slice(0, 7)}</td>
+                <td>
+                  <code>{manifest.ref.slice(0, 7)}</code>
+                </td>
                 <td>{prettyDate(manifest.modified)}</td>
                 <td>{Object.keys(manifest.paths).length}</td>
                 <td>
                   <a
+                    class="button button--tonal button--small"
                     href={createStagingLink(
                       window.location.href,
                       manifest.site,
@@ -94,6 +97,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                       manifest.ref
                     )}
                   >
+                    <span class="material-icons-outlined">open_in_new</span>
                     Link
                   </a>
                 </td>
