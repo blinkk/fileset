@@ -39,6 +39,7 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
   }
 
   async componentDidMount() {
+    document.title = `${this.state.siteId} @ ${this.state.ref} – Fileset`;
     this.setState({loading: true});
     try {
       const resp: any = await rpc('manifest.get', {
@@ -138,7 +139,9 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
                       {redirect.from}
                     </a>
                   </td>
-                  <td>{redirect.to}</td>
+                  <td>
+                    <code>{redirect.to}</code>
+                  </td>
                   <td>{redirect.permanent}</td>
                 </tr>
               ))}
