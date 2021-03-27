@@ -4,6 +4,10 @@ import {Link} from 'preact-router/match';
 import {Page} from './page';
 
 export class HomePage extends Page<any, any> {
+  async componentDidMount() {
+    document.title = 'Fileset';
+  }
+
   render() {
     return (
       <div class="HomePage">

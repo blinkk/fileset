@@ -31,6 +31,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
   }
 
   async componentDidMount() {
+    document.title = `${this.state.siteId} – Fileset`;
     try {
       this.setState({loading: true});
       const resp: any = await rpc('manifest.list', {
