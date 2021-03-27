@@ -12,6 +12,7 @@ interface BuildPageProps {
   path: string;
   siteId?: string;
   ref?: string;
+  tab?: string;
 }
 
 interface BuildPageState {
@@ -20,6 +21,7 @@ interface BuildPageState {
   loading: boolean;
   ref: string;
   manifest: any;
+  tab?: string;
 }
 
 export class BuildPage extends Page<BuildPageProps, BuildPageState> {
@@ -31,7 +33,9 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
       loading: false,
       ref: props.matches.ref,
       manifest: null,
+      tab: props.matches.tab,
     };
+    console.log(this);
   }
 
   async componentDidMount() {
@@ -49,6 +53,10 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
       this.setState({loading: false});
       console.error(err);
     }
+  }
+
+  async componentWillReceiveProps(props: BuildPageProps) {
+    this.setState({tab: props.tab});
   }
 
   filterPaths(paths: Record<string, string>) {
@@ -80,7 +88,6 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
   renderPathsTable() {
     return (
       <div class="BuildPage__content__table">
-        <div class="BuildPage__content__table__title">Files</div>
         <table>
           <thead>
             <tr>
@@ -112,7 +119,6 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
   renderRedirectsTable() {
     return (
       <div class="BuildPage__content__table">
-        <div class="BuildPage__content__table__title">Redirects</div>
         {this.state.manifest &&
         this.state.manifest.redirects &&
         this.state.manifest.redirects.length ? (
@@ -165,7 +171,7 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
             </div>
             <div class="BuildPage__content__gitData__secondary">
               <span class="BuildPage__content__gitData__secondary__shortSha">
-                {this.state.manifest.ref.slice(0, 7)}
+                <code>{this.state.manifest.ref.slice(0, 7)}</code>
               </span>
               &nbsp;on&nbsp;
               <span class="BuildPage__content__gitData__secondary__modified">
@@ -176,6 +182,46 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
         ) : (
           ''
         )}
+      </div>
+    );
+  }
+
+  renderTabSet() {
+    return (
+      <div class="BuildPage__tabset">
+        <div class="BuildPage__tabset__bar">
+          <Link
+            className={`BuildPage__tabset__bar__tab ${
+              this.state.tab === undefined
+                ? 'BuildPage__tabset__bar__tab--active'
+                : ''
+            }`}
+            href={this.state.currentPath}
+          >
+            <span class="material-icons-outlined">insert_drive_file</span>
+            Files (
+            {this.state.manifest
+              ? Object.keys(this.state.manifest.paths).length
+              : '0'}
+            )
+          </Link>
+          <Link
+            className={`BuildPage__tabset__bar__tab ${
+              this.state.tab === 'redirects'
+                ? 'BuildPage__tabset__bar__tab--active'
+                : ''
+            }`}
+            href={`${this.state.currentPath}?tab=redirects`}
+          >
+            <span class="material-icons-outlined">double_arrow</span>
+            Redirects (
+            {this.state.manifest ? this.state.manifest.redirects.length : '0'})
+          </Link>
+        </div>
+        <div>
+          {this.state.tab === undefined ? this.renderPathsTable() : ''}
+          {this.state.tab === 'redirects' ? this.renderRedirectsTable() : ''}
+        </div>
       </div>
     );
   }
@@ -199,8 +245,7 @@ export class BuildPage extends Page<BuildPageProps, BuildPageState> {
         </div>
         <div class="BuildPage__content">
           {this.state.loading ? '' : this.renderGitData()}
-          {this.state.loading ? this.renderLoading() : this.renderPathsTable()}
-          {this.state.loading ? '' : this.renderRedirectsTable()}
+          {this.state.loading ? this.renderLoading() : this.renderTabSet()}
         </div>
       </div>
     );
