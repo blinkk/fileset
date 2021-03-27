@@ -74,10 +74,13 @@ export const lookupManifest = async (options: ManifestLookupOptions[]) => {
   return entities.find(Boolean);
 };
 
-export const listManifests = async (siteId: string) => {
+export const listManifests = async (siteId: string, manifestType?: string) => {
   const query = datastore.createQuery('Fileset2Manifest');
   query.filter('site', siteId);
-  query.filter('manifestType', ManifestType.Branch);
+  query.filter(
+    'manifestType',
+    manifestType ? manifestType : ManifestType.Branch
+  );
   const result = await query.run();
   if (result) {
     return result[0];

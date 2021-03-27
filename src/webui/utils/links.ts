@@ -19,8 +19,9 @@ export function createStagingLink(
   });
   branch = branch.replace('/', '--');
   let prefix;
-  // Resulting branch isn't URL safe, we need to use the ref.
-  if (encodeURIComponent(branch) !== branch) {
+  // Resulting branch is empty (meaning we want the ref link), or isn't URL
+  // safe, we need to use the ref.
+  if (!branch || encodeURIComponent(branch) !== branch) {
     prefix = ref.slice(0, 7);
   } else {
     prefix = branch;
