@@ -332,7 +332,7 @@ export function createApp(siteId: string) {
           manifestPaths[`${urlPath}/index.html`]
         ) {
           const destination = `${urlPath}/`;
-          res.redirect(302, destination);
+          res.redirect(301, destination);
           return;
         }
         console.log(`Blob not found in ${blobPrefix} -> ${req.path}`);
