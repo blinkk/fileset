@@ -160,13 +160,12 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
 
   renderHistoryTable() {
     return (
-      <div class="SitePage__content__table">
+      <div class="SitePage__content__table SitePage__content__table--bordered">
         <table>
           <thead>
             <tr>
               <th>Description</th>
               <th data-extra-small>Commit</th>
-              <th>Modified</th>
               <th data-extra-small>Files</th>
               <th data-small>Links</th>
             </tr>
@@ -177,8 +176,11 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                 <td>
                   {manifest.commit ? (
                     <div>
-                      {manifest.commit.message}{' '}
-                      <small>{manifest.commit.author.name}</small>
+                      <div>{manifest.commit.message}</div>
+                      <div>
+                        <b>{manifest.commit.author.name}</b> authored on
+                        {prettyDate(manifest.modified)}
+                      </div>
                     </div>
                   ) : (
                     <small>(unknown)</small>
@@ -187,7 +189,6 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
                 <td>
                   <code>{manifest.ref.slice(0, 7)}</code>
                 </td>
-                <td>{prettyDate(manifest.modified)}</td>
                 <td>{Object.keys(manifest.paths).length}</td>
                 <td>
                   <a
