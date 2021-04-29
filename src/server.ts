@@ -31,6 +31,8 @@ interface ManifestLookupOptions {
   branchOrRef: string;
 }
 
+const FingerprintedExtensions = new Set(['.css', '.js', '.svg']);
+
 export const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
     datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
@@ -301,6 +303,11 @@ export function createApp(siteId: string) {
         urlPath += 'index.html';
       }
 
+      // Used for cache-control settings.
+      const ext = fsPath.extname(req.path.split('?')[0]);
+      const isFingerprinted =
+        FingerprintedExtensions.has(ext) && req.url.includes('fingerprint=');
+
       // Handle static content.
       const manifestPaths = manifest.paths;
       let blobKey =
@@ -382,7 +389,9 @@ export function createApp(siteId: string) {
         delete proxyRes.headers['x-goog-stored-content-length'];
         delete proxyRes.headers['x-guploader-response-body-transformations'];
         delete proxyRes.headers['x-guploader-uploadid'];
-        if (isLive && !is404Page) {
+        if (isFingerprinted) {
+          proxyRes.headers['cache-control'] = 'public, max-age=31536000';
+        } else if (isLive && !is404Page) {
           // This cannot be "private, max-age=0" as this kills perf.
           // This also can't be a very small value, as it kills perf. 0036 seems to work correctly.
           // The padded "0036" keeps the Content-Length identical with `3600`.
