@@ -45,8 +45,7 @@ function findConfig(path: string): Config {
   } else {
     return {};
   }
-  // TODO: Validate config schema.
-  return yaml.safeLoad(fs.readFileSync(configPath, 'utf8')) as Config;
+  return (yaml.safeLoad(fs.readFileSync(configPath, 'utf8')) as Config) || {};
 }
 
 export class UploadCommand {
@@ -60,23 +59,14 @@ export class UploadCommand {
     const ttl = this.options.ttl ? new Date(this.options.ttl) : undefined;
     const site = this.options.site || config.site;
 
-    let bucket = this.options.bucket;
-    if (!bucket && config.google_cloud_project) {
-      bucket = `${config.google_cloud_project}.appspot.com`;
-    } else if (!bucket && process.env.GOOGLE_CLOUD_PROJECT) {
-      bucket = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
-    }
-    if (!bucket) {
+    const googleCloudProject =
+      config.google_cloud_project || process.env.GOOGLE_CLOUD_PROJECT;
+    if (!googleCloudProject) {
       throw new Error(
         'Unable to determine which Google Cloud Storage bucket to use. You must specify a `google_cloud_project` in `fileset.yaml` or specify a `GOOGLE_CLOUD_PROJECT` environment variable.'
       );
     }
-
-    const googleCloudProject =
-      config.google_cloud_project || process.env.GOOGLE_CLOUD_PROJECT;
-    if (!googleCloudProject) {
-      throw new Error('Unable to determine the Google Cloud project.');
-    }
+    const bucket = this.options.bucket || `${googleCloudProject}.appspot.com`;
 
     const manifestObj = new manifest.Manifest(
       (site as string) || 'default',
