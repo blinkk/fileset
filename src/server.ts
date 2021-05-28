@@ -117,12 +117,14 @@ export function parseHostname(
   const cleanBaseUrl = options.baseUrl
     ? options.baseUrl.replace(/^(https?):\/\//, '').split(':')[0]
     : '';
-  const isLive = cleanHostname === cleanBaseUrl;
+  const isProdHostname = cleanHostname === cleanBaseUrl;
   // Staging, run through supported prefixes.
   if (
-    (options.baseUrl && cleanHostname.includes(cleanBaseUrl) && !isLive) ||
+    (options.baseUrl &&
+      cleanHostname.includes(cleanBaseUrl) &&
+      !isProdHostname) ||
     options.hostname.includes('.localhost') ||
-    (options.hostname.includes('-dot-') && !isLive)
+    (options.hostname.includes('-dot-') && !isProdHostname)
   ) {
     // site-ref
     // site-ref-with-dashes
@@ -245,7 +247,9 @@ export function createApp(siteId: string) {
 
       // Access control check for staging environments.
       // TODO: Make the `isLive` check work with scheduled branches.
-      const isLive = defaults.LIVE_BRANCHES.includes(manifest.branch);
+      const stagingOnly = Boolean(process.env.FILESET_STAGING_ONLY);
+      const isLive =
+        defaults.LIVE_BRANCHES.includes(manifest.branch) && !stagingOnly;
       if (!isLive) {
         // If the webui isn't enabled, only live filesets are served. All other
         // paths are disabled.

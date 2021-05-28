@@ -5,6 +5,7 @@ env_variables:
   FILESET_BASE_URL: 'staging.example.com'
   FILESET_DEFAULT_BRANCH: main
   FILESET_SITE: default
+  FILESET_STAGING_ONLY: ''
 includes:
 - secrets.yaml
 handlers:
