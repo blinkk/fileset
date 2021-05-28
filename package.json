@@ -18,10 +18,11 @@
     "clean": "gts clean",
     "compile": "tsc; webpack --config webpack.common.js --mode development",
     "copy": "cpx 'src/static/**' 'dist/src/static'",
-    "dev:start": "npm run copy; npm run compile",
     "dev": "nodemon --watch src -e ts,tsx,sass --exec npm run dev:start",
+    "dev:start": "npm run copy; npm run compile",
     "docs": "typedoc --out docs",
     "fix": "node ./node_modules/eslint/bin/eslint --fix src/**/*.ts src/**/*.tsx",
+    "prepare": "rm -rf dist/; npm run dev:start;",
     "test": "ava"
   },
   "ava": {
