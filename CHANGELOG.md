@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.2.1](https://www.github.com/blinkk/fileset/compare/v0.2.0...v0.2.1) (2021-05-28)
+
+
+### Bug Fixes
+
+* ensure package is prepared before publish ([7978c08](https://www.github.com/blinkk/fileset/commit/7978c085b8aebbb15ba7de17567bc0f66b9a0d3e))
+
 ## [0.2.0](https://www.github.com/blinkk/fileset/compare/v0.1.5...v0.2.0) (2021-05-28)
 
 
