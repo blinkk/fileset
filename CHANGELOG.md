@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://www.github.com/blinkk/fileset/compare/v0.1.5...v0.2.0) (2021-05-28)
+
+
+### Miscellaneous Chores
+
+* release 0.2.0 ([6c877ba](https://www.github.com/blinkk/fileset/commit/6c877ba3b9326a06e3ed772682de0d4564b640a9))
+
 ### [0.1.5](https://www.github.com/blinkk/fileset/compare/v0.1.4...v0.1.5) (2021-05-28)
 
 
