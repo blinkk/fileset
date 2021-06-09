@@ -91,6 +91,34 @@
 					to issue a response sprinkled with one of the above dynamic features, and
 					otherwise proxies traffic directly to Google Cloud Storage – leveraging Google&#39;s
 				global network for performance.</p>
+				<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+					<h2>Table of contents</h2>
+				</a>
+				<ul>
+					<li><a href="#concept">Concept</a></li>
+					<li><a href="#usage">Usage</a><ul>
+							<li><a href="#server-setup">Server setup</a></li>
+							<li><a href="#upload-files">Upload files</a></li>
+						</ul>
+					</li>
+					<li><a href="#uploader-authentication">Uploader authentication</a><ul>
+							<li><a href="#local-testing-authenticate-using-user-account">Local testing (authenticate using user account)</a></li>
+							<li><a href="#continuous-deployment-authenticate-using-service-account">Continuous deployment (authenticate using service account)</a></li>
+						</ul>
+					</li>
+					<li><a href="#environments">Environments</a></li>
+					<li><a href="#testing">Testing</a><ul>
+							<li><a href="#response-headers">Response headers</a></li>
+							<li><a href="#query-parameters">Query parameters</a></li>
+						</ul>
+					</li>
+					<li><a href="#tips">Tips</a><ul>
+							<li><a href="#usage-within-makefile">Usage within Makefile</a></li>
+							<li><a href="#usage-with-amagaki">Usage with Amagaki</a></li>
+							<li><a href="#usage-with-growdev">Usage with Grow.dev</a></li>
+						</ul>
+					</li>
+				</ul>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
@@ -279,12 +307,19 @@
 				<p>The absolute path to the <code>fileset</code> executable can be specified to invoke the CLI.</p>
 				<pre><code><span style="color: #000000">.</span><span style="color: #811F3F">/node_modules/</span><span style="color: #000000">.</span><span style="color: #001080">bin</span><span style="color: #000000">/</span><span style="color: #001080">fileset</span><span style="color: #000000"> </span><span style="color: #001080">upload</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
 </code></pre>
+				<a href="#usage-with-amagaki" id="usage-with-amagaki" style="color: inherit; text-decoration: none;">
+					<h3>Usage with Amagaki</h3>
+				</a>
+				<p>First, build the site to the <code>./build</code> directory. Then, upload the directory to Fileset.</p>
+				<pre><code class="language-shell"><span style="color: #000000">npx @blinkk/amagaki build</span>
+<span style="color: #000000">npx @blinkk/fileset upload build</span>
+</code></pre>
 				<a href="#usage-with-growdev" id="usage-with-growdev" style="color: inherit; text-decoration: none;">
 					<h3>Usage with Grow.dev</h3>
 				</a>
 				<p>First, build the site to the <code>./build</code> directory. Then, upload the directory to Fileset.</p>
-				<pre><code><span style="color: #001080">grow</span><span style="color: #000000"> </span><span style="color: #001080">build</span><span style="color: #000000"> --</span><span style="color: #001080">deployment</span><span style="color: #000000">=</span><span style="color: #001080">prod</span>
-<span style="color: #001080">npx</span><span style="color: #000000"> </span><span style="color: #001080">fileset</span><span style="color: #000000"> </span><span style="color: #001080">upload</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
+				<pre><code class="language-shell"><span style="color: #000000">grow build --deployment=prod</span>
+<span style="color: #000000">npx @blinkk/fileset upload build</span>
 </code></pre>
 			</div>
 		</div>
