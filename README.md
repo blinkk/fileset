@@ -34,6 +34,24 @@ to issue a response sprinkled with one of the above dynamic features, and
 otherwise proxies traffic directly to Google Cloud Storage – leveraging Google's
 global network for performance.
 
+## Table of contents
+
+- [Concept](#concept)
+- [Usage](#usage)
+  - [Server setup](#server-setup)
+  - [Upload files](#upload-files)
+- [Uploader authentication](#uploader-authentication)
+  - [Local testing (authenticate using user account)](#local-testing-authenticate-using-user-account)
+  - [Continuous deployment (authenticate using service account)](#continuous-deployment-authenticate-using-service-account)
+- [Environments](#environments)
+- [Testing](#testing)
+  - [Response headers](#response-headers)
+  - [Query parameters](#query-parameters)
+- [Tips](#tips)
+  - [Usage within Makefile](#usage-within-makefile)
+  - [Usage with Amagaki](#usage-with-amagaki)
+  - [Usage with Grow.dev](#usage-with-growdev)
+
 ## Usage
 
 There are two main tasks required in order to use Fileset:
@@ -200,13 +218,22 @@ The absolute path to the `fileset` executable can be specified to invoke the CLI
 ./node_modules/.bin/fileset upload build
 ```
 
+### Usage with Amagaki
+
+First, build the site to the `./build` directory. Then, upload the directory to Fileset.
+
+```shell
+npx @blinkk/amagaki build
+npx @blinkk/fileset upload build
+```
+
 ### Usage with Grow.dev
 
 First, build the site to the `./build` directory. Then, upload the directory to Fileset.
 
-```
+```shell
 grow build --deployment=prod
-npx fileset upload build
+npx @blinkk/fileset upload build
 ```
 
 [github-image]: https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg
