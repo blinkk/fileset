@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://www.github.com/blinkk/fileset/compare/v0.2.1...v0.3.0) (2021-08-04)
+
+
+### Features
+
+* allow specifying gcp project in cli ([449b2b2](https://www.github.com/blinkk/fileset/commit/449b2b2a7ba403f5ab8e75238171b8a12ddc97ac))
+
 ### [0.2.1](https://www.github.com/blinkk/fileset/compare/v0.2.0...v0.2.1) (2021-05-28)
 
 
