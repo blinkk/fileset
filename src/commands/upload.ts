@@ -7,11 +7,12 @@ import * as yaml from 'js-yaml';
 import {getGitData} from '../gitdata';
 
 interface UploadOptions {
+  branch?: string;
   bucket: string;
   force?: boolean;
-  site: string;
+  googleCloudProject?: string;
   ref?: string;
-  branch?: string;
+  site: string;
   ttl?: string;
 }
 
@@ -60,10 +61,12 @@ export class UploadCommand {
     const site = this.options.site || config.site;
 
     const googleCloudProject =
-      config.google_cloud_project || process.env.GOOGLE_CLOUD_PROJECT;
+      this.options.googleCloudProject ||
+      config.google_cloud_project ||
+      process.env.GOOGLE_CLOUD_PROJECT;
     if (!googleCloudProject) {
       throw new Error(
-        'Unable to determine which Google Cloud Storage bucket to use. You must specify a `google_cloud_project` in `fileset.yaml` or specify a `GOOGLE_CLOUD_PROJECT` environment variable.'
+        'Unable to determine which Google Cloud Storage bucket to use. You must specify a `google_cloud_project` in `fileset.yaml`, use the `-p` flag, or specify a `GOOGLE_CLOUD_PROJECT` environment variable.'
       );
     }
     const bucket = this.options.bucket || `${googleCloudProject}.appspot.com`;

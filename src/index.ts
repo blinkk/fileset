@@ -10,6 +10,7 @@ async function main() {
   program
     .command('upload [dir]')
     .description('Uploads a directory to cloud storage')
+    .option('-p, --google-cloud-project <project>', 'project', '')
     .option('-s, --site <site>', 'site', '')
     .option('-r, --ref <ref>', 'ref', '')
     .option('-b, --branch <branch>', 'branch', '')
