@@ -90,6 +90,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#branch" class="tsd-kind-icon">branch</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#commit" class="tsd-kind-icon">commit</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#files" class="tsd-kind-icon">files</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#googlecloudproject" class="tsd-kind-icon">google<wbr>Cloud<wbr>Project</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#headers" class="tsd-kind-icon">headers</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#localizationpathformat" class="tsd-kind-icon">localization<wbr>Path<wbr>Format</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#redirecttrailingslashes" class="tsd-kind-icon">redirect<wbr>Trailing<wbr>Slashes</a></li>
@@ -97,6 +98,12 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#ref" class="tsd-kind-icon">ref</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#shortsha" class="tsd-kind-icon">short<wbr>Sha</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="manifest.manifest-1.html#site" class="tsd-kind-icon">site</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="manifest.manifest-1.html#urls" class="tsd-kind-icon">urls</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -109,6 +116,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="manifest.manifest-1.html#pathstojson" class="tsd-kind-icon">paths<wbr>ToJSON</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="manifest.manifest-1.html#setheaders" class="tsd-kind-icon">set<wbr>Headers</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="manifest.manifest-1.html#setredirects" class="tsd-kind-icon">set<wbr>Redirects</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="manifest.manifest-1.html#tooutputjson" class="tsd-kind-icon">to<wbr>OutputJSON</a></li>
 							</ul>
 						</section>
 					</div>
@@ -120,13 +128,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Manifest<span class="tsd-signature-symbol">(</span>site<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, commit<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="manifest.manifest-1.html" class="tsd-signature-type" data-tsd-kind="Class">Manifest</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Manifest<span class="tsd-signature-symbol">(</span>site<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ref<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, branch<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, commit<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a>, googleCloudProject<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="manifest.manifest-1.html" class="tsd-signature-type" data-tsd-kind="Class">Manifest</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L68">manifest.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L78">manifest.ts:78</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -143,6 +151,9 @@
 								<li>
 									<h5>commit: <a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a></h5>
 								</li>
+								<li>
+									<h5>googleCloudProject: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="manifest.manifest-1.html" class="tsd-signature-type" data-tsd-kind="Class">Manifest</a></h4>
 						</li>
@@ -157,7 +168,7 @@
 					<div class="tsd-signature tsd-kind-icon">branch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L61">manifest.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L70">manifest.ts:70</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -167,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">commit<span class="tsd-signature-symbol">:</span> <a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L68">manifest.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L77">manifest.ts:77</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,7 +188,17 @@
 					<div class="tsd-signature tsd-kind-icon">files<span class="tsd-signature-symbol">:</span> <a href="../interfaces/manifest.manifestfile.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestFile</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L62">manifest.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L71">manifest.ts:71</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="googlecloudproject" class="tsd-anchor"></a>
+					<h3>google<wbr>Cloud<wbr>Project</h3>
+					<div class="tsd-signature tsd-kind-icon">google<wbr>Cloud<wbr>Project<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L78">manifest.ts:78</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -187,7 +208,7 @@
 					<div class="tsd-signature tsd-kind-icon">headers<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L67">manifest.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L76">manifest.ts:76</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,7 +218,7 @@
 					<div class="tsd-signature tsd-kind-icon">localization<wbr>Path<wbr>Format<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L66">manifest.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L75">manifest.ts:75</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -207,7 +228,7 @@
 					<div class="tsd-signature tsd-kind-icon">redirect<wbr>Trailing<wbr>Slashes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L65">manifest.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L74">manifest.ts:74</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -217,7 +238,7 @@
 					<div class="tsd-signature tsd-kind-icon">redirects<span class="tsd-signature-symbol">:</span> <a href="../interfaces/manifest.redirect.html" class="tsd-signature-type" data-tsd-kind="Interface">Redirect</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L63">manifest.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L72">manifest.ts:72</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -227,7 +248,7 @@
 					<div class="tsd-signature tsd-kind-icon">ref<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L60">manifest.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L69">manifest.ts:69</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,7 +258,7 @@
 					<div class="tsd-signature tsd-kind-icon">short<wbr>Sha<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L64">manifest.ts:64</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L73">manifest.ts:73</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -247,9 +268,29 @@
 					<div class="tsd-signature tsd-kind-icon">site<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L59">manifest.ts:59</a></li>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L68">manifest.ts:68</a></li>
 						</ul>
 					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="urls" class="tsd-anchor"></a>
+					<h3>urls</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> urls<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifesturls.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestUrls</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L165">manifest.ts:165</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/manifest.manifesturls.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestUrls</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -264,7 +305,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L107">manifest.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L124">manifest.ts:124</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -290,7 +331,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L123">manifest.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L140">manifest.ts:140</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -319,7 +360,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L83">manifest.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L100">manifest.ts:100</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -342,7 +383,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L98">manifest.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L115">manifest.ts:115</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -365,7 +406,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L132">manifest.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L149">manifest.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
@@ -382,7 +423,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L90">manifest.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L107">manifest.ts:107</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -405,7 +446,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/61dd574/src/manifest.ts#L94">manifest.ts:94</a></li>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L111">manifest.ts:111</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -415,6 +456,34 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="tooutputjson" class="tsd-anchor"></a>
+					<h3>to<wbr>OutputJSON</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">to<wbr>OutputJSON<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>commit<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a><span class="tsd-signature-symbol">; </span>files<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifestfile.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestFile</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>urls<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifesturls.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestUrls</a><span class="tsd-signature-symbol"> }</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/9d90c8c/src/manifest.ts#L157">manifest.ts:157</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>commit<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a><span class="tsd-signature-symbol">; </span>files<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifestfile.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestFile</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>urls<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifesturls.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestUrls</a><span class="tsd-signature-symbol"> }</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter">
+									<h5>commit<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.commit.html" class="tsd-signature-type" data-tsd-kind="Interface">Commit</a></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>files<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifestfile.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestFile</a><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li class="tsd-parameter">
+									<h5>urls<span class="tsd-signature-symbol">: </span><a href="../interfaces/manifest.manifesturls.html" class="tsd-signature-type" data-tsd-kind="Interface">ManifestUrls</a></h5>
+								</li>
+							</ul>
 						</li>
 					</ul>
 				</section>
@@ -484,6 +553,9 @@
 								<a href="manifest.manifest-1.html#files" class="tsd-kind-icon">files</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="manifest.manifest-1.html#googlecloudproject" class="tsd-kind-icon">google<wbr>Cloud<wbr>Project</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="manifest.manifest-1.html#headers" class="tsd-kind-icon">headers</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -503,6 +575,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="manifest.manifest-1.html#site" class="tsd-kind-icon">site</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="manifest.manifest-1.html#urls" class="tsd-kind-icon">urls</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="manifest.manifest-1.html#addfile" class="tsd-kind-icon">add<wbr>File</a>
@@ -525,6 +600,9 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="manifest.manifest-1.html#setredirects" class="tsd-kind-icon">set<wbr>Redirects</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="manifest.manifest-1.html#tooutputjson" class="tsd-kind-icon">to<wbr>OutputJSON</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -534,6 +612,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/manifest.manifestfile.html" class="tsd-kind-icon">Manifest<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/manifest.manifesturls.html" class="tsd-kind-icon">Manifest<wbr>Urls</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/manifest.redirect.html" class="tsd-kind-icon">Redirect</a>
