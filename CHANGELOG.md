@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://www.github.com/blinkk/fileset/compare/v0.3.0...v0.4.0) (2021-08-07)
+
+
+### Features
+
+* add support for output manifest ([9d90c8c](https://www.github.com/blinkk/fileset/commit/9d90c8c72f87249aa84d92bcaca2608d5adbda55))
+
 ## [0.3.0](https://www.github.com/blinkk/fileset/compare/v0.2.1...v0.3.0) (2021-08-04)
 
 
