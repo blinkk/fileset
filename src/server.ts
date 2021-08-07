@@ -90,6 +90,15 @@ export const listManifests = async (siteId: string, manifestType?: string) => {
   return null;
 };
 
+export function branchToHostnameToken(branch: string) {
+  let hostname = branch;
+  for (const prefix of defaults.COMMON_BRANCH_PREFIXES) {
+    hostname = hostname.replace(prefix, '');
+  }
+  hostname = hostname.replace(/\//g, '--');
+  return hostname;
+}
+
 export function parseHostname(
   options: ParseHostnameOptions
 ): ManifestLookupOptions[] {

@@ -1,3 +1,5 @@
+// eslint-disable-next-line node/no-extraneous-import
+import * as _colors from 'colors';
 import * as fs from 'fs';
 import * as fsPath from 'path';
 import * as manifest from '../manifest';
@@ -11,6 +13,7 @@ interface UploadOptions {
   bucket: string;
   force?: boolean;
   googleCloudProject?: string;
+  outputFile?: string;
   ref?: string;
   site: string;
   ttl?: string;
@@ -75,7 +78,8 @@ export class UploadCommand {
       (site as string) || 'default',
       this.options.ref || gitData.ref,
       this.options.branch || gitData.branch || '',
-      gitData.commit
+      gitData.commit,
+      googleCloudProject
     );
     await manifestObj.createFromDirectory(path);
     if (config.redirectTrailingSlashes === false) {
@@ -105,5 +109,27 @@ export class UploadCommand {
       this.options.force,
       ttl
     );
+
+    if (this.options.outputFile) {
+      const data = JSON.stringify(manifestObj.toOutputJSON(), null, 2);
+      const outputDir = fsPath.dirname(this.options.outputFile);
+      if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, {recursive: true});
+      }
+      fs.writeFileSync(this.options.outputFile, data);
+    }
+
+    console.log(
+      `Finalized upload for site: ${manifestObj.site} -> ${manifestObj.branch} @ ${manifestObj.shortSha}`
+    );
+    const cleanDate = new Date(manifestObj.commit.author.timestamp * 1000);
+    console.log(
+      `[${cleanDate.getFullYear()}-${cleanDate.getMonth()}-${cleanDate.getDate()}] <${
+        manifestObj.commit.author.email
+      }> ${manifestObj.commit.message.split('Change-Id')[0].trim()}`
+    );
+    console.log('Dashboard:'.blue + ` ${manifestObj.urls.ui}`);
+    console.log('    Build:'.blue + ` ${manifestObj.urls.stagingSha}`);
+    console.log('  Staging:'.green + ` ${manifestObj.urls.stagingBranch}`);
   }
 }

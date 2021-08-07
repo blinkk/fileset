@@ -39,6 +39,7 @@ export async function getGitData(path: string): Promise<GitData> {
     commit: {
       message: cleanMessage,
       author: {
+        timestamp: commit.committer.timestamp,
         name: commit.author.name,
         email: commit.author.email,
       },

@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as fsPath from 'path';
 import * as mimeTypes from 'mime-types';
 
+import {branchToHostnameToken} from './server';
+
 const walk = function (path: string, newFiles?: string[]) {
   let files = newFiles || [];
   fs.readdirSync(path).forEach(file => {
@@ -34,11 +36,18 @@ export interface Redirect {
 interface GitAuthor {
   email: string;
   name: string;
+  timestamp: number;
 }
 
 export interface Commit {
   message: string;
   author: GitAuthor;
+}
+
+export interface ManifestUrls {
+  stagingBranch: string;
+  stagingSha: string;
+  ui: string;
 }
 
 export interface SerializedManifest {
@@ -66,8 +75,15 @@ export class Manifest {
   localizationPathFormat: string;
   headers: Record<string, Record<string, string>>;
   commit: Commit;
+  googleCloudProject: string;
 
-  constructor(site: string, ref: string, branch: string, commit: Commit) {
+  constructor(
+    site: string,
+    ref: string,
+    branch: string,
+    commit: Commit,
+    googleCloudProject: string
+  ) {
     this.files = [];
     this.redirects = [];
     this.site = site;
@@ -78,6 +94,7 @@ export class Manifest {
     this.localizationPathFormat = DEFAULT_LOCALIZATION_PATH_FORMAT;
     this.headers = {};
     this.commit = commit;
+    this.googleCloudProject = googleCloudProject;
   }
 
   async createFromDirectory(path: string) {
@@ -135,5 +152,33 @@ export class Manifest {
       pathsToHashes[file.cleanPath] = file.hash;
     });
     return pathsToHashes;
+  }
+
+  toOutputJSON() {
+    return {
+      urls: this.urls,
+      files: this.files,
+      commit: this.commit,
+    };
+  }
+
+  get urls(): ManifestUrls {
+    // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
+    const hostnameSuffix = `fileset-dot-${this.googleCloudProject}.appspot.com`;
+    const stagingShaUrl =
+      this.site === 'default'
+        ? `https://${this.shortSha}-dot-${hostnameSuffix}`
+        : `https://${this.site}-${this.shortSha}-dot-${hostnameSuffix}`;
+    const branchToken = branchToHostnameToken(this.branch);
+    const stagingBranchUrl =
+      this.site === 'default'
+        ? `https://${branchToken}-dot-${hostnameSuffix}`
+        : `https://${this.site}-${branchToken}-dot-${hostnameSuffix}`;
+    const uiUrl = `https://${hostnameSuffix}/fileset/sites/${this.site}/${this.shortSha}`;
+    return {
+      stagingBranch: stagingBranchUrl,
+      stagingSha: stagingShaUrl,
+      ui: uiUrl,
+    };
   }
 }

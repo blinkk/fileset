@@ -16,6 +16,7 @@ async function main() {
     .option('-b, --branch <branch>', 'branch', '')
     .option('-f, --force', 'force', false)
     .option('-t, --ttl <ttl>', 'ttl', undefined)
+    .option('-o, --output-file <path>', 'output file', '')
     .action(async (path, options) => {
       const cmd = new UploadCommand(options);
       await cmd.run(path);

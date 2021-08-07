@@ -217,17 +217,4 @@ async function finalize(
   // const routerKey = datastore.key(['Fileset2Router', manifest.site]);
   // const router =  await datastore.get(routerKey);
   // const entity = router && router[0];
-  console.log(
-    `Finalized upload for site: ${manifest.site} -> ${manifest.branch} @ ${manifest.shortSha}`
-  );
-  // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
-  if (manifest.site === 'default') {
-    console.log(
-      `Staged: https://${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
-    );
-  } else {
-    console.log(
-      `Staged: https://${manifest.site}-${manifest.shortSha}-dot-fileset-dot-${googleCloudProject}.appspot.com`
-    );
-  }
 }

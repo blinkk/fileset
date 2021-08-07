@@ -3,6 +3,14 @@ import * as server from './server';
 import {ExecutionContext} from 'ava';
 import test from 'ava';
 
+test('Test branchToHostnameToken', (t: ExecutionContext) => {
+  t.deepEqual(server.branchToHostnameToken('main'), 'main');
+  t.deepEqual(server.branchToHostnameToken('feature/foo'), 'foo');
+  t.deepEqual(server.branchToHostnameToken('workspace/foo'), 'foo');
+  t.deepEqual(server.branchToHostnameToken('b/foo'), 'foo');
+  t.deepEqual(server.branchToHostnameToken('foo/bar'), 'foo--bar');
+});
+
 test('Test parseHostname', (t: ExecutionContext) => {
   t.deepEqual(
     server.parseHostname({
