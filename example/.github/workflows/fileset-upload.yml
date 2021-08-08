@@ -37,5 +37,21 @@ jobs:
         npm install
         npm run build
     - name: Upload
+      id: upload
       run: |-
-        npx @blinkk/fileset upload -s ${{ env.SITE }} -b ${GITHUB_REF#refs/heads/} build
+        npx @blinkk/fileset upload \
+          -s ${{ env.SITE }} \
+          -b ${GITHUB_REF#refs/heads/} \
+          -o upload.json \
+          build
+        echo "::set-output name=build-link::$(jq -r .urls.stagingSha upload.json)"
+        echo "::set-output name=dashboard-link::$(jq -r .urls.ui upload.json)"
+        echo "::set-output name=staging-link::$(jq -r .urls.stagingBranch upload.json)"
+    - name: Comment
+      uses: peter-evans/commit-comment@v1
+      with:
+        body: |
+          **Staging Link:**
+          ${{ steps.upload.outputs.staging-link }}
+          - [Dashboard](${{ steps.upload.outputs.dashboard-link }})
+          - [Build](${{ steps.upload.outputs.build-link }})
