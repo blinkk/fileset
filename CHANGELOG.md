@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.1](https://www.github.com/blinkk/fileset/compare/v0.4.0...v0.4.1) (2021-08-08)
+
+
+### Bug Fixes
+
+* clarify link naming ([0d6a257](https://www.github.com/blinkk/fileset/commit/0d6a257e0a433901516f1d1f163d974db037d036))
+
 ## [0.4.0](https://www.github.com/blinkk/fileset/compare/v0.3.0...v0.4.0) (2021-08-07)
 
 
