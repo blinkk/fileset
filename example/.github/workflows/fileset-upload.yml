@@ -44,9 +44,9 @@ jobs:
           -b ${GITHUB_REF#refs/heads/} \
           -o upload.json \
           build
-        echo "::set-output name=build-link::$(jq -r .urls.stagingSha upload.json)"
-        echo "::set-output name=dashboard-link::$(jq -r .urls.ui upload.json)"
-        echo "::set-output name=staging-link::$(jq -r .urls.stagingBranch upload.json)"
+        echo "::set-output name=build-link::$(jq -r .links.buildLink upload.json)"
+        echo "::set-output name=dashboard-link::$(jq -r .links.dashboardLink upload.json)"
+        echo "::set-output name=staging-link::$(jq -r .links.stagingLink upload.json)"
     - name: Comment
       uses: peter-evans/commit-comment@v1
       with:

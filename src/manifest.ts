@@ -44,10 +44,10 @@ export interface Commit {
   author: GitAuthor;
 }
 
-export interface ManifestUrls {
-  stagingBranch: string;
-  stagingSha: string;
-  ui: string;
+export interface ManifestLinks {
+  stagingLink: string;
+  buildLink: string;
+  dashboardLink: string;
 }
 
 export interface SerializedManifest {
@@ -156,29 +156,29 @@ export class Manifest {
 
   toOutputJSON() {
     return {
-      urls: this.urls,
+      links: this.links,
       files: this.files,
       commit: this.commit,
     };
   }
 
-  get urls(): ManifestUrls {
+  get links(): ManifestLinks {
     // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
     const hostnameSuffix = `fileset-dot-${this.googleCloudProject}.appspot.com`;
-    const stagingShaUrl =
+    const buildLink =
       this.site === 'default'
         ? `https://${this.shortSha}-dot-${hostnameSuffix}`
         : `https://${this.site}-${this.shortSha}-dot-${hostnameSuffix}`;
     const branchToken = branchToHostnameToken(this.branch);
-    const stagingBranchUrl =
+    const stagingLink =
       this.site === 'default'
         ? `https://${branchToken}-dot-${hostnameSuffix}`
         : `https://${this.site}-${branchToken}-dot-${hostnameSuffix}`;
-    const uiUrl = `https://${hostnameSuffix}/fileset/sites/${this.site}/${this.shortSha}`;
+    const dashboardLink = `https://${hostnameSuffix}/fileset/sites/${this.site}/${this.shortSha}`;
     return {
-      stagingBranch: stagingBranchUrl,
-      stagingSha: stagingShaUrl,
-      ui: uiUrl,
+      stagingLink: stagingLink,
+      buildLink: buildLink,
+      dashboardLink: dashboardLink,
     };
   }
 }

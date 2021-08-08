@@ -128,8 +128,8 @@ export class UploadCommand {
         manifestObj.commit.author.email
       }> ${manifestObj.commit.message.split('Change-Id')[0].trim()}`
     );
-    console.log('Dashboard:'.blue + ` ${manifestObj.urls.ui}`);
-    console.log('    Build:'.blue + ` ${manifestObj.urls.stagingSha}`);
-    console.log('  Staging:'.green + ` ${manifestObj.urls.stagingBranch}`);
+    console.log('Dashboard:'.blue + ` ${manifestObj.links.dashboardLink}`);
+    console.log('    Build:'.blue + ` ${manifestObj.links.buildLink}`);
+    console.log('  Staging:'.green + ` ${manifestObj.links.stagingLink}`);
   }
 }
