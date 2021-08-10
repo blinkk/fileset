@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.2](https://www.github.com/blinkk/fileset/compare/v0.4.1...v0.4.2) (2021-08-10)
+
+
+### Bug Fixes
+
+* use base url for links ([9673134](https://www.github.com/blinkk/fileset/commit/96731344ef396efa7d39ba393c997e5a86001446))
+
 ### [0.4.1](https://www.github.com/blinkk/fileset/compare/v0.4.0...v0.4.1) (2021-08-08)
 
 
