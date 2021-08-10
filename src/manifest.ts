@@ -164,7 +164,9 @@ export class Manifest {
 
   get links(): ManifestLinks {
     // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
-    const hostnameSuffix = `fileset-dot-${this.googleCloudProject}.appspot.com`;
+    const hostnameSuffix =
+      process.env.FILESET_BASE_URL ||
+      `fileset-dot-${this.googleCloudProject}.appspot.com`;
     const buildLink =
       this.site === 'default'
         ? `https://${this.shortSha}-dot-${hostnameSuffix}`
