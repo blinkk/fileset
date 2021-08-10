@@ -129,11 +129,24 @@ export function configure(app: express.Application) {
       // Example original URL (untrusted): https://foo.fileset.com/bar/.
       const currentUrl = new URL(`${req.protocol}://${host}${req.originalUrl}`);
       const originalUrl = new URL(req.query.state as string);
+      // If using the `FILESET_BASE_URL` feature, which allows for custom hostnames, replace
+      // the App Engine `-dot-` hostname with the `BASE_URL` hostname and redirect.
+      const defaultHostnamePart = `fileset-dot-${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
+      if (
+        originalUrl.host.includes(defaultHostnamePart) &&
+        process.env.FILESET_BASE_URL
+      ) {
+        originalUrl.host = originalUrl.host.replace(
+          defaultHostnamePart,
+          process.env.FILESET_BASE_URL
+        );
+      }
       // Verify the `?returnTo` and `state` parameters are not external URLs.
       // Subdomains (i.e. staging environment URLs) are permitted, as they are
       // trusted.
       if (!originalUrl.host.endsWith(currentUrl.host)) {
         res.status(400);
+        res.contentType('text/plain');
         res.send('External redirects are disallowed.');
         return;
       }
