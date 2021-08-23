@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.6](https://www.github.com/blinkk/fileset/compare/v0.4.5...v0.4.6) (2021-08-23)
+
+
+### Miscellaneous Chores
+
+* release 0.4.6 ([2c9d399](https://www.github.com/blinkk/fileset/commit/2c9d39916042a94e710bd037aa463de70f865910))
+
 ### [0.4.5](https://www.github.com/blinkk/fileset/compare/v0.4.4...v0.4.5) (2021-08-23)
 
 
