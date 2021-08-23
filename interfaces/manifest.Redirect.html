@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>UploadCommand | @blinkk/fileset</title>
+	<title>Redirect | @blinkk/fileset</title>
 	<meta name="description" content="Documentation for @blinkk/fileset">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -53,13 +53,13 @@
 					<a href="../modules.html">@blinkk/fileset</a>
 				</li>
 				<li>
-					<a href="../modules/commands_upload.html">commands/upload</a>
+					<a href="../modules/manifest.html">manifest</a>
 				</li>
 				<li>
-					<a href="commands_upload.uploadcommand.html">UploadCommand</a>
+					<a href="manifest.Redirect.html">Redirect</a>
 				</li>
 			</ul>
-			<h1>Class UploadCommand</h1>
+			<h1>Interface Redirect</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">UploadCommand</span>
+						<span class="target">Redirect</span>
 					</li>
 				</ul>
 			</section>
@@ -79,70 +79,47 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="commands_upload.uploadcommand.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="commands_upload.uploadcommand.html#run" class="tsd-kind-icon">run</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="manifest.Redirect.html#from" class="tsd-kind-icon">from</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="manifest.Redirect.html#permanent" class="tsd-kind-icon">permanent</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="manifest.Redirect.html#to" class="tsd-kind-icon">to</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Upload<wbr>Command<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">UploadOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="commands_upload.uploadcommand.html" class="tsd-signature-type" data-tsd-kind="Class">UploadCommand</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/58488f6/src/commands/upload.ts#L55">commands/upload.ts:55</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>options: <span class="tsd-signature-type">UploadOptions</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="commands_upload.uploadcommand.html" class="tsd-signature-type" data-tsd-kind="Class">UploadCommand</a></h4>
-						</li>
-					</ul>
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="from" class="tsd-anchor"></a>
+					<h3>from</h3>
+					<div class="tsd-signature tsd-kind-icon">from<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/589fa6b/src/manifest.ts#L31">manifest.ts:31</a></li>
+						</ul>
+					</aside>
 				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="run" class="tsd-anchor"></a>
-					<h3>run</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">run<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/blinkk/fileset/blob/58488f6/src/commands/upload.ts#L60">commands/upload.ts:60</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>path: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#x27;./&#x27;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="permanent" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> permanent</h3>
+					<div class="tsd-signature tsd-kind-icon">permanent<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/589fa6b/src/manifest.ts#L33">manifest.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="to" class="tsd-anchor"></a>
+					<h3>to</h3>
+					<div class="tsd-signature tsd-kind-icon">to<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/blinkk/fileset/blob/589fa6b/src/manifest.ts#L32">manifest.ts:32</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -150,7 +127,7 @@
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class=" ">
-						<a href="../modules.html">Exports</a>
+						<a href="../modules.html">Modules</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="../modules/api.html">api</a>
@@ -158,7 +135,7 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/commands_serve.html">commands/serve</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/commands_upload.html">commands/upload</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -168,12 +145,9 @@
 						<a href="../modules/gitdata.html">gitdata</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="../modules/index.html">index</a>
-					</li>
-					<li class=" tsd-kind-module">
 						<a href="../modules/locale.html">locale</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/manifest.html">manifest</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -192,21 +166,42 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/manifest.Manifest.html" class="tsd-kind-icon">Manifest</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="manifest.Commit.html" class="tsd-kind-icon">Commit</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="manifest.ManifestFile.html" class="tsd-kind-icon">Manifest<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="manifest.ManifestLinks.html" class="tsd-kind-icon">Manifest<wbr>Links</a>
+					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="commands_upload.uploadcommand.html" class="tsd-kind-icon">Upload<wbr>Command</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="manifest.Redirect.html" class="tsd-kind-icon">Redirect</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="commands_upload.uploadcommand.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="manifest.Redirect.html#from" class="tsd-kind-icon">from</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="commands_upload.uploadcommand.html#run" class="tsd-kind-icon">run</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="manifest.Redirect.html#permanent" class="tsd-kind-icon">permanent</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="manifest.Redirect.html#to" class="tsd-kind-icon">to</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="manifest.SerializedManifest.html" class="tsd-kind-icon">Serialized<wbr>Manifest</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="../modules/manifest.html#DEFAULT_LOCALIZATION_PATH_FORMAT" class="tsd-kind-icon">DEFAULT_<wbr>LOCALIZATION_<wbr>PATH_<wbr>FORMAT</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -217,16 +212,15 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
 				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
 				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 			</ul>
 		</div>
 	</div>
