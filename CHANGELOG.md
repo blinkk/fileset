@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.5](https://www.github.com/blinkk/fileset/compare/v0.4.4...v0.4.5) (2021-08-23)
+
+
+### Bug Fixes
+
+* upgrade isomorphic-git to resolve vuln ([c0a922e](https://www.github.com/blinkk/fileset/commit/c0a922e0550fca523201327250753cef935b4d4b))
+
 ### [0.4.4](https://www.github.com/blinkk/fileset/compare/v0.4.3...v0.4.4) (2021-08-11)
 
 
