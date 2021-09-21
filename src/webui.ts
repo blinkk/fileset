@@ -212,7 +212,7 @@ export function configure(app: express.Application) {
         success: true,
         data: data,
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       if (e.stack) {
         console.error(e.stack);
