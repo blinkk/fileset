@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.9](https://www.github.com/blinkk/fileset/compare/v0.4.8...v0.4.9) (2021-09-21)
+
+
+### Bug Fixes
+
+* improve error reporting on upload ([ed28e24](https://www.github.com/blinkk/fileset/commit/ed28e24110c6277943cdcaf3cadcd6765049556d))
+
 ### [0.4.8](https://www.github.com/blinkk/fileset/compare/v0.4.7...v0.4.8) (2021-09-21)
 
 
