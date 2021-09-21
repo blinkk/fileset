@@ -22,5 +22,6 @@ jobs:
             ${{ runner.os }}-
       - name: Run tests
         run: |
-                npm install --dev
+                rm package-lock.json
+                npm install --also=dev
                 npm run test
