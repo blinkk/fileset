@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.10](https://www.github.com/blinkk/fileset/compare/v0.4.9...v0.4.10) (2021-09-21)
+
+
+### Bug Fixes
+
+* exception handling ([bcbbf5c](https://www.github.com/blinkk/fileset/commit/bcbbf5c7b101b535f75036f7fdaf01a1c186f238))
+
 ### [0.4.9](https://www.github.com/blinkk/fileset/compare/v0.4.8...v0.4.9) (2021-09-21)
 
 
