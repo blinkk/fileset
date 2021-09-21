@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.7](https://www.github.com/blinkk/fileset/compare/v0.4.6...v0.4.7) (2021-09-21)
+
+
+### Miscellaneous Chores
+
+* release 0.4.7 ([8576fd2](https://www.github.com/blinkk/fileset/commit/8576fd201092418ce6bbaa7a40d4b1d94e00154a))
+
 ### [0.4.6](https://www.github.com/blinkk/fileset/compare/v0.4.5...v0.4.6) (2021-08-23)
 
 
