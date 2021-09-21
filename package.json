@@ -80,7 +80,7 @@
     "commander": "^6.2.1",
     "connect-ensure-login": "^0.1.1",
     "cookie-session": "^1.4.0",
-    "country-language": "git://github.com/bdswiss/country-language#32091c1a2dffa196cac41f2d4aebfc5bf8bd3f94",
+    "country-language": "https://github.com/bdswiss/country-language#32091c1a2dffa196cac41f2d4aebfc5bf8bd3f94",
     "express": "^4.17.1",
     "fast-crc32c": "^2.0.0",
     "google-auth-library": "6.1.3",
