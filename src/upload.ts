@@ -92,6 +92,8 @@ export async function uploadManifest(
       speed: 0,
     });
 
+    const errors = [];
+
     await mapLimit(
       filesToUpload,
       NUM_CONCURRENT_UPLOADS,
@@ -114,26 +116,37 @@ export async function uploadManifest(
             path: manifestFile.cleanPath,
           },
         };
-        // TODO: Veryify this correctly handles errors and retry attempts.
+        // TODO: Verify this correctly handles errors and retry attempts.
         const remotePath = getBlobPath(manifest.site, manifestFile.hash);
-        const resp = await storageBucket.upload(manifestFile.path, {
-          // NOTE: `gzip: true` must *not* be set here. Doing so interferes
-          // with the proxied GCS response. Despite not setting `gzip: true`,
-          // the response remains gzipped from the proxy server.
-          destination: remotePath,
-          metadata: metadata,
-        });
-        bytesTransferred += parseInt(resp[1].size);
-        const elapsed = Math.floor(Date.now() / 1000) - startTime;
-        const speed = (bytesTransferred / elapsed / (1024 * 1024)).toFixed(2);
-        bar.update((numProcessedFiles += 1), {
-          speed: speed,
-        });
-        if (numProcessedFiles === numTotalFiles) {
-          bar.stop();
+        try {
+          const resp = await storageBucket.upload(manifestFile.path, {
+            // NOTE: `gzip: true` must *not* be set here. Doing so interferes
+            // with the proxied GCS response. Despite not setting `gzip: true`,
+            // the response remains gzipped from the proxy server.
+            destination: remotePath,
+            metadata: metadata,
+          });
+          bytesTransferred += parseInt(resp[1].size);
+        } catch (err) {
+          errors.push(err);
+          console.error(`Error uploading -> ${manifestFile.path}`);
+          console.error(err);
+        } finally {
+          const elapsed = Math.floor(Date.now() / 1000) - startTime;
+          const speed = (bytesTransferred / elapsed / (1024 * 1024)).toFixed(2);
+          bar.update((numProcessedFiles += 1), {
+            speed: speed,
+          });
+          if (numProcessedFiles === numTotalFiles) {
+            bar.stop();
+          }
         }
       })
     );
+
+    if (errors.length) {
+      throw new Error(`Encountered ${errors.length} errors uploading.`);
+    }
 
     await finalize(googleCloudProject, manifest, ttl);
   }
