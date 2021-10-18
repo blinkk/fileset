@@ -1,5 +1,6 @@
 import git = require('isomorphic-git');
 import fs = require('fs');
+import fsPath = require('path');
 
 import * as manifest from './manifest';
 interface GitData {
@@ -9,6 +10,7 @@ interface GitData {
 }
 
 export async function getGitData(path: string): Promise<GitData> {
+  path = fsPath.resolve(path);
   const root = await git.findRoot({
     fs,
     filepath: path,
