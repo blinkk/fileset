@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.11](https://www.github.com/blinkk/fileset/compare/v0.4.10...v0.4.11) (2021-10-18)
+
+
+### Bug Fixes
+
+* support deployment from nested directories ([47b585d](https://www.github.com/blinkk/fileset/commit/47b585d8b36b92508b7dd7779603ca709b0c57bf))
+
 ### [0.4.10](https://www.github.com/blinkk/fileset/compare/v0.4.9...v0.4.10) (2021-09-21)
 
 
