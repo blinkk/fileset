@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.12](https://www.github.com/blinkk/fileset/compare/v0.4.11...v0.4.12) (2021-10-22)
+
+
+### Bug Fixes
+
+* revert "fix: issue with superfluous -dot-" ([8a4d8c7](https://www.github.com/blinkk/fileset/commit/8a4d8c7ae5e97adad0312045738883e4537d89a5))
+
 ### [0.4.11](https://www.github.com/blinkk/fileset/compare/v0.4.10...v0.4.11) (2021-10-18)
 
 
