@@ -136,9 +136,10 @@ export function configure(app: express.Application) {
         originalUrl.host.includes(defaultHostnamePart) &&
         process.env.FILESET_BASE_URL
       ) {
-        originalUrl.host = originalUrl.host
-          .replace(defaultHostnamePart, process.env.FILESET_BASE_URL)
-          .replace('-dot-', '.');
+        originalUrl.host = originalUrl.host.replace(
+          defaultHostnamePart,
+          process.env.FILESET_BASE_URL
+        );
       }
       // Verify the `?returnTo` and `state` parameters are not external URLs.
       // Subdomains (i.e. staging environment URLs) are permitted, as they are
