@@ -1,10 +1,22 @@
 service: fileset
 runtime: nodejs10
 env_variables:
+  # Comma-separated domains. Fileset will require users to be members of these
+  # organizations (via their Google Account email address domain) in order for
+  # users to access staging.
   FILESET_ALLOWED_ORGANIZATIONS: 'example1.com,example2.com'
+  # Specify the canonical URL (without https://) used for staging URLs and for
+  # the webui dashboard. Staging links will be accessed via
+  # https://`<site>-<branch>.<FILESET_BASE_URL>` and the webui will be accessed
+  # via https://<FILESET_BASE_URL>/fileset/.
   FILESET_BASE_URL: 'staging.example.com'
+  # Which branch is used as the "prod" branch? Other branches will be limited
+  # to staging access only.
   FILESET_DEFAULT_BRANCH: main
+  # Which fileset site to use as the default site.
   FILESET_SITE: default
+  # Whether to use the server as a staging server only. If set to `true`, no
+  # branches will be used as the "prod" branch.
   FILESET_STAGING_ONLY: ''
 includes:
 - secrets.yaml
