@@ -58,6 +58,10 @@ export class UploadCommand {
   }
 
   async run(path = './') {
+    if (!fs.existsSync(fsPath.resolve(path))) {
+      throw new Error(`Path ${path} does not exist. Nothing to upload.`);
+    }
+
     const gitData = await getGitData(path);
     const config = findConfig(path);
     const ttl = this.options.ttl ? new Date(this.options.ttl) : undefined;

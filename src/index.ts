@@ -6,6 +6,11 @@ import {createCommand} from 'commander';
 
 const program = createCommand();
 
+// Ensure unhandled promises cause the command to fail.
+process.on('unhandledRejection', err => {
+  throw err;
+});
+
 program
   .command('upload [dir]')
   .description('Uploads a directory to cloud storage')
