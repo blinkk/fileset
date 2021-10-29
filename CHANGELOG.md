@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.13](https://www.github.com/blinkk/fileset/compare/v0.4.12...v0.4.13) (2021-10-29)
+
+
+### Bug Fixes
+
+* ensure unhandled promises fail ([4fb2f02](https://www.github.com/blinkk/fileset/commit/4fb2f02a0bc3157d6b2c7dabbbb1593edb598f70))
+
 ### [0.4.12](https://www.github.com/blinkk/fileset/compare/v0.4.11...v0.4.12) (2021-10-22)
 
 
