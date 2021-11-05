@@ -1,6 +1,6 @@
 import * as acceptlang from 'accept-language-parser';
 
-import {getCountry} from 'country-language';
+import {getCountry} from './countries';
 
 import express = require('express');
 
@@ -81,7 +81,7 @@ function getCountryLanguages(countryCode: string): string[] {
   const country = getCountry(countryCode);
   // The `getCountry` function returns an error string if the country code is
   // invalid.
-  if (typeof country !== 'object') {
+  if (!country) {
     return [];
   }
 

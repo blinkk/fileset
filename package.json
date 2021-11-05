@@ -1,98 +1,97 @@
 {
-  "name": "@blinkk/fileset",
-  "bin": {
-    "fileset": "./dist/src/index.js"
-  },
-  "engines": {
-    "node": ">=10.0.0"
-  },
-  "version": "0.4.13",
-  "license": "MIT",
-  "homepage": "https://github.com/blinkkcode/fileset/",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/blinkkcode/fileset.git"
-  },
-  "scripts": {
-    "check": "gts check",
-    "clean": "gts clean",
-    "compile": "tsc; webpack --config webpack.common.js --mode development",
-    "copy": "cpx 'src/static/**' 'dist/src/static'",
-    "dev": "nodemon --watch src -e ts,tsx,sass --exec npm run dev:start",
-    "dev:start": "npm run copy; npm run compile",
-    "docs": "typedoc --out docs",
-    "fix": "node ./node_modules/eslint/bin/eslint --fix src/**/*.ts src/**/*.tsx",
-    "prepare": "rm -rf dist/; npm run dev:start;",
-    "test": "ava"
-  },
-  "ava": {
-    "require": [
-      "ts-node/register"
-    ],
-    "extensions": [
-      "ts"
-    ],
+    "name": "@blinkk/fileset",
+    "bin": {
+        "fileset": "./dist/src/index.js"
+    },
+    "engines": {
+        "node": ">=10.0.0"
+    },
+    "version": "0.4.13",
+    "license": "MIT",
+    "homepage": "https://github.com/blinkkcode/fileset/",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/blinkkcode/fileset.git"
+    },
+    "scripts": {
+        "check": "gts check",
+        "clean": "gts clean",
+        "compile": "tsc; webpack --config webpack.common.js --mode development",
+        "copy": "cpx 'src/static/**' 'dist/src/static'; cpx 'data/**' 'dist/data/'",
+        "dev": "nodemon --watch src -e ts,tsx,sass --exec npm run dev:start",
+        "dev:start": "npm run copy; npm run compile",
+        "docs": "typedoc --out docs",
+        "fix": "node ./node_modules/eslint/bin/eslint --fix src/**/*.ts src/**/*.tsx",
+        "prepare": "rm -rf dist/; npm run dev:start;",
+        "test": "ava"
+    },
+    "ava": {
+        "require": [
+            "ts-node/register"
+        ],
+        "extensions": [
+            "ts"
+        ],
+        "files": [
+            "src/*.test.ts"
+        ]
+    },
+    "devDependencies": {
+        "@types/accept-language-parser": "^1.5.1",
+        "@types/async": "^3.2.5",
+        "@types/cli-progress": "^3.9.0",
+        "@types/connect-ensure-login": "^0.1.5",
+        "@types/cookie-session": "^2.0.42",
+        "@types/express": "^4.17.9",
+        "@types/http-proxy": "^1.17.4",
+        "@types/js-yaml": "^3.12.5",
+        "@types/mime-types": "^2.1.0",
+        "@types/node": "^14.14.16",
+        "@types/nunjucks": "^3.1.4",
+        "@types/passport": "^1.0.6",
+        "@types/passport-google-oauth20": "^2.0.6",
+        "@types/webpack": "^4.41.26",
+        "ava": "^3.15.0",
+        "cpx": "^1.5.0",
+        "file-loader": "^6.2.0",
+        "glob": "^7.1.6",
+        "gts": "^3.1.0",
+        "nodemon": "^2.0.6",
+        "preact": "^10.4.4",
+        "preact-material-components": "^1.6.1",
+        "preact-router": "^3.2.1",
+        "sass": "^1.32.4",
+        "sass-loader": "^10.1.1",
+        "ts-loader": "^8.0.12",
+        "ts-node": "^9.1.1",
+        "typedoc": "^0.21.6",
+        "typescript": "^4.1.3",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11",
+        "webpack-merge": "^5.7.3",
+        "webpack-stream": "^5.2.1"
+    },
+    "dependencies": {
+        "@google-cloud/datastore": "6.3.1",
+        "@google-cloud/storage": "5.7.0",
+        "accept-language-parser": "^1.5.0",
+        "async": "^3.2.0",
+        "cli-progress": "^3.9.0",
+        "commander": "^6.2.1",
+        "connect-ensure-login": "^0.1.1",
+        "cookie-session": "^1.4.0",
+        "express": "^4.17.1",
+        "fast-crc32c": "^2.0.0",
+        "google-auth-library": "6.1.3",
+        "http-proxy": "^1.18.1",
+        "isomorphic-git": "^1.10.0",
+        "js-yaml": "^3.14.1",
+        "mime-types": "^2.1.27",
+        "nunjucks": "^3.2.3",
+        "passport": "^0.4.1",
+        "passport-google-oauth20": "^2.0.0"
+    },
     "files": [
-      "src/*.test.ts"
+        "dist"
     ]
-  },
-  "devDependencies": {
-    "@types/accept-language-parser": "^1.5.1",
-    "@types/async": "^3.2.5",
-    "@types/cli-progress": "^3.9.0",
-    "@types/connect-ensure-login": "^0.1.5",
-    "@types/cookie-session": "^2.0.42",
-    "@types/express": "^4.17.9",
-    "@types/http-proxy": "^1.17.4",
-    "@types/js-yaml": "^3.12.5",
-    "@types/mime-types": "^2.1.0",
-    "@types/node": "^14.14.16",
-    "@types/nunjucks": "^3.1.4",
-    "@types/passport": "^1.0.6",
-    "@types/passport-google-oauth20": "^2.0.6",
-    "@types/webpack": "^4.41.26",
-    "ava": "^3.15.0",
-    "cpx": "^1.5.0",
-    "file-loader": "^6.2.0",
-    "glob": "^7.1.6",
-    "gts": "^3.1.0",
-    "nodemon": "^2.0.6",
-    "preact": "^10.4.4",
-    "preact-material-components": "^1.6.1",
-    "preact-router": "^3.2.1",
-    "sass": "^1.32.4",
-    "sass-loader": "^10.1.1",
-    "ts-loader": "^8.0.12",
-    "ts-node": "^9.1.1",
-    "typedoc": "^0.21.6",
-    "typescript": "^4.1.3",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-merge": "^5.7.3",
-    "webpack-stream": "^5.2.1"
-  },
-  "dependencies": {
-    "@google-cloud/datastore": "6.3.1",
-    "@google-cloud/storage": "5.7.0",
-    "accept-language-parser": "^1.5.0",
-    "async": "^3.2.0",
-    "cli-progress": "^3.9.0",
-    "commander": "^6.2.1",
-    "connect-ensure-login": "^0.1.1",
-    "cookie-session": "^1.4.0",
-    "country-language": "https://github.com/bdswiss/country-language#32091c1a2dffa196cac41f2d4aebfc5bf8bd3f94",
-    "express": "^4.17.1",
-    "fast-crc32c": "^2.0.0",
-    "google-auth-library": "6.1.3",
-    "http-proxy": "^1.18.1",
-    "isomorphic-git": "^1.10.0",
-    "js-yaml": "^3.14.1",
-    "mime-types": "^2.1.27",
-    "nunjucks": "^3.2.3",
-    "passport": "^0.4.1",
-    "passport-google-oauth20": "^2.0.0"
-  },
-  "files": [
-    "dist"
-  ]
 }

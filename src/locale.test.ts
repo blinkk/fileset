@@ -11,7 +11,7 @@ function mockRequest(
   acceptLanguageHeader: string,
   countryHeader: string
 ) {
-  return ({
+  return {
     query: {
       hl: hlParam,
       gl: glParam,
@@ -24,7 +24,7 @@ function mockRequest(
       }
       throw new Error(`Missing mock for header: ${arg}`);
     },
-  } as unknown) as express.Request;
+  } as unknown as express.Request;
 }
 
 test('Test locale', (t: ExecutionContext) => {
