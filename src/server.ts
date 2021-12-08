@@ -349,7 +349,8 @@ export function createApp(siteId: string) {
         // Trailing slash redirect.
         if (
           manifest.redirectTrailingSlashes !== false &&
-          manifestPaths[`${urlPath}/index.html`]
+          (manifestPaths[`${urlPath}/index.html`] ||
+            manifestPaths[`${urlPath.toLowerCase()}/index.html`])
         ) {
           const destination = `${urlPath}/`;
           res.redirect(301, destination);
