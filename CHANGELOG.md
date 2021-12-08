@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.14](https://www.github.com/blinkk/fileset/compare/v0.4.13...v0.4.14) (2021-12-08)
+
+
+### Bug Fixes
+
+* support case insensitive trailing slash redirects ([210741a](https://www.github.com/blinkk/fileset/commit/210741a5408919789732071766f7e010f868f6b5))
+
 ### [0.4.13](https://www.github.com/blinkk/fileset/compare/v0.4.12...v0.4.13) (2021-10-29)
 
 
