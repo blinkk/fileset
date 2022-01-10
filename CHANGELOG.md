@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.15](https://www.github.com/blinkk/fileset/compare/v0.4.14...v0.4.15) (2022-01-10)
+
+
+### Bug Fixes
+
+* replace colors with chalk ([0961a38](https://www.github.com/blinkk/fileset/commit/0961a380b3a7b418ae036dc9f0402ea7b07c662c))
+
 ### [0.4.14](https://www.github.com/blinkk/fileset/compare/v0.4.13...v0.4.14) (2021-12-08)
 
 
