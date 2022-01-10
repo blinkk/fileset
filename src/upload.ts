@@ -1,5 +1,3 @@
-import _colors = require('colors');
-
 import * as cliProgress from 'cli-progress';
 
 import {Manifest, ManifestFile} from './manifest';
@@ -7,6 +5,7 @@ import {asyncify, mapLimit} from 'async';
 
 import {Datastore} from '@google-cloud/datastore';
 import {Storage} from '@google-cloud/storage';
+import chalk from 'chalk';
 import {entity} from '@google-cloud/datastore/build/src/entity';
 
 const NUM_CONCURRENT_UPLOADS = 64;
@@ -47,7 +46,7 @@ function createProgressBar() {
     {
       format:
         'Uploading ({value}/{total}): ' +
-        _colors.green('{bar}') +
+        chalk.green('{bar}') +
         ' Total: {duration_formatted} ({speed}MB/s, ETA: {eta_formatted})',
     },
     cliProgress.Presets.shades_classic

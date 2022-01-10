@@ -1,11 +1,10 @@
-// eslint-disable-next-line node/no-extraneous-import
-import * as _colors from 'colors';
 import * as fs from 'fs';
 import * as fsPath from 'path';
 import * as manifest from '../manifest';
 import * as upload from '../upload';
 import * as yaml from 'js-yaml';
 
+import chalk from 'chalk';
 import {getGitData} from '../gitdata';
 
 interface UploadOptions {
@@ -132,8 +131,12 @@ export class UploadCommand {
         manifestObj.commit.author.email
       }> ${manifestObj.commit.message.split('Change-Id')[0].trim()}`
     );
-    console.log('Dashboard:'.blue + ` ${manifestObj.links.dashboardLink}`);
-    console.log('    Build:'.blue + ` ${manifestObj.links.buildLink}`);
-    console.log('  Staging:'.green + ` ${manifestObj.links.stagingLink}`);
+    console.log(
+      chalk.blue('Dashboard:') + ` ${manifestObj.links.dashboardLink}`
+    );
+    console.log(chalk.blue('    Build:') + ` ${manifestObj.links.buildLink}`);
+    console.log(
+      chalk.green('  Staging:') + ` ${manifestObj.links.stagingLink}`
+    );
   }
 }

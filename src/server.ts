@@ -1,7 +1,5 @@
 import * as defaults from './defaults';
-import * as express from 'express';
 import * as fsPath from 'path';
-import * as httpProxy from 'http-proxy';
 import * as locale from './locale';
 import * as manifest from './manifest';
 import * as trie from './trie';
@@ -11,6 +9,8 @@ import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
 import {entity} from '@google-cloud/datastore/build/src/entity';
+import express from 'express';
+import httpProxy from 'http-proxy';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
