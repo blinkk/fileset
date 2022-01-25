@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.4.16](https://www.github.com/blinkk/fileset/compare/v0.4.15...v0.4.16) (2022-01-25)
+
+
+### Bug Fixes
+
+* passport import ([3a06780](https://www.github.com/blinkk/fileset/commit/3a06780c967cb780345dad409b623f035367ae13))
+
 ### [0.4.15](https://www.github.com/blinkk/fileset/compare/v0.4.14...v0.4.15) (2022-01-10)
 
 
