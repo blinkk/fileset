@@ -1,13 +1,12 @@
 import express = require('express');
 
-import * as api from './api';
-import * as fsPath from 'path';
-import * as nunjucks from 'nunjucks';
-import * as passport from 'passport';
-
+import {ApiHandler} from './api';
 import {Strategy} from 'passport-google-oauth20';
 import {URL} from 'url';
 import {ensureLoggedIn} from 'connect-ensure-login';
+import fsPath from 'path';
+import nunjucks from 'nunjucks';
+import passport from 'passport';
 
 import CookieSession = require('cookie-session');
 
@@ -205,7 +204,7 @@ export function configure(app: express.Application) {
       return;
     }
     try {
-      const apiHandler = new api.ApiHandler();
+      const apiHandler = new ApiHandler();
       const method = req.path.slice('/fileset/api/'.length);
       const reqData = req.body || {};
       const data = await apiHandler.handle(req, method, reqData);
