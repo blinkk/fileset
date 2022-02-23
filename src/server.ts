@@ -329,8 +329,17 @@ export function createApp(siteId: string) {
       const blobPrefix = `/${BUCKET}/fileset/sites/${manifest.site}/blobs`;
       let is404Page = req.path === defaults.DEFAULT_404_PAGE;
 
+      // Set a cookie indicating that the user wants to disable localization redirects.
+      if ('ncr' in req.query) {
+        res.cookie('ncr', 'true', {
+          httpOnly: true,
+          secure: true,
+        });
+      }
+
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
-      if (localizedUrlPath && req.query.ncr === undefined) {
+      const ncr = 'ncr' in req.query || req.cookies.has('ncr');
+      if (localizedUrlPath && !ncr) {
         if (localizedUrlPath.endsWith('/index.html')) {
           localizedUrlPath = localizedUrlPath.slice(0, -10);
         }
