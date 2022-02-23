@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/blinkk/fileset/compare/v0.4.16...v0.5.0) (2022-02-23)
+
+
+### Features
+
+* persist ncr value across navigation ([fde8718](https://www.github.com/blinkk/fileset/commit/fde8718fdf03a340f3ff0b781eb0c5838c46f5fd))
+
 ### [0.4.16](https://www.github.com/blinkk/fileset/compare/v0.4.15...v0.4.16) (2022-01-25)
 
 
