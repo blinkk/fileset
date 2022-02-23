@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.1](https://www.github.com/blinkk/fileset/compare/v0.5.0...v0.5.1) (2022-02-23)
+
+
+### Bug Fixes
+
+* issue parsing cookies ([47beeec](https://www.github.com/blinkk/fileset/commit/47beeeca3c036d872e23b3b0bec6e87e832c462e))
+
 ## [0.5.0](https://www.github.com/blinkk/fileset/compare/v0.4.16...v0.5.0) (2022-02-23)
 
 
