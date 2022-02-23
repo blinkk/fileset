@@ -8,6 +8,7 @@ import * as webui from './webui';
 import {Datastore} from '@google-cloud/datastore';
 import {GoogleAuth} from 'google-auth-library';
 import {ManifestType} from './upload';
+import cookie from 'cookie';
 import {entity} from '@google-cloud/datastore/build/src/entity';
 import express from 'express';
 import httpProxy from 'http-proxy';
@@ -338,7 +339,8 @@ export function createApp(siteId: string) {
       }
 
       // If a localized URL path was found, and if `?ncr` is not present, redirect.
-      const ncr = 'ncr' in req.query || req.cookies.has('ncr');
+      const cookies = req.headers.cookie && cookie.parse(req.headers.cookie);
+      const ncr = 'ncr' in req.query || (cookies && 'ncr' in cookies);
       if (localizedUrlPath && !ncr) {
         if (localizedUrlPath.endsWith('/index.html')) {
           localizedUrlPath = localizedUrlPath.slice(0, -10);
