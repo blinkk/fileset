@@ -181,6 +181,7 @@ export function configure(app: express.Application) {
     CookieSession({
       name: 'fileset.session',
       keys: [sessionSecret],
+      sameSite: 'none',
     })
   );
   app.use(passport.initialize());
