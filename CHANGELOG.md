@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://www.github.com/blinkk/fileset/compare/v0.5.1...v0.6.0) (2022-04-01)
+
+
+### Features
+
+* enable sameSite:none for iframed staging environments ([5c8a521](https://www.github.com/blinkk/fileset/commit/5c8a521a67825a4c2196907315cd0cbb21a20f71))
+
 ### [0.5.1](https://www.github.com/blinkk/fileset/compare/v0.5.0...v0.5.1) (2022-02-23)
 
 
