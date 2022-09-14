@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.2](https://github.com/blinkk/fileset/compare/v0.7.0...v0.7.2) (2022-09-14)
+
+
+### Bug Fixes
+
+* dashboard domain cli output ([9e00d19](https://github.com/blinkk/fileset/commit/9e00d19ba20f3e59fc804de2cee98645ca267f46))
+
+
+### Miscellaneous Chores
+
+* release 0.7.2 ([ecead30](https://github.com/blinkk/fileset/commit/ecead30e2e7787177179d5f28ff18cac05b54be3))
+
 ## [0.7.0](https://github.com/blinkk/fileset/compare/v0.6.0...v0.7.0) (2022-09-14)
 
 
