@@ -177,16 +177,23 @@ export class Manifest {
     ) {
       hostnameSuffix = `.${hostnameSuffix}`;
     }
-    const buildLink =
-      this.site === 'default'
-        ? `https://${this.shortSha}${hostnameSuffix}`
-        : `https://${this.site}-${this.shortSha}${hostnameSuffix}`;
+    const buildLink = s;
+    this.site === 'default'
+      ? `https://${this.shortSha}${hostnameSuffix}`
+      : `https://${this.site}-${this.shortSha}${hostnameSuffix}`;
     const branchToken = branchToHostnameToken(this.branch);
     const stagingLink =
       this.site === 'default'
         ? `https://${branchToken}${hostnameSuffix}`
         : `https://${this.site}-${branchToken}${hostnameSuffix}`;
-    const dashboardLink = `https://${hostnameSuffix}/fileset/sites/${this.site}/${this.shortSha}`;
+    let dashboardDomain = hostnameSuffix;
+    dashboardDomain = dashboardDomain.startsWith('-dot-')
+      ? dashboardDomain.slice(5)
+      : dashboardDomain;
+    dashboardDomain = dashboardDomain.startsWith('.')
+      ? dashboardDomain.slice(1)
+      : dashboardDomain;
+    const dashboardLink = `https://${dashboardDomain}/fileset/sites/${this.site}/${this.shortSha}`;
     return {
       stagingLink: stagingLink,
       buildLink: buildLink,
