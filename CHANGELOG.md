@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/blinkk/fileset/compare/v0.6.0...v0.7.0) (2022-09-14)
+
+
+### Features
+
+* support custom staging urls in cli output ([da3e8a1](https://github.com/blinkk/fileset/commit/da3e8a1c6f4eeaa92354dd36be985e7fdcca2703))
+
 ## [0.6.0](https://www.github.com/blinkk/fileset/compare/v0.5.1...v0.6.0) (2022-04-01)
 
 
