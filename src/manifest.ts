@@ -163,19 +163,29 @@ export class Manifest {
   }
 
   get links(): ManifestLinks {
-    // TODO: Allow customizing the staging URL using `fileset.yaml` configuration.
-    const hostnameSuffix =
+    let hostnameSuffix =
       process.env.FILESET_BASE_URL ||
       `fileset-dot-${this.googleCloudProject}.appspot.com`;
+    if (
+      hostnameSuffix.includes('-dot-') &&
+      !hostnameSuffix.startsWith('-dot-')
+    ) {
+      hostnameSuffix = `-dot-${hostnameSuffix}`;
+    } else if (
+      !hostnameSuffix.startsWith('.') &&
+      !hostnameSuffix.includes('-dot-')
+    ) {
+      hostnameSuffix = `.${hostnameSuffix}`;
+    }
     const buildLink =
       this.site === 'default'
-        ? `https://${this.shortSha}-dot-${hostnameSuffix}`
-        : `https://${this.site}-${this.shortSha}-dot-${hostnameSuffix}`;
+        ? `https://${this.shortSha}${hostnameSuffix}`
+        : `https://${this.site}-${this.shortSha}${hostnameSuffix}`;
     const branchToken = branchToHostnameToken(this.branch);
     const stagingLink =
       this.site === 'default'
-        ? `https://${branchToken}-dot-${hostnameSuffix}`
-        : `https://${this.site}-${branchToken}-dot-${hostnameSuffix}`;
+        ? `https://${branchToken}${hostnameSuffix}`
+        : `https://${this.site}-${branchToken}${hostnameSuffix}`;
     const dashboardLink = `https://${hostnameSuffix}/fileset/sites/${this.site}/${this.shortSha}`;
     return {
       stagingLink: stagingLink,
