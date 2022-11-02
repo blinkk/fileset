@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/blinkk/fileset/compare/v0.7.3...v0.7.4) (2022-11-02)
+
+
+### Bug Fixes
+
+* avoid infinite redirect loop ([b0811fa](https://github.com/blinkk/fileset/commit/b0811fad715890697fac1bcc687cc956b60fb163))
+
 ## [0.7.3](https://github.com/blinkk/fileset/compare/v0.7.2...v0.7.3) (2022-11-02)
 
 
