@@ -367,7 +367,7 @@ export function createApp(siteId: string) {
           (manifestPaths[`${urlPath}/index.html`] ||
             manifestPaths[`${urlPath.toLowerCase()}/index.html`])
         ) {
-          const destination = preserveQueryString(req, urlPath);
+          const destination = preserveQueryString(req, `${urlPath}/`);
           res.redirect(301, destination);
           return;
         }
