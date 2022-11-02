@@ -34,6 +34,12 @@ interface ManifestLookupOptions {
 
 const FingerprintedExtensions = new Set(['.css', '.js', '.svg']);
 
+function preserveQueryString(req: express.Request, destination: string) {
+  return req.originalUrl.includes('?')
+    ? `${destination}?${req.originalUrl.split('?')[1]}`
+    : destination;
+}
+
 export const getManifest = async (siteId: string, branchOrRef: string) => {
   const keys = [
     datastore.key(['Fileset2Manifest', `${siteId}:branch:${branchOrRef}`]),
@@ -304,9 +310,7 @@ export function createApp(siteId: string) {
           const result = route.getRedirect(params);
           const code = result[0];
           let destination = result[1];
-          destination = req.originalUrl.includes('?')
-            ? `${destination}?${req.originalUrl.split('?')[1]}`
-            : destination;
+          destination = preserveQueryString(req, destination);
           res.redirect(code, destination);
           return;
         }
@@ -363,7 +367,7 @@ export function createApp(siteId: string) {
           (manifestPaths[`${urlPath}/index.html`] ||
             manifestPaths[`${urlPath.toLowerCase()}/index.html`])
         ) {
-          const destination = `${urlPath}/`;
+          const destination = preserveQueryString(req, urlPath);
           res.redirect(301, destination);
           return;
         }
