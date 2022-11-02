@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/blinkk/fileset/compare/v0.7.2...v0.7.3) (2022-11-02)
+
+
+### Bug Fixes
+
+* preserve query string when redirecting ([fb8226b](https://github.com/blinkk/fileset/commit/fb8226b3c64660ad31bf3668023156e540afb385))
+
 ## [0.7.2](https://github.com/blinkk/fileset/compare/v0.7.0...v0.7.2) (2022-09-14)
 
 
