@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/blinkk/fileset/compare/v0.7.4...v0.8.0) (2022-11-17)
+
+
+### Features
+
+* add special content-type for .soy ([a7a8ce6](https://github.com/blinkk/fileset/commit/a7a8ce61c5260534dfcac5e3d1a637b8edfb6231))
+
 ## [0.7.4](https://github.com/blinkk/fileset/compare/v0.7.3...v0.7.4) (2022-11-02)
 
 
