@@ -429,6 +429,10 @@ export function createApp(siteId: string) {
           // Authenticated responses cannot be cached publicly.
           proxyRes.headers['cache-control'] = 'private, max-age=0';
         }
+        // Special case for generated `.soy` and `.soy.html` files.
+        if (urlPath.endsWith('.soy') || urlPath.endsWith('.soy.html')) {
+          proxyRes.headers['content-type'] = 'text/plain';
+        }
 
         // Handle custom headers.
         if (manifest.headers) {
