@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/blinkk/fileset/compare/v0.8.0...v0.9.0) (2023-08-26)
+
+
+### Features
+
+* add cache to manifest lookup ([e12c0c3](https://github.com/blinkk/fileset/commit/e12c0c3e16f432f1b4a8bd5892f3c9e61a577172))
+
+
+### Bug Fixes
+
+* update webpack ([49c736e](https://github.com/blinkk/fileset/commit/49c736e3d7822839b8687030ae388ef704af9416))
+
 ## [0.8.0](https://github.com/blinkk/fileset/compare/v0.7.4...v0.8.0) (2022-11-17)
 
 
