@@ -12,6 +12,7 @@ import cookie from 'cookie';
 import {entity} from '@google-cloud/datastore/build/src/entity';
 import express from 'express';
 import httpProxy from 'http-proxy';
+import {get, set} from './cache';
 
 const PROXY_BASE_URL = 'https://storage.googleapis.com';
 const BUCKET = `${process.env.GOOGLE_CLOUD_PROJECT}.appspot.com`;
@@ -241,17 +242,14 @@ export function createApp(siteId: string) {
         ? process.env.FILESET_DEFAULT_BRANCH.split(',')
         : undefined,
     });
+    const key = JSON.stringify(manifestsToLookup);
 
     if (req.query.debug) {
-      console.log(
-        `Attempting to find manifest matching -> ${JSON.stringify(
-          manifestsToLookup
-        )}`
-      );
+      console.log(`Attempting to find manifest matching -> ${key}`);
     }
 
     try {
-      const manifest = await lookupManifest(manifestsToLookup);
+      const manifest = get(key) ?? (await lookupManifest(manifestsToLookup));
       if (!manifest || !manifest.paths) {
         res
           .status(404)
@@ -260,6 +258,7 @@ export function createApp(siteId: string) {
           );
         return;
       }
+      set(key, manifest);
 
       // Access control check for staging environments.
       // TODO: Make the `isLive` check work with scheduled branches.
