@@ -185,7 +185,8 @@ export class RouteTrie {
    */
   private normalizePath(path: string) {
     // Remove leading slashes.
-    return path.replace(/^\/+/g, '');
+    // Convert to lowercase for case insensitive matching.
+    return path.replace(/^\/+/g, '').toLocaleLowerCase();
   }
 
   /**
