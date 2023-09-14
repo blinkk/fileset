@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/blinkk/fileset/compare/v0.9.0...v0.9.1) (2023-09-14)
+
+
+### Bug Fixes
+
+* use case insensitive matching ([3d08252](https://github.com/blinkk/fileset/commit/3d08252e2c219c74844535b550e785b1712f6967))
+
 ## [0.9.0](https://github.com/blinkk/fileset/compare/v0.8.0...v0.9.0) (2023-08-26)
 
 
