@@ -359,6 +359,20 @@ export function createApp(siteId: string) {
         blobKey = manifest.paths[`${urlPath}/index.html`];
       }
 
+      // If a blob wasn't found, and if the URL ends with ".html", and if a
+      // corresponding blob exists at a clean URL, redirect automatically.
+      // For example, this will redirect `/foo/bar.html` to `/foo/bar/` if
+      // `/foo/bar/index.html` exists in the manifest.
+      const cleanPath = urlPath.replace(/\.html$/, '');
+      if (
+        !blobKey &&
+        urlPath.endsWith('.html') &&
+        manifestPaths[`${cleanPath}/index.html`]
+      ) {
+        res.redirect(301, preserveQueryString(req, `${cleanPath}/`));
+        return;
+      }
+
       if (!blobKey) {
         // Trailing slash redirect.
         if (
