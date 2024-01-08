@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/blinkk/fileset/compare/v0.9.1...v0.10.0) (2024-01-08)
+
+
+### Features
+
+* handle clean urls e.g. /foo.html -&gt; /foo/ ([33adcf6](https://github.com/blinkk/fileset/commit/33adcf6af775bfec4495b5059df26ddd61ca5c7b))
+
 ## [0.9.1](https://github.com/blinkk/fileset/compare/v0.9.0...v0.9.1) (2023-09-14)
 
 
