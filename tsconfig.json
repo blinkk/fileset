@@ -1,29 +1,18 @@
 {
-    "extends": "./node_modules/gts/tsconfig-google.json",
-    "compilerOptions": {
-      "esModuleInterop": true,
-      "lib": ["dom"],
-      "rootDir": ".",
-      "outDir": "dist",
-      "types": [
-        "node"
-      ]
-    },
-    "exclude": [
-      "./src/webui/**/*.ts",
-    ],
-    "include": [
-      "src/**/*.ts",
-      "test/**/*.ts"
-    ],
-    "typedocOptions": {
-      "entryPoints": [
-        "./src/",
-      ],
-      "excludeExternals": true,
-      "exclude": [
-        "./src/*.test.ts",
-        "./src/**/*.tsx",
-      ],
-    }
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "lib": ["dom"],
+    "rootDir": ".",
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "exclude": ["./src/webui/**/*.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "typedocOptions": {
+    "entryPoints": ["./src/"],
+    "excludeExternals": true,
+    "exclude": ["./src/*.test.ts", "./src/**/*.tsx"]
   }
+}

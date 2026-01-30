@@ -4,11 +4,14 @@ import {Manifest, ManifestFile} from './manifest';
 import {asyncify, mapLimit} from 'async';
 
 import {Datastore} from '@google-cloud/datastore';
-import {Storage} from '@google-cloud/storage';
+import {Bucket, Storage} from '@google-cloud/storage';
 import chalk from 'chalk';
 import {entity} from '@google-cloud/datastore/build/src/entity';
 
 const NUM_CONCURRENT_UPLOADS = 64;
+const MAX_RETRIES = 5;
+const INITIAL_BACKOFF_MS = 1000;
+const MAX_BACKOFF_MS = 60000;
 
 export const ManifestType = {
   Ref: 'ref',
@@ -19,7 +22,7 @@ function getBlobPath(siteId: string, hash: string) {
   return `fileset/sites/${siteId}/blobs/${hash}`;
 }
 
-const findUploadedFiles = async (manifest: Manifest, storageBucket: any) => {
+const findUploadedFiles = async (manifest: Manifest, storageBucket: Bucket) => {
   const filesToUpload: Array<ManifestFile> = [];
   await mapLimit(
     manifest.files,
@@ -51,6 +54,89 @@ function createProgressBar() {
     },
     cliProgress.Presets.shades_classic
   );
+}
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+interface GCSError {
+  code?: number;
+  errors?: Array<{reason?: string}>;
+  message?: string;
+}
+
+function isRateLimitError(error: unknown): boolean {
+  // Check for GCS 429 rate limit error.
+  const err = error as GCSError;
+  return !!(
+    err?.code === 429 ||
+    err?.errors?.some(e => e.reason === 'rateLimitExceeded') ||
+    err?.message?.includes('rate limit') ||
+    err?.message?.includes('exceeded the rate limit')
+  );
+}
+
+interface UploadMetadata {
+  cacheControl: string;
+  contentType: string;
+  metadata: {
+    path: string;
+  };
+}
+
+async function uploadWithRetry(
+  storageBucket: Bucket,
+  manifestFile: ManifestFile,
+  remotePath: string,
+  metadata: UploadMetadata
+): Promise<[{}, {size: string}]> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const resp = await storageBucket.upload(manifestFile.path, {
+        // NOTE: `gzip: true` must *not* be set here. Doing so interferes
+        // with the proxied GCS response. Despite not setting `gzip: true`,
+        // the response remains gzipped from the proxy server.
+        destination: remotePath,
+        metadata: metadata,
+      });
+      return resp;
+    } catch (err) {
+      lastError = err;
+
+      // Only retry on rate limit errors.
+      if (!isRateLimitError(err)) {
+        throw err;
+      }
+
+      // Don't sleep on the last attempt.
+      if (attempt < MAX_RETRIES) {
+        // Exponential backoff with jitter.
+        const backoffMs = Math.min(
+          INITIAL_BACKOFF_MS * Math.pow(2, attempt),
+          MAX_BACKOFF_MS
+        );
+        // Add jitter (±25%).
+        const jitter = backoffMs * 0.25 * (Math.random() * 2 - 1);
+        const sleepMs = Math.round(backoffMs + jitter);
+
+        console.log(
+          chalk.yellow(
+            `Rate limit hit for ${manifestFile.cleanPath}, retrying in ${(
+              sleepMs / 1000
+            ).toFixed(1)}s (attempt ${attempt + 1}/${MAX_RETRIES})...`
+          )
+        );
+
+        await sleep(sleepMs);
+      }
+    }
+  }
+
+  // If we've exhausted all retries, throw the last error.
+  throw lastError;
 }
 
 export async function uploadManifest(
@@ -115,16 +201,14 @@ export async function uploadManifest(
             path: manifestFile.cleanPath,
           },
         };
-        // TODO: Verify this correctly handles errors and retry attempts.
         const remotePath = getBlobPath(manifest.site, manifestFile.hash);
         try {
-          const resp = await storageBucket.upload(manifestFile.path, {
-            // NOTE: `gzip: true` must *not* be set here. Doing so interferes
-            // with the proxied GCS response. Despite not setting `gzip: true`,
-            // the response remains gzipped from the proxy server.
-            destination: remotePath,
-            metadata: metadata,
-          });
+          const resp = await uploadWithRetry(
+            storageBucket,
+            manifestFile,
+            remotePath,
+            metadata
+          );
           bytesTransferred += parseInt(resp[1].size);
         } catch (err) {
           errors.push(err);
