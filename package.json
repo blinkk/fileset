@@ -1,7 +1,7 @@
 {
   "name": "@blinkk/fileset",
   "bin": {
-    "fileset": "./dist/src/index.js"
+    "fileset": "dist/src/index.js"
   },
   "engines": {
     "node": ">=10.0.0"
