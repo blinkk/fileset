@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/blinkk/fileset/compare/v0.10.0...v0.11.0) (2026-01-30)
+
+
+### Features
+
+* add retries for uploads with backoff ([cdbdf43](https://github.com/blinkk/fileset/commit/cdbdf4396fe655436338d57896ac346d73dd175b))
+
 ## [0.10.0](https://github.com/blinkk/fileset/compare/v0.9.1...v0.10.0) (2024-01-08)
 
 
