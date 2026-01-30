@@ -5,6 +5,7 @@
       "lib": ["dom"],
       "rootDir": ".",
       "outDir": "dist",
+      "skipLibCheck": true,
       "types": [
         "node"
       ]
