@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.7.2](https://github.com/blinkk/fileset/compare/fileset-v0.11.0...fileset-v0.7.2) (2026-01-30)
+
+
+### Features
+
+* add ability to use server as staging only ([8c2d132](https://github.com/blinkk/fileset/commit/8c2d1324c9d9cf499a34ff6a47a6c27f38c47143))
+* add cache to manifest lookup ([e12c0c3](https://github.com/blinkk/fileset/commit/e12c0c3e16f432f1b4a8bd5892f3c9e61a577172))
+* add release-please integration ([af73ee4](https://github.com/blinkk/fileset/commit/af73ee402285a9aa4590579a5d2247e65214e3cc))
+* add retries for uploads with backoff ([cdbdf43](https://github.com/blinkk/fileset/commit/cdbdf4396fe655436338d57896ac346d73dd175b))
+* add special content-type for .soy ([a7a8ce6](https://github.com/blinkk/fileset/commit/a7a8ce61c5260534dfcac5e3d1a637b8edfb6231))
+* add support for output manifest ([9d90c8c](https://github.com/blinkk/fileset/commit/9d90c8c72f87249aa84d92bcaca2608d5adbda55))
+* allow specifying gcp project in cli ([449b2b2](https://github.com/blinkk/fileset/commit/449b2b2a7ba403f5ab8e75238171b8a12ddc97ac))
+* enable sameSite:none for iframed staging environments ([5c8a521](https://github.com/blinkk/fileset/commit/5c8a521a67825a4c2196907315cd0cbb21a20f71))
+* handle clean urls e.g. /foo.html -&gt; /foo/ ([33adcf6](https://github.com/blinkk/fileset/commit/33adcf6af775bfec4495b5059df26ddd61ca5c7b))
+* persist ncr value across navigation ([fde8718](https://github.com/blinkk/fileset/commit/fde8718fdf03a340f3ff0b781eb0c5838c46f5fd))
+* support custom staging urls in cli output ([da3e8a1](https://github.com/blinkk/fileset/commit/da3e8a1c6f4eeaa92354dd36be985e7fdcca2703))
+* switch to npm trusted publishers for secure publishing ([ac6aa46](https://github.com/blinkk/fileset/commit/ac6aa4690d913c42765be1bd597135de51e2cb51))
+
+
+### Bug Fixes
+
+* avoid infinite redirect loop ([b0811fa](https://github.com/blinkk/fileset/commit/b0811fad715890697fac1bcc687cc956b60fb163))
+* clarify link naming ([0d6a257](https://github.com/blinkk/fileset/commit/0d6a257e0a433901516f1d1f163d974db037d036))
+* configure release-please to use v-prefix tags ([a13d9c6](https://github.com/blinkk/fileset/commit/a13d9c6f7d924903f8cccf4227aaaf68085dfc48))
+* dashboard domain cli output ([9e00d19](https://github.com/blinkk/fileset/commit/9e00d19ba20f3e59fc804de2cee98645ca267f46))
+* ensure package is prepared before publish ([7978c08](https://github.com/blinkk/fileset/commit/7978c085b8aebbb15ba7de17567bc0f66b9a0d3e))
+* ensure unhandled promises fail ([4fb2f02](https://github.com/blinkk/fileset/commit/4fb2f02a0bc3157d6b2c7dabbbb1593edb598f70))
+* exception handling ([bcbbf5c](https://github.com/blinkk/fileset/commit/bcbbf5c7b101b535f75036f7fdaf01a1c186f238))
+* fix issue with missing config file ([bb792ab](https://github.com/blinkk/fileset/commit/bb792abd14f3443da6503df76a4a9db1fb52d802))
+* improve error reporting on upload ([ed28e24](https://github.com/blinkk/fileset/commit/ed28e24110c6277943cdcaf3cadcd6765049556d))
+* issue parsing cookies ([47beeec](https://github.com/blinkk/fileset/commit/47beeeca3c036d872e23b3b0bec6e87e832c462e))
+* issue with superfluous -dot- ([39cb318](https://github.com/blinkk/fileset/commit/39cb3182174fc4d2886b5a20106fdead7f8b264c))
+* issue with using BASE_URL and links ([62be29f](https://github.com/blinkk/fileset/commit/62be29fa123bfbf8fdb0479fcbaa6dc18f1efff3))
+* passport import ([3a06780](https://github.com/blinkk/fileset/commit/3a06780c967cb780345dad409b623f035367ae13))
+* preserve query string when redirecting ([fb8226b](https://github.com/blinkk/fileset/commit/fb8226b3c64660ad31bf3668023156e540afb385))
+* replace colors with chalk ([0961a38](https://github.com/blinkk/fileset/commit/0961a380b3a7b418ae036dc9f0402ea7b07c662c))
+* restore CHANGELOG history to correct state ([c6dc8f9](https://github.com/blinkk/fileset/commit/c6dc8f9ff212651d02958e0111c803f9ff89b921))
+* revert "fix: issue with superfluous -dot-" ([8a4d8c7](https://github.com/blinkk/fileset/commit/8a4d8c7ae5e97adad0312045738883e4537d89a5))
+* set correct base version in manifest to 0.11.0 ([8c6920d](https://github.com/blinkk/fileset/commit/8c6920deaf84fa480d81c6fb0b8d38b088028dd2))
+* support case insensitive trailing slash redirects ([210741a](https://github.com/blinkk/fileset/commit/210741a5408919789732071766f7e010f868f6b5))
+* support deployment from nested directories ([47b585d](https://github.com/blinkk/fileset/commit/47b585d8b36b92508b7dd7779603ca709b0c57bf))
+* update all version references to 0.11.0 ([820809d](https://github.com/blinkk/fileset/commit/820809dda7ef3527c4234c4db8dd1b2ff0727b67))
+* update webpack ([49c736e](https://github.com/blinkk/fileset/commit/49c736e3d7822839b8687030ae388ef704af9416))
+* upgrade isomorphic-git to resolve vuln ([c0a922e](https://github.com/blinkk/fileset/commit/c0a922e0550fca523201327250753cef935b4d4b))
+* use base url for links ([9673134](https://github.com/blinkk/fileset/commit/96731344ef396efa7d39ba393c997e5a86001446))
+* use case insensitive matching ([3d08252](https://github.com/blinkk/fileset/commit/3d08252e2c219c74844535b550e785b1712f6967))
+
+
+### Miscellaneous Chores
+
+* release 0.1.4 ([524ea3b](https://github.com/blinkk/fileset/commit/524ea3b127a907e6c1390c3df21494a0634a9b20))
+* release 0.1.5 ([44f88c1](https://github.com/blinkk/fileset/commit/44f88c1cbfa745ee9c49dfa5ff83274ac0011252))
+* release 0.2.0 ([6c877ba](https://github.com/blinkk/fileset/commit/6c877ba3b9326a06e3ed772682de0d4564b640a9))
+* release 0.4.6 ([2c9d399](https://github.com/blinkk/fileset/commit/2c9d39916042a94e710bd037aa463de70f865910))
+* release 0.4.7 ([8576fd2](https://github.com/blinkk/fileset/commit/8576fd201092418ce6bbaa7a40d4b1d94e00154a))
+* release 0.4.8 ([568a864](https://github.com/blinkk/fileset/commit/568a8649ca3070a7698c62e7ba502c0e2816bebb))
+* release 0.7.2 ([ecead30](https://github.com/blinkk/fileset/commit/ecead30e2e7787177179d5f28ff18cac05b54be3))
+
 ## [0.11.0](https://github.com/blinkk/fileset/compare/v0.10.0...v0.11.0) (2026-01-30)
 
 ### Features
