@@ -1,19 +1,5 @@
 # Changelog
 
-## [0.11.0](https://github.com/blinkk/fileset/compare/v0.10.0...v0.11.0) (2024-01-30)
-
-### Features
-
-- add retries for uploads with backoff ([cdbdf43](https://github.com/blinkk/fileset/commit/cdbdf4396fe655436338d57896ac346d73dd175b))
-
-## [0.10.0](https://github.com/blinkk/fileset/compare/v0.9.1...v0.10.0) (2024-01-08)
-
-- release 0.2.0 ([6c877ba](https://github.com/blinkk/fileset/commit/6c877ba3b9326a06e3ed772682de0d4564b640a9))
-- release 0.4.6 ([2c9d399](https://github.com/blinkk/fileset/commit/2c9d39916042a94e710bd037aa463de70f865910))
-- release 0.4.7 ([8576fd2](https://github.com/blinkk/fileset/commit/8576fd201092418ce6bbaa7a40d4b1d94e00154a))
-- release 0.4.8 ([568a864](https://github.com/blinkk/fileset/commit/568a8649ca3070a7698c62e7ba502c0e2816bebb))
-- release 0.7.2 ([ecead30](https://github.com/blinkk/fileset/commit/ecead30e2e7787177179d5f28ff18cac05b54be3))
-
 ## [0.11.0](https://github.com/blinkk/fileset/compare/v0.10.0...v0.11.0) (2026-01-30)
 
 ### Features
@@ -24,7 +10,7 @@
 
 ### Features
 
-- handle clean urls e.g. /foo.html -&gt; /foo/ ([33adcf6](https://github.com/blinkk/fileset/commit/33adcf6af775bfec4495b5059df26ddd61ca5c7b))
+- handle clean urls e.g. /foo.html -> /foo/ ([33adcf6](https://github.com/blinkk/fileset/commit/33adcf6af775bfec4495b5059df26ddd61ca5c7b))
 
 ## [0.9.1](https://github.com/blinkk/fileset/compare/v0.9.0...v0.9.1) (2023-09-14)
 
