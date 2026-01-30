@@ -1,0 +1,403 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@blinkk/fileset</title>
+	<meta name="description" content="Documentation for @blinkk/fileset">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@blinkk/fileset</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>@blinkk/fileset</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#fileset" id="fileset" style="color: inherit; text-decoration: none;">
+					<h1>Fileset</h1>
+				</a>
+				<p><a href="https://npmjs.org/package/@blinkk/fileset"><img src="https://img.shields.io/npm/v/@blinkk/fileset.svg" alt="NPM Version"></a>
+					<a href="https://github.com/blinkkcode/fileset/actions"><img src="https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg" alt="GitHub Actions"></a>
+					<a href="https://david-dm.org/blinkkcode/fileset"><img src="https://david-dm.org/blinkkcode/fileset.svg" alt="Dependency Status"></a>
+					<a href="https://snyk.io/test/github/blinkkcode/fileset"><img src="https://snyk.io/test/github/blinkkcode/fileset/badge.svg" alt="Known Vulnerabilities"></a>
+					<a href="https://codecov.io/gh/blinkkcode/fileset"><img src="https://codecov.io/gh/blinkkcode/fileset/branch/main/graph/badge.svg" alt="codecov"></a>
+				<a href="https://github.com/google/gts"><img src="https://img.shields.io/badge/code%20style-google-blueviolet.svg" alt="TypeScript Style Guide"></a></p>
+				<p>Fileset is a light, high-performance TypeScript static web server intended for
+				high-traffic static sites. Features include:</p>
+				<ul>
+					<li>Atomic deployments</li>
+					<li>(To be implemented) Scheduled deployments</li>
+					<li>Redirects</li>
+					<li>Localization-aware redirects</li>
+					<li>Isolated per-branch staging environments backed by Google Account authentication</li>
+					<li>Ultra-fast TTFB and payload transfer speeds</li>
+					<li>A simple web UI for inspecting uploaded files</li>
+				</ul>
+				<p>The server runs on Google App Engine and proxies requests to Google Cloud Storage.</p>
+				<a href="#concept" id="concept" style="color: inherit; text-decoration: none;">
+					<h2>Concept</h2>
+				</a>
+				<p>Many websites can be built and deployed as fully static content (i.e. just HTML,
+					CSS, and JavaScript – with no dynamic backend). Despite being static content,
+					websites may still have other requirements such as localization, redirects, or
+					atomic deployments that end up adding slight dynamic functionality to an
+				otherwise fully static project.</p>
+				<p>Fileset aims to bridge the gap by offering a thin middle layer on top of Google
+					Cloud Storage: static files are uploaded to Google Cloud Storage via the CLI,
+					with the Fileset server handling request traffic. The server determines whether
+					to issue a response sprinkled with one of the above dynamic features, and
+					otherwise proxies traffic directly to Google Cloud Storage – leveraging Google&#39;s
+				global network for performance.</p>
+				<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+					<h2>Table of contents</h2>
+				</a>
+				<ul>
+					<li><a href="#concept">Concept</a></li>
+					<li><a href="#usage">Usage</a><ul>
+							<li><a href="#server-setup">Server setup</a></li>
+							<li><a href="#upload-files">Upload files</a></li>
+						</ul>
+					</li>
+					<li><a href="#uploader-authentication">Uploader authentication</a><ul>
+							<li><a href="#local-testing-authenticate-using-user-account">Local testing (authenticate using user account)</a></li>
+							<li><a href="#continuous-deployment-authenticate-using-service-account">Continuous deployment (authenticate using service account)</a></li>
+						</ul>
+					</li>
+					<li><a href="#environments">Environments</a></li>
+					<li><a href="#testing">Testing</a><ul>
+							<li><a href="#response-headers">Response headers</a></li>
+							<li><a href="#query-parameters">Query parameters</a></li>
+						</ul>
+					</li>
+					<li><a href="#tips">Tips</a><ul>
+							<li><a href="#usage-within-makefile">Usage within Makefile</a></li>
+							<li><a href="#usage-with-amagaki">Usage with Amagaki</a></li>
+							<li><a href="#usage-with-growdev">Usage with Grow.dev</a></li>
+						</ul>
+					</li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>There are two main tasks required in order to use Fileset:</p>
+				<ol>
+					<li>First, you&#39;ll need to deploy the server. This only needs to be done once,
+					when the project is originally set up.</li>
+					<li>Second, you&#39;ll need to upload files to be served. Files must be uploaded each
+					time you want to serve new files, update redirects, etc.</li>
+				</ol>
+				<a href="#server-setup" id="server-setup" style="color: inherit; text-decoration: none;">
+					<h3>Server setup</h3>
+				</a>
+				<ol>
+					<li><p>Within your project, create a directory to house the server configuration, e.g.
+						<code>./backend/server</code>.</p>
+					</li>
+					<li><p>Copy the files from <a href="./example/server/">./example/server/</a> into this directory.</p>
+					</li>
+					<li><p>Modify the settings in <code>app.yaml</code> and <code>secrets.yaml</code>.</p>
+					</li>
+					<li><p>Setup and deploy the app using the provided
+							<a href="./example/server/Makefile">Makefile</a>. The app will be deployed to an App
+							Engine service named <code>fileset</code>, so it will not conflict with your current
+						deployment.</p>
+					</li>
+				</ol>
+				<pre><code class="language-bash"><span style="color: #000000">make project=&lt;AppId&gt; setup</span>
+<span style="color: #000000">make project=&lt;AppId&gt; deploy</span>
+</code></pre>
+				<a href="#upload-files" id="upload-files" style="color: inherit; text-decoration: none;">
+					<h3>Upload files</h3>
+				</a>
+				<ol>
+					<li><strong>Create a <code>fileset.yaml</code> configuration file.</strong> The minimum example is below. See
+						the <a href="./example/fileset.yaml">example fileset.yaml</a> for full configuration
+					options.</li>
+				</ol>
+				<pre><code class="language-yaml"><span style="color: #800000">google_cloud_project</span><span style="color: #000000">: </span><span style="color: #0000FF">&lt;AppId&gt;</span>
+</code></pre>
+				<ol start="2">
+					<li><p><strong>Generate your files.</strong> Use a static site generator or just manually create a directory containing files
+							to upload. In step (3) below, the files in the directory <code>./build</code> are
+						uploaded.</p>
+					</li>
+					<li><p><strong>Upload your files.</strong> The uploader will look for <code>fileset.yaml</code> within the
+							specified directory first. If it&#39;s not found, it will look up in the parent
+							folder. If the config file doesn&#39;t exist in either folder, the uploader will
+						abort.</p>
+					</li>
+				</ol>
+				<pre><code class="language-bash"><span style="color: #000000">npx fileset upload ./build</span>
+</code></pre>
+				<p>That&#39;s it! Files have been uploaded to Google Cloud Storage and the uploaded
+					directory is now being served by the application server. You can verify by
+				visiting:</p>
+				<pre><code><span style="color: #000000">https:</span><span style="color: #008000">//fileset-dot-&lt;AppId&gt;.appspot.com</span>
+</code></pre>
+				<a href="#uploader-authentication" id="uploader-authentication" style="color: inherit; text-decoration: none;">
+					<h2>Uploader authentication</h2>
+				</a>
+				<p>You&#39;ll need to be authenticated to upload files and deploy the serving manifests.</p>
+				<a href="#local-testing-authenticate-using-user-account" id="local-testing-authenticate-using-user-account" style="color: inherit; text-decoration: none;">
+					<h3>Local testing (authenticate using user account)</h3>
+				</a>
+				<p>If you are testing locally, your user account can be used to authenticate to
+					Cloud Datastore and Cloud Storage. Simply run the below command to create
+				credentials used for authentication:</p>
+				<pre><code class="language-bash"><span style="color: #000000">gcloud auth application-default login</span>
+</code></pre>
+				<a href="#continuous-deployment-authenticate-using-service-account" id="continuous-deployment-authenticate-using-service-account" style="color: inherit; text-decoration: none;">
+					<h3>Continuous deployment (authenticate using service account)</h3>
+				</a>
+				<p>If you are using a service account for deployment, you&#39;ll need to ensure it has
+					the right permissions. When using Fileset with Google Cloud Build, simply run
+					<code>make setup</code> from the <code>example/server</code> directory to configure your project&#39;s
+				Cloud Build Service account with the right permissions.</p>
+				<p>The following permissions are needed:</p>
+				<ul>
+					<li>Cloud Datastore (manifests are stored here): Cloud Datastore Owner
+					(<code>datastore.owner</code>)</li>
+					<li>Cloud Storage (files are uploaded here): Storage Object Admin
+					(<code>storage.objectAdmin</code>)</li>
+				</ul>
+				<p>If using the Cloud Build service account (or any other service account), you&#39;ll
+					need to add the above two permissions to the account. That can be done via the
+					IAM page (<code>https://console.cloud.google.com/access/iam?project=&lt;AppId&gt;</code>) or via
+				the <code>gcloud</code> CLI.</p>
+				<p>The provided <a href="./example/server/Makefile">Makefile</a> also sets up Google Cloud
+				Build permissions for you.</p>
+				<pre><code class="language-bash"><span style="color: #000000">make project=&lt;AppId&gt; setup</span>
+</code></pre>
+				<a href="#environments" id="environments" style="color: inherit; text-decoration: none;">
+					<h2>Environments</h2>
+				</a>
+				<p>Fileset uses Git branches to determine whether files should be in production
+					(and public) or in staging (and restricted via Google Account authentication).
+					The Git branch is determined by inspecting the local Git environment when the
+				<code>upload</code> command is invoked.</p>
+				<p>The best way to understand how this works is by following the examples below:</p>
+				<pre><code class="language-bash"><span style="color: #008000"># main branch</span>
+<span style="color: #008000"># ✓ public</span>
+<span style="color: #008000"># ✓ production URL</span>
+<span style="color: #008000"># ✓ also available from staging URLs (restricted)</span>
+
+<span style="color: #000000">(main) $ npx fileset upload build</span>
+<span style="color: #000000">...</span>
+<span style="color: #000000">Public URL:            https://appid.appspot.com</span>
+<span style="color: #000000">URL (via commit):      https://f3a9abb-dot-fileset-dot-appid.appspot.com</span>
+<span style="color: #000000">URL (via branch name): https://master-dot-fileset-dot-appid.appspot.com</span>
+</code></pre>
+				<pre><code class="language-bash"><span style="color: #008000"># staging branch</span>
+<span style="color: #008000"># ✓ not public</span>
+<span style="color: #008000"># ✓ staging URL only (restricted)</span>
+
+<span style="color: #000000">(staging) $ npx fileset upload build</span>
+<span style="color: #000000">...</span>
+<span style="color: #000000">URL (via commit):      https://4fb48ce-dot-fileset-dot-appid.appspot.com</span>
+<span style="color: #000000">URL (via branch name): https://staging-dot-fileset-dot-appid.appspot.com</span>
+</code></pre>
+				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+					<h2>Testing</h2>
+				</a>
+				<a href="#response-headers" id="response-headers" style="color: inherit; text-decoration: none;">
+					<h3>Response headers</h3>
+				</a>
+				<p>You can verify Fileset server is working as you expect by looking for the following headers:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Header</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>x‑fileset‑site</code></td>
+							<td>The site being served. Usually this will be <code>default</code> but for multi-site installations, this will be useful for determining which site is serving.</td>
+						</tr>
+						<tr>
+							<td><code>x‑fileset‑ref</code></td>
+							<td>The Git commit sha that corresponds to the serving manifest that is handling your request.</td>
+						</tr>
+						<tr>
+							<td><code>x‑fileset‑blob</code></td>
+							<td>The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file&#39;s content.</td>
+						</tr>
+						<tr>
+							<td><code>x‑fileset‑ttl</code></td>
+							<td>For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served.</td>
+						</tr>
+				</tbody></table>
+				<a href="#query-parameters" id="query-parameters" style="color: inherit; text-decoration: none;">
+					<h3>Query parameters</h3>
+				</a>
+				<p>You can simulate geolocation behavior using query parameters:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Parameter</th>
+							<th>Name</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>hl</code></td>
+							<td>Language</td>
+							<td>Overrides the incoming <code>accept-language</code> header.</td>
+						</tr>
+						<tr>
+							<td><code>gl</code></td>
+							<td>Geolocation</td>
+							<td>Overrides the incoming <code>x-appengine-country</code> header.</td>
+						</tr>
+						<tr>
+							<td><code>ncr</code></td>
+							<td>No country redirect</td>
+							<td>Disables localization-aware redirects.</td>
+						</tr>
+				</tbody></table>
+				<a href="#tips" id="tips" style="color: inherit; text-decoration: none;">
+					<h2>Tips</h2>
+				</a>
+				<a href="#usage-within-makefile" id="usage-within-makefile" style="color: inherit; text-decoration: none;">
+					<h3>Usage within Makefile</h3>
+				</a>
+				<p>The absolute path to the <code>fileset</code> executable can be specified to invoke the CLI.</p>
+				<pre><code><span style="color: #000000">.</span><span style="color: #811F3F">/node_modules/</span><span style="color: #000000">.</span><span style="color: #001080">bin</span><span style="color: #000000">/</span><span style="color: #001080">fileset</span><span style="color: #000000"> </span><span style="color: #001080">upload</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
+</code></pre>
+				<a href="#usage-with-amagaki" id="usage-with-amagaki" style="color: inherit; text-decoration: none;">
+					<h3>Usage with Amagaki</h3>
+				</a>
+				<p>First, build the site to the <code>./build</code> directory. Then, upload the directory to Fileset.</p>
+				<pre><code class="language-shell"><span style="color: #000000">npx @blinkk/amagaki build</span>
+<span style="color: #000000">npx @blinkk/fileset upload build</span>
+</code></pre>
+				<a href="#usage-with-growdev" id="usage-with-growdev" style="color: inherit; text-decoration: none;">
+					<h3>Usage with Grow.dev</h3>
+				</a>
+				<p>First, build the site to the <code>./build</code> directory. Then, upload the directory to Fileset.</p>
+				<pre><code class="language-shell"><span style="color: #000000">grow build --deployment=prod</span>
+<span style="color: #000000">npx @blinkk/fileset upload build</span>
+</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Modules</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/api.html">api</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/cache.html">cache</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/commands_serve.html">commands/serve</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/commands_upload.html">commands/upload</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/countries.html">countries</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/defaults.html">defaults</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/gitdata.html">gitdata</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/locale.html">locale</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/manifest.html">manifest</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/server.html">server</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/trie.html">trie</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/upload.html">upload</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/webui.html">webui</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
