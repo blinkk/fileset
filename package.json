@@ -8,10 +8,10 @@
   },
   "version": "1.0.0",
   "license": "MIT",
-  "homepage": "https://github.com/blinkkcode/fileset/",
+  "homepage": "https://github.com/blinkk/fileset/",
   "repository": {
     "type": "git",
-    "url": "git://github.com/blinkkcode/fileset.git"
+    "url": "git://github.com/blinkk/fileset.git"
   },
   "scripts": {
     "check": "gts check",

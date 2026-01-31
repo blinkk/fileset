@@ -19,6 +19,7 @@ high-traffic static sites. Features include:
 - A simple web UI for inspecting uploaded files
 
 The server runs on Google App Engine and proxies requests to Google Cloud Storage.
+
 ## Concept
 
 Many websites can be built and deployed as fully static content (i.e. just HTML,
@@ -91,8 +92,8 @@ google_cloud_project: <AppId>
 ```
 
 2. **Generate your files.** Use a static site generator or just manually create a directory containing files
-to upload. In step (3) below, the files in the directory `./build` are
-uploaded.
+   to upload. In step (3) below, the files in the directory `./build` are
+   uploaded.
 
 3. **Upload your files.** The uploader will look for `fileset.yaml` within the
    specified directory first. If it's not found, it will look up in the parent
@@ -131,7 +132,6 @@ If you are using a service account for deployment, you'll need to ensure it has
 the right permissions. When using Fileset with Google Cloud Build, simply run
 `make setup` from the `example/server` directory to configure your project's
 Cloud Build Service account with the right permissions.
-
 
 The following permissions are needed:
 
@@ -191,22 +191,22 @@ URL (via branch name): https://staging-dot-fileset-dot-appid.appspot.com
 
 You can verify Fileset server is working as you expect by looking for the following headers:
 
-| Header | Description |
-|-|-|
+| Header           | Description                                                                                                                                        |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `x‑fileset‑site` | The site being served. Usually this will be `default` but for multi-site installations, this will be useful for determining which site is serving. |
-| `x‑fileset‑ref` | The Git commit sha that corresponds to the serving manifest that is handling your request. |
-| `x‑fileset‑blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content. |
-| `x‑fileset‑ttl` | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served. |
+| `x‑fileset‑ref`  | The Git commit sha that corresponds to the serving manifest that is handling your request.                                                         |
+| `x‑fileset‑blob` | The blob directory key corresponding to the file being served. This is the SHA-1 hash of the file's content.                                       |
+| `x‑fileset‑ttl`  | For scheduled deployments, the value of this header will correspond to the timestamp for the timed deployment being served.                        |
 
 ### Query parameters
 
 You can simulate geolocation behavior using query parameters:
 
-| Parameter | Name | Description |
-|-|-|-|
-| `hl` | Language | Overrides the incoming `accept-language` header. |
-| `gl` | Geolocation | Overrides the incoming `x-appengine-country` header. |
-| `ncr` | No country redirect | Disables localization-aware redirects. |
+| Parameter | Name                | Description                                          |
+| --------- | ------------------- | ---------------------------------------------------- |
+| `hl`      | Language            | Overrides the incoming `accept-language` header.     |
+| `gl`      | Geolocation         | Overrides the incoming `x-appengine-country` header. |
+| `ncr`     | No country redirect | Disables localization-aware redirects.               |
 
 ## Tips
 
@@ -236,15 +236,15 @@ grow build --deployment=prod
 npx @blinkk/fileset upload build
 ```
 
-[github-image]: https://github.com/blinkkcode/fileset/workflows/Run%20tests/badge.svg
-[github-url]: https://github.com/blinkkcode/fileset/actions
-[codecov-image]: https://codecov.io/gh/blinkkcode/fileset/branch/main/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/blinkkcode/fileset
-[david-image]: https://david-dm.org/blinkkcode/fileset.svg
-[david-url]: https://david-dm.org/blinkkcode/fileset
+[github-image]: https://github.com/blinkk/fileset/workflows/Run%20tests/badge.svg
+[github-url]: https://github.com/blinkk/fileset/actions
+[codecov-image]: https://codecov.io/gh/blinkk/fileset/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/blinkk/fileset
+[david-image]: https://david-dm.org/blinkk/fileset.svg
+[david-url]: https://david-dm.org/blinkk/fileset
 [gts-image]: https://img.shields.io/badge/code%20style-google-blueviolet.svg
 [gts-url]: https://github.com/google/gts
 [npm-image]: https://img.shields.io/npm/v/@blinkk/fileset.svg
 [npm-url]: https://npmjs.org/package/@blinkk/fileset
-[snyk-image]: https://snyk.io/test/github/blinkkcode/fileset/badge.svg
-[snyk-url]: https://snyk.io/test/github/blinkkcode/fileset
+[snyk-image]: https://snyk.io/test/github/blinkk/fileset/badge.svg
+[snyk-url]: https://snyk.io/test/github/blinkk/fileset

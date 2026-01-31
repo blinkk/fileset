@@ -239,7 +239,7 @@ export class SitePage extends Page<SitePageProps, SitePageState> {
         </div>
         <div class="SitePage__content__empty__buttons">
           <a
-            href="https://github.com/blinkkcode/fileset#deployment-setup"
+            href="https://github.com/blinkk/fileset#deployment-setup"
             class="button button--medium"
           >
             View documentation
