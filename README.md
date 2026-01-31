@@ -2,7 +2,6 @@
 
 [![NPM Version][npm-image]][npm-url]
 [![GitHub Actions][github-image]][github-url]
-[![Dependency Status][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![codecov][codecov-image]][codecov-url]
 [![TypeScript Style Guide][gts-image]][gts-url]
@@ -240,8 +239,6 @@ npx @blinkk/fileset upload build
 [github-url]: https://github.com/blinkk/fileset/actions
 [codecov-image]: https://codecov.io/gh/blinkk/fileset/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/blinkk/fileset
-[david-image]: https://david-dm.org/blinkk/fileset.svg
-[david-url]: https://david-dm.org/blinkk/fileset
 [gts-image]: https://img.shields.io/badge/code%20style-google-blueviolet.svg
 [gts-url]: https://github.com/google/gts
 [npm-image]: https://img.shields.io/npm/v/@blinkk/fileset.svg
