@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/blinkk/fileset/compare/fileset-v1.0.0...fileset-v1.0.1) (2026-01-31)
+
+
+### Bug Fixes
+
+* **ci:** remove registry-url to enable OIDC publishing ([432b4cf](https://github.com/blinkk/fileset/commit/432b4cf9aaf7c6fbd8d29ed263b710eafbe575dc))
+
 ## [1.0.0](https://github.com/blinkk/fileset/compare/fileset-v1.0.0...fileset-v1.0.0) (2026-01-31)
 
 
