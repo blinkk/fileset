@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/blinkk/fileset/compare/fileset-v1.0.1...fileset-v1.0.2) (2026-01-31)
+
+
+### Bug Fixes
+
+* **ci:** explicitly configure npm registry for scoped package ([d44dbaa](https://github.com/blinkk/fileset/commit/d44dbaaeae20d1779667a3ade040d1e023ee4d6c))
+
 ## [1.0.1](https://github.com/blinkk/fileset/compare/fileset-v1.0.0...fileset-v1.0.1) (2026-01-31)
 
 
